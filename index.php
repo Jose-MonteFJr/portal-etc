@@ -28,17 +28,17 @@ if (isset($_SESSION['user_id'])) {
       <div class="col-md-4">
         <div class="card shadow-sm">
           <div class="card-body p-4">
-            <h1 class="h4 mb-3 text-center">Nosso querido Sistema 2025.2</h1>
+            <h1 class="h4 mb-3 text-center">Portal ETC</h1>
             <?php if (!empty($_GET['error'])): ?>
               <div class="alert alert-danger py-2"><?php echo htmlspecialchars($_GET['error']); ?></div>
             <?php endif; ?>
             <form method="post" action="login.php" autocomplete="off">
               <div class="mb-3">
-                <label class="form-label">E-mail</label>
+                <label class="form-label">E-mail: </label>
                 <input type="email" name="email" class="form-control">
               </div>
               <div class="mb-3">
-                <label class="form-label">Senha</label>
+                <label class="form-label">Senha: </label>
                 <input type="password" name="password" class="form-control">
               </div>
               <button type="submit" class="btn btn-primary w-100">Entrar</button>

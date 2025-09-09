@@ -27,15 +27,31 @@ SET time_zone = "+00:00";
 -- Estrutura para tabela `users`
 --
 
-CREATE TABLE `users` (
-  `id` int(11) NOT NULL,
-  `first_name` varchar(100) NOT NULL,
-  `last_name` varchar(100) NOT NULL,
-  `email` varchar(190) NOT NULL,
+CREATE TABLE `usuario` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `nome_completo` varchar(150) NOT NULL,
+  `cpf` varchar(11) UNIQUE NOT NULL,
+  `data_nascimento` DATE NOT NULL,
+  `email` varchar(100) UNIQUE NOT NULL,
+  `telefone` varchar(20) NOT NULL,
   `password_hash` varchar(255) NOT NULL,
-  `role` enum('admin','user') NOT NULL DEFAULT 'user',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE `endereco` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `usuario_id` INT NOT NULL,
+  `cep` VARCHAR(8) NOT NULL,
+  `logradouro` VARCHAR(120) NOT NULL,
+  `numero` VARCHAR(10),
+  `complemento` VARCHAR(100),
+  `bairro` VARCHAR(80),
+  `cidade` VARCHAR(80),
+  `estado` VARCHAR(50),
+  `pais` VARCHAR(50) DEFAULT 'Brasil',
+  FOREIGN KEY (usuario_id) REFERENCES usuario(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 
 --
 -- Despejando dados para a tabela `users`
