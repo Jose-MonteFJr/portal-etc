@@ -1,7 +1,7 @@
 <?php
 // config/db.php. Lembrem-se  - Se for colocar em produção, altere as credenciais.
 $host = '127.0.0.1';
-$db   = 'login_roles';
+$db   = 'portal_etc';
 $user = 'root'; 
 $pass = '';          
 $charset = 'utf8mb4';
