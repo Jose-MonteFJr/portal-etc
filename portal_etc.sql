@@ -33,15 +33,15 @@ SET time_zone = "+00:00";
 CREATE TABLE usuarios (
   id_usuarios INT AUTO_INCREMENT PRIMARY KEY,
   nome_completo VARCHAR(150) NOT NULL,
-  cpf VARCHAR(11) UNIQUE NOT NULL, 
+  cpf CHAR(14) UNIQUE NOT NULL, 
   email VARCHAR(150) UNIQUE NOT NULL,
   password_hash VARCHAR(255) NOT NULL,
-  telefone VARCHAR(20) NOT NULL,
+  telefone CHAR(15) NOT NULL, 
   data_nascimento DATE NOT NULL,
   tipo ENUM('aluno', 'professor', 'coordenador', 'secretaria') NOT NULL DEFAULT 'aluno',
-  status ENUM('ativo', 'inativo') DEFAULT 'ativo',
+  status ENUM('ativo', 'inativo') NOT NULL DEFAULT 'ativo',
   criado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(),
-  atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP() ON UPDATE CURRENT_TIMESTAMP()
+  atualizado_em TIMESTAMP DEFAULT ON UPDATE CURRENT_TIMESTAMP()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- INSERINDO VALORES DE TESTE
@@ -55,23 +55,31 @@ INSERT INTO usuarios (nome_completo, cpf, email, password_hash, telefone, data_n
 CREATE TABLE alunos (
   id_alunos INT AUTO_INCREMENT PRIMARY KEY,
   id_usuarios INT NOT NULL,
-  matricula VARCHAR(20) UNIQUE NOT NULL,
+  matricula INT(8) UNIQUE NOT NULL, -- 23105215 = PRIMEIROS 2 DIGITOS REFERENTE AO ANO E DEPOIS A MATRICULA - VER O SEQUENCE LOGO ABAIXO
   data_ingresso DATE NOT NULL,
   status_academico ENUM('cursando', 'formado', 'trancado', 'desistente') NOT NULL DEFAULT 'cursando',
   id_curso INT NOT NULL,
   id_turma INT NULL,
   criado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(),
-  atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP() ON UPDATE CURRENT_TIMESTAMP(),
+  atualizado_em TIMESTAMP DEFAULT ON UPDATE CURRENT_TIMESTAMP(),
 
   CONSTRAINT fk_alunos_usuarios FOREIGN KEY (id_usuarios) REFERENCES usuarios(id_usuarios) ON DELETE CASCADE,
-    CONSTRAINT fk_alunos_cursos FOREIGN KEY (id_cursos) REFERENCES cursos(id_cursos) ON DELETE RESTRICT,
-    CONSTRAINT fk_alunos_turmas FOREIGN KEY (id_turmas) REFERENCES turmas(id_turmas) ON DELETE SET NULL
+  CONSTRAINT fk_alunos_cursos FOREIGN KEY (id_cursos) REFERENCES cursos(id_cursos) ON DELETE RESTRICT,
+  CONSTRAINT fk_alunos_turmas FOREIGN KEY (id_turmas) REFERENCES turmas(id_turmas) ON DELETE SET NULL
 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+-- -----------------------------------------------------------------
 
+-- UTILIZAR O SEQUENCE PARA A MATRICULA AUTOMATICA
 
+/*-- criando a sequence para gerar o número da mátricula
+CREATE SEQUENCE seq_matricula START WITH 1 INCREMENT BY 1;
 
+-- exemplo de como gerar a matrícula para o cadastro
+SELECT CONCAT(DATE_FORMAT(CURRENT_DATE, '%y'), LPAD(NEXTVAL(seq_matricula ), 6, '0')); */
+
+-- ------------------------------------------------------------------
 
 
 
