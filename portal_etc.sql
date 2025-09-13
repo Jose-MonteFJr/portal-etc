@@ -7,9 +7,6 @@
 -- Versão do servidor: 10.4.28-MariaDB
 -- Versão do PHP: 8.2.4
 
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
-SET time_zone = "+00:00";
 
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -21,17 +18,21 @@ SET time_zone = "+00:00";
 -- Banco de dados: `portal_etc`
 --
 
--- CREATE DATABASE portal_etc;
+CREATE DATABASE portal_etc CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE portal_etc;
 
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
 
--- -------------------------------------------------------- LEMBRAR DE COLOCAR TODOS NO PLURAL!!!!!!!
+-- -------------------------------------------------------- LEMBRAR DE COLOCAR TODOS NO SINGULAR!!!
 
 --
--- Tabela usuarios
+-- Tabela usuario
 --
 
-CREATE TABLE usuarios (
-  id_usuarios INT AUTO_INCREMENT UNSIGNED PRIMARY KEY,
+CREATE TABLE usuario (
+  id_usuario INT UNSIGNED AUTO_INCREMENT PRIMARY KEY, 
   nome_completo VARCHAR(150) NOT NULL,
   cpf CHAR(14) UNIQUE NOT NULL, 
   email VARCHAR(150) UNIQUE NOT NULL,
@@ -41,33 +42,93 @@ CREATE TABLE usuarios (
   tipo ENUM('aluno', 'professor', 'coordenador', 'secretaria') NOT NULL DEFAULT 'aluno',
   status ENUM('ativo', 'inativo') NOT NULL DEFAULT 'ativo',
   criado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  atualizado_em TIMESTAMP DEFAULT ON UPDATE CURRENT_TIMESTAMP
+  atualizado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- INSERINDO VALORES DE TESTE
+-- INSERINDO VALORES DE TESTE USUARIO
 
-INSERT INTO usuarios (nome_completo, cpf, email, password_hash, telefone, data_nascimento) VALUE ('Joao Gomes', '12312312309','joao@joao.com', '$2y$10$4v3s86.rU8.Bq7UfqQ2mYuFmbv2voXZxdoeTDb4XdsX0w9AGUlrHG', '61912341234', '2020-06-25' );
+INSERT INTO usuario (nome_completo, cpf, email, password_hash, telefone, data_nascimento, tipo)
+VALUES 
+('Maria Silva', '11122233344', 'maria@teste.com', '$2y$10$EXEMPLOHASH1', '61998765432', '2000-05-12', 'aluno'),
+('Carlos Pereira', '55566677788', 'carlos@teste.com', '$2y$10$EXEMPLOHASH2', '61987654321', '1999-08-20', 'aluno'),
+('Ana Costa', '99988877766', 'ana@teste.com', '$2y$10$EXEMPLOHASH3', '61976543210', '2001-03-05', 'aluno');
+
 
 --
--- Tabela alunos
+-- Tabela aluno
 --
 
-CREATE TABLE alunos (
-  id_alunos INT AUTO_INCREMENT UNSIGNED PRIMARY KEY,
-  id_usuarios INT UNSIGNED NOT NULL,
-  matricula INT(8) UNSIGNED UNIQUE NOT NULL, -- 23105215 = PRIMEIROS 2 DIGITOS REFERENTE AO ANO E DEPOIS A MATRICULA - VER O SEQUENCE LOGO ABAIXO
+CREATE TABLE aluno (
+  id_aluno INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  id_usuario INT UNSIGNED NOT NULL,
+  matricula CHAR(8) UNIQUE, -- 23000001 - PRIMEIROS 2 DIGITOS REFERENTE AO ANO E O RESTO É A MATRICULA
   data_ingresso DATE NOT NULL,
   status_academico ENUM('cursando', 'formado', 'trancado', 'desistente') NOT NULL DEFAULT 'cursando',
-  id_curso INT UNSIGNED NOT NULL,
-  id_turma INT UNSIGNED NULL,
+  -- id_curso INT UNSIGNED NOT NULL,
+  -- id_turma INT UNSIGNED NULL,
   criado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  atualizado_em TIMESTAMP DEFAULT ON UPDATE CURRENT_TIMESTAMP,
+  atualizado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
-  CONSTRAINT fk_alunos_usuarios FOREIGN KEY (id_usuarios) REFERENCES usuarios(id_usuarios) ON DELETE CASCADE,
-  CONSTRAINT fk_alunos_cursos FOREIGN KEY (id_cursos) REFERENCES cursos(id_cursos) ON DELETE RESTRICT,
-  CONSTRAINT fk_alunos_turmas FOREIGN KEY (id_turmas) REFERENCES turmas(id_turmas) ON DELETE SET NULL
-
+  CONSTRAINT fk_aluno_usuario FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario) ON DELETE CASCADE -- ,
+  -- CONSTRAINT fk_aluno_curso FOREIGN KEY (id_curso) REFERENCES curso(id_curso) ON DELETE RESTRICT,
+  -- CONSTRAINT fk_aluno_turma FOREIGN KEY (id_turma) REFERENCES turma(id_turma) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Tabela da sequencia
+--
+
+CREATE TABLE sequencias_matricula (
+  ano CHAR(2) PRIMARY KEY,           -- ex: "25"
+  ultimo_numero INT UNSIGNED NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- TRIGGER DEVE SER CRIADO NO SQL DO BANCO DE DADOS
+--
+
+
+DELIMITER $$
+
+CREATE TRIGGER trg_aluno_matricula
+BEFORE INSERT ON aluno
+FOR EACH ROW
+BEGIN
+  DECLARE seq INT;
+  DECLARE ano_char CHAR(2);
+
+  SET ano_char := DATE_FORMAT(NOW(), '%y'); -- pega últimos 2 dígitos do ano
+
+  -- Se não existir sequência para o ano, cria com 0
+  INSERT INTO sequencias_matricula (ano, ultimo_numero)
+  VALUES (ano_char COLLATE utf8mb4_general_ci, 0)
+  ON DUPLICATE KEY UPDATE ultimo_numero = ultimo_numero; -- evita comparar ano
+
+  -- Incrementa sequência
+  UPDATE sequencias_matricula
+  SET ultimo_numero = ultimo_numero + 1
+  WHERE ano = ano_char COLLATE utf8mb4_general_ci;
+
+  -- Busca valor atualizado
+  SELECT ultimo_numero INTO seq
+  FROM sequencias_matricula
+  WHERE ano = ano_char COLLATE utf8mb4_general_ci;
+
+  -- Monta matrícula no formato: AA + 6 dígitos
+  SET NEW.matricula = CONCAT(ano_char, LPAD(seq, 6, '0'));
+END$$
+
+DELIMITER ;
+
+--
+-- INSERINDO VALOR DE TESTE ALUNO
+--
+
+INSERT INTO aluno (id_usuario, data_ingresso)
+VALUES
+(1, '2025-01-15'),
+(2, '2025-02-10'),
+(3, '2025-03-05');
 
 -- -----------------------------------------------------------------
 
