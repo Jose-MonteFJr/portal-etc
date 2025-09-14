@@ -18,6 +18,8 @@
 -- Banco de dados: `portal_etc`
 --
 
+-- Adicione esta linha para garantir um reset completo
+DROP DATABASE IF EXISTS portal_etc;
 CREATE DATABASE portal_etc CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 USE portal_etc;
 
@@ -45,14 +47,53 @@ CREATE TABLE usuario (
   atualizado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- INSERINDO VALORES DE TESTE USUARIO
+--
+-- Tabela endereco
+--
+CREATE TABLE endereco (
+    id_endereco INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    id_usuario INT UNSIGNED NOT NULL,
+    logradouro VARCHAR(150) NOT NULL,
+    numero VARCHAR(10) NOT NULL,
+    complemento VARCHAR(50) NULL,
+    bairro VARCHAR(100) NOT NULL,
+    cidade VARCHAR(100) NOT NULL,
+    estado CHAR(2) NOT NULL,           -- Armazena a UF, ex: 'DF', 'SP', 'RJ'
+    cep CHAR(10) NOT NULL,               -- formato 00000-000
+    criado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    atualizado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
-INSERT INTO usuario (nome_completo, cpf, email, password_hash, telefone, data_nascimento, tipo)
-VALUES 
-('Maria Silva', '11122233344', 'maria@teste.com', '$2y$10$EXEMPLOHASH1', '61998765432', '2000-05-12', 'aluno'),
-('Carlos Pereira', '55566677788', 'carlos@teste.com', '$2y$10$EXEMPLOHASH2', '61987654321', '1999-08-20', 'aluno'),
-('Ana Costa', '99988877766', 'ana@teste.com', '$2y$10$EXEMPLOHASH3', '61976543210', '2001-03-05', 'aluno');
+    CONSTRAINT fk_endereco_usuario FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+CREATE TABLE curso (
+    id_curso INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(150) UNIQUE NOT NULL, -- Adicionado UNIQUE para evitar cursos com o mesmo nome
+    turno ENUM('matutino','vespertino','noturno') NOT NULL,
+    carga_horaria SMALLINT UNSIGNED NOT NULL,
+    criado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    atualizado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE turma (
+    id_turma INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    ano YEAR NOT NULL,
+    semestre TINYINT UNSIGNED NOT NULL, -- Usar UNSIGNED para semestre (1 ou 2)
+    turno ENUM('matutino','vespertino','noturno') NOT NULL,
+    id_curso INT UNSIGNED NOT NULL,
+    
+    -- Timestamps conforme o padrão solicitado
+    criado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    atualizado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    -- Chave estrangeira corrigida
+    CONSTRAINT fk_turma_curso FOREIGN KEY (id_curso) REFERENCES curso(id_curso) ON DELETE RESTRICT,
+    
+    -- Restrição para evitar turmas duplicadas
+    CONSTRAINT uq_turma UNIQUE (nome, ano, semestre, id_curso)
+
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Tabela aluno
@@ -64,14 +105,14 @@ CREATE TABLE aluno (
   matricula CHAR(8) UNIQUE, -- 23000001 - PRIMEIROS 2 DIGITOS REFERENTE AO ANO E O RESTO É A MATRICULA
   data_ingresso DATE NOT NULL,
   status_academico ENUM('cursando', 'formado', 'trancado', 'desistente') NOT NULL DEFAULT 'cursando',
-  -- id_curso INT UNSIGNED NOT NULL,
-  -- id_turma INT UNSIGNED NULL,
+  id_curso INT UNSIGNED NOT NULL,
+  id_turma INT UNSIGNED NULL,
   criado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   atualizado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
-  CONSTRAINT fk_aluno_usuario FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario) ON DELETE CASCADE -- ,
-  -- CONSTRAINT fk_aluno_curso FOREIGN KEY (id_curso) REFERENCES curso(id_curso) ON DELETE RESTRICT,
-  -- CONSTRAINT fk_aluno_turma FOREIGN KEY (id_turma) REFERENCES turma(id_turma) ON DELETE SET NULL
+  CONSTRAINT fk_aluno_usuario FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario) ON DELETE CASCADE,
+  CONSTRAINT fk_aluno_curso FOREIGN KEY (id_curso) REFERENCES curso(id_curso) ON DELETE RESTRICT,
+  CONSTRAINT fk_aluno_turma FOREIGN KEY (id_turma) REFERENCES turma(id_turma) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -120,28 +161,29 @@ END$$
 
 DELIMITER ;
 
+
+
+
+
+
+
+
+
 --
 -- INSERINDO VALOR DE TESTE ALUNO
 --
 
-INSERT INTO aluno (id_usuario, data_ingresso)
+-- PRIMEIRO, INSERIR UM CURSO PARA OBTER UM ID VÁLIDO
+INSERT INTO curso (nome, turno, carga_horaria) 
+VALUES ('Técnico em Informática', 'noturno', 1200);
+-- Supondo que este curso recebeu o id_curso = 1
+
+-- DEPOIS, CORRIGIR O INSERT DE ALUNOS, ADICIONANDO O id_curso
+INSERT INTO aluno (id_usuario, id_curso, data_ingresso)
 VALUES
-(1, '2025-01-15'),
-(2, '2025-02-10'),
-(3, '2025-03-05');
-
--- -----------------------------------------------------------------
-
--- UTILIZAR O SEQUENCE PARA A MATRICULA AUTOMATICA
-
-/*-- criando a sequence para gerar o número da mátricula
-CREATE SEQUENCE seq_matricula START WITH 1 INCREMENT BY 1;
-
--- exemplo de como gerar a matrícula para o cadastro
-SELECT CONCAT(DATE_FORMAT(CURRENT_DATE, '%y'), LPAD(NEXTVAL(seq_matricula ), 6, '0')); */
-
--- ------------------------------------------------------------------
-
+(1, 1, '2025-01-15'), -- Aluno 1 matriculado no curso 1
+(2, 1, '2025-02-10'), -- Aluno 2 matriculado no curso 1
+(3, 1, '2025-03-05'); -- Aluno 3 matriculado no curso 1
 
 
 -- CREATE TABLE `users` (
