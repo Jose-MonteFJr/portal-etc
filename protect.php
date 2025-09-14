@@ -1,6 +1,6 @@
 <?php
 if (session_status() === PHP_SESSION_NONE) session_start();
-if (!isset($_SESSION['user_id'])) {
+if (!isset($_SESSION['id_usuario'])) {
   header('Location: index.php?error=Faça login para continuar.');
   exit;
 }

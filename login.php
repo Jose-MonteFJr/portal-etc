@@ -11,19 +11,18 @@ if (!$email || !$password) {
   exit;
 }
 
-$stmt = $pdo->prepare('SELECT id, first_name, last_name, email, password_hash, role FROM users WHERE email = ? LIMIT 1');
+$stmt = $pdo->prepare('SELECT id_usuario, nome_completo, email, password_hash, tipo FROM usuario WHERE email = ? LIMIT 1');
 $stmt->execute([$email]);
 $user = $stmt->fetch();
 
 if ($user && password_verify($password, $user['password_hash'])) {
   // Guarda o essencial na sessão
-  $_SESSION['user_id'] = $user['id'];
-  $_SESSION['first_name'] = $user['first_name'];
-  $_SESSION['last_name'] = $user['last_name'];
+  $_SESSION['id_usuario'] = $user['id_usuario'];
+  $_SESSION['nome_completo'] = $user['nome_completo'];
   $_SESSION['email'] = $user['email'];
-  $_SESSION['role'] = $user['role'];
+  $_SESSION['tipo'] = $user['tipo'];
 
-  if ($user['role'] === 'admin') {
+  if ($user['tipo'] === 'secretaria') {
     header('Location: admin.php');
   } else {
     header('Location: user.php');

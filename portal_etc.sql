@@ -7,8 +7,6 @@
 -- Versão do servidor: 10.4.28-MariaDB
 -- Versão do PHP: 8.2.4
 
-
-
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
@@ -18,7 +16,7 @@
 -- Banco de dados: `portal_etc`
 --
 
--- Adicione esta linha para garantir um reset completo
+-- CRIAÇÃO DO BANCO DE DADOS
 DROP DATABASE IF EXISTS portal_etc;
 CREATE DATABASE portal_etc CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 USE portal_etc;
@@ -27,29 +25,23 @@ SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
 
--- -------------------------------------------------------- LEMBRAR DE COLOCAR TODOS NO SINGULAR!!!
 
---
--- Tabela usuario
---
-
+-- TABELAS
+-- OBS - LEMBRAR DE CRIAR NA ORDEM CORRETA
 CREATE TABLE usuario (
   id_usuario INT UNSIGNED AUTO_INCREMENT PRIMARY KEY, 
   nome_completo VARCHAR(150) NOT NULL,
-  cpf CHAR(14) UNIQUE NOT NULL, 
+  cpf CHAR(14) UNIQUE NOT NULL, -- 123.123.123-09
   email VARCHAR(150) UNIQUE NOT NULL,
   password_hash VARCHAR(255) NOT NULL,
   telefone CHAR(15) NOT NULL, 
   data_nascimento DATE NOT NULL,
   tipo ENUM('aluno', 'professor', 'coordenador', 'secretaria') NOT NULL DEFAULT 'aluno',
   status ENUM('ativo', 'inativo') NOT NULL DEFAULT 'ativo',
-  criado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   atualizado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Tabela endereco
---
 CREATE TABLE endereco (
     id_endereco INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     id_usuario INT UNSIGNED NOT NULL,
@@ -60,7 +52,7 @@ CREATE TABLE endereco (
     cidade VARCHAR(100) NOT NULL,
     estado CHAR(2) NOT NULL,           -- Armazena a UF, ex: 'DF', 'SP', 'RJ'
     cep CHAR(10) NOT NULL,               -- formato 00000-000
-    criado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     atualizado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
     CONSTRAINT fk_endereco_usuario FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario) ON DELETE CASCADE
@@ -69,9 +61,8 @@ CREATE TABLE endereco (
 CREATE TABLE curso (
     id_curso INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(150) UNIQUE NOT NULL, -- Adicionado UNIQUE para evitar cursos com o mesmo nome
-    turno ENUM('matutino','vespertino','noturno') NOT NULL,
     carga_horaria SMALLINT UNSIGNED NOT NULL,
-    criado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     atualizado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -79,25 +70,16 @@ CREATE TABLE turma (
     id_turma INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
     ano YEAR NOT NULL,
-    semestre TINYINT UNSIGNED NOT NULL, -- Usar UNSIGNED para semestre (1 ou 2)
+    semestre TINYINT UNSIGNED NOT NULL, -- Ex - 1 ou 2
     turno ENUM('matutino','vespertino','noturno') NOT NULL,
     id_curso INT UNSIGNED NOT NULL,
-    
-    -- Timestamps conforme o padrão solicitado
-    criado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     atualizado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
-    -- Chave estrangeira corrigida
     CONSTRAINT fk_turma_curso FOREIGN KEY (id_curso) REFERENCES curso(id_curso) ON DELETE RESTRICT,
-    
-    -- Restrição para evitar turmas duplicadas
     CONSTRAINT uq_turma UNIQUE (nome, ano, semestre, id_curso)
 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Tabela aluno
---
 
 CREATE TABLE aluno (
   id_aluno INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -105,29 +87,18 @@ CREATE TABLE aluno (
   matricula CHAR(8) UNIQUE, -- 23000001 - PRIMEIROS 2 DIGITOS REFERENTE AO ANO E O RESTO É A MATRICULA
   data_ingresso DATE NOT NULL,
   status_academico ENUM('cursando', 'formado', 'trancado', 'desistente') NOT NULL DEFAULT 'cursando',
-  id_curso INT UNSIGNED NOT NULL,
   id_turma INT UNSIGNED NULL,
-  criado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   atualizado_em TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
   CONSTRAINT fk_aluno_usuario FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario) ON DELETE CASCADE,
-  CONSTRAINT fk_aluno_curso FOREIGN KEY (id_curso) REFERENCES curso(id_curso) ON DELETE RESTRICT,
   CONSTRAINT fk_aluno_turma FOREIGN KEY (id_turma) REFERENCES turma(id_turma) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Tabela da sequencia
---
 
 CREATE TABLE sequencias_matricula (
   ano CHAR(2) PRIMARY KEY,           -- ex: "25"
   ultimo_numero INT UNSIGNED NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- TRIGGER DEVE SER CRIADO NO SQL DO BANCO DE DADOS
---
-
 
 DELIMITER $$
 
@@ -161,17 +132,21 @@ END$$
 
 DELIMITER ;
 
+-- INSERTS PADRÃO
+
+INSERT INTO usuario (nome_completo, cpf, email, password_hash, telefone, data_nascimento, tipo) 
+VALUES 
+-- SECRETARIA/ADMIN
+('Jose Jose','123.123.123-23','jose@admin.com','$2y$10$4v3s86.rU8.Bq7UfqQ2mYuFmbv2voXZxdoeTDb4XdsX0w9AGUlrHG','(61) 91234-1234','2000-02-24','secretaria'), 
+-- PROFESSOR
+('Joao Joao','902.123.123-09','joao@joao.com','$2y$10$sIAToRWB9iPfexeKqf6tquxaPy4nvBsDH9lrV5DHuXzJt0QPsYwc6','(61) 90123-1234','2001-02-25','professor'),
+-- COORDENADOR
+('Sara Sara','223.123.123-00','sara@gmail.com','$2y$10$A5thQ3yREy.eLqp5fi.C/O8TRRblpPPfTopf75bP8HSqDsqheo.H2','(61) 99999-1234','2002-09-01','coordenador'),
+-- ALUNO
+('Antonio Jose','000.000.000-00','ant@ant.com','$2y$10$A5thQ3yREy.eLqp5fi.C/O8TRRblpPPfTopf75bP8HSqDsqheo.H1','(61) 90321-3219','2005-02-22','aluno');
 
 
-
-
-
-
-
-
---
--- INSERINDO VALOR DE TESTE ALUNO
---
+-- INSERTS DE TESTE
 
 -- PRIMEIRO, INSERIR UM CURSO PARA OBTER UM ID VÁLIDO
 INSERT INTO curso (nome, turno, carga_horaria) 

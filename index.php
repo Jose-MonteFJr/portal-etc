@@ -1,10 +1,10 @@
 <?php
 
 session_start();
-if (isset($_SESSION['user_id'])) {
+if (isset($_SESSION['id_usuario'])) {
   // Depois que fez o login → redireciona conforme perfil
-  if ($_SESSION['role'] === 'admin') {
-    //Se admin
+  if ($_SESSION['tipo'] === 'secretaria') {
+    //Se admin/secretaria
     header('Location: admin.php');
     exit;
   } else {

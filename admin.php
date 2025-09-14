@@ -11,7 +11,7 @@ ensure_admin();
 
 // Parâmetros de busca/filtro
 $q          = trim($_GET['q'] ?? '');
-$roleFilter = $_GET['role'] ?? '';
+$roleFilter = $_GET['tipo'] ?? '';
 $page       = max(1, (int)($_GET['page'] ?? 1));
 $perPage    = 8;
 
@@ -20,32 +20,32 @@ $clauses = [];
 $params  = [];
 
 if ($q !== '') {
-    $clauses[] = "(first_name LIKE ? OR last_name LIKE ? OR email LIKE ?)";
+    $clauses[] = "(nome_completo LIKE ? OR email LIKE ?)";
     $like = "%$q%";
     $params[] = $like; 
     $params[] = $like; 
     $params[] = $like;
 }
 
-if ($roleFilter === 'admin' || $roleFilter === 'user') {
-    $clauses[] = "role = ?";
+if ($roleFilter === 'secretaria' || $roleFilter === 'usuario') {
+    $clauses[] = "tipo = ?";
     $params[]  = $roleFilter;
 }
 
 $whereSql = $clauses ? ('WHERE ' . implode(' AND ', $clauses)) : '';
 
 // Total para paginação
-$stmt = $pdo->prepare("SELECT COUNT(*) AS total FROM users $whereSql");
+$stmt = $pdo->prepare("SELECT COUNT(*) AS total FROM usuario $whereSql");
 $stmt->execute($params);
 $total  = (int)$stmt->fetchColumn();
 $pages  = max(1, (int)ceil($total / $perPage));
 $offset = ($page - 1) * $perPage;
 
 // Busca usuários
-$sql = "SELECT id, first_name, last_name, email, role, created_at
-        FROM users
+$sql = "SELECT id_usuario, nome_completo, email, tipo, created_at
+        FROM usuario
         $whereSql
-        ORDER BY id DESC
+        ORDER BY id_usuario DESC
         LIMIT $perPage OFFSET $offset";
 $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
@@ -68,10 +68,10 @@ include __DIR__ . '/partials/header.php';
     </div>
     <div class="col-md-3">
       <label class="form-label">Perfil</label>
-      <select name="role" class="form-select">
+      <select name="tipo" class="form-select">
         <option value="">Todos</option>
-        <option value="user"  <?php echo $roleFilter==='user'  ? 'selected' : ''; ?>>User</option>
-        <option value="admin" <?php echo $roleFilter==='admin' ? 'selected' : ''; ?>>Admin</option>
+        <option value="usuario"  <?php echo $roleFilter==='usuario'  ? 'selected' : ''; ?>>Usuario</option>
+        <option value="secretaria" <?php echo $roleFilter==='secretaria' ? 'selected' : ''; ?>>Admin</option>
       </select>
     </div>
     <div class="col-md-3 text-end">
@@ -100,20 +100,20 @@ include __DIR__ . '/partials/header.php';
         <tbody>
           <?php foreach ($users as $u): ?>
             <tr>
-              <td><?php echo (int)$u['id']; ?></td>
-              <td><?php echo htmlspecialchars($u['first_name'] . ' ' . $u['last_name']); ?></td>
+              <td><?php echo (int)$u['id_usuario']; ?></td>
+              <td><?php echo htmlspecialchars($u['nome_completo']); ?></td>
               <td><?php echo htmlspecialchars($u['email']); ?></td>
               <td>
-                <span class="badge text-bg-<?php echo $u['role']==='admin' ? 'danger' : 'secondary'; ?>">
-                  <?php echo htmlspecialchars($u['role']); ?>
+                <span class="badge text-bg-<?php echo $u['tipo']==='secretaria' ? 'danger' : 'secondary'; ?>">
+                  <?php echo htmlspecialchars($u['tipo']); ?>
                 </span>
               </td>
               <td><?php echo htmlspecialchars($u['created_at']); ?></td>
               <td class="text-end">
-                <a class="btn btn-sm btn-outline-secondary" href="users_edit.php?id=<?php echo (int)$u['id']; ?>">Editar</a>
+                <a class="btn btn-sm btn-outline-secondary" href="users_edit.php?id=<?php echo (int)$u['id_usuario']; ?>">Editar</a>
                 <form action="users_delete.php" method="post" class="d-inline" onsubmit="return confirm('Tem certeza que deseja excluir?');">
                   <?php require_once __DIR__ . '/helpers.php'; csrf_input(); ?>
-                  <input type="hidden" name="id" value="<?php echo (int)$u['id']; ?>">
+                  <input type="hidden" name="id_usuario" value="<?php echo (int)$u['id_usuario']; ?>">
                   <button type="submit" class="btn btn-sm btn-outline-danger">Excluir</button>
                 </form>
               </td>

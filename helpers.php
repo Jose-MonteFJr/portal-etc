@@ -5,7 +5,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 //Se o usuário estiver logado com um perfil de admin
 function ensure_admin() {
-    if (!isset($_SESSION['user_id']) || ($_SESSION['role'] ?? '') !== 'admin') {
+    if (!isset($_SESSION['id_usuario']) || ($_SESSION['tipo'] ?? '') !== 'secretaria') {
         header('Location: index.php?error=Acesso negado.');
         exit;
     }
