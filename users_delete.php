@@ -9,23 +9,23 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
   exit;
 }
 csrf_check();
-$id = (int)($_POST['id'] ?? 0);
+$id_usuario = (int)($_POST['id_usuario'] ?? 0);
 
-if ($id <= 0) {
+if ($id_usuario <= 0) {
   flash_set('danger', 'ID inválido.');
   header('Location: admin.php');
   exit;
 }
 
 // Evita deletar a si mesmo
-if ($id === (int)$_SESSION['user_id']) {
+if ($id_usuario === (int)$_SESSION['id_usuario']) {
   flash_set('warning', 'Você não pode excluir o próprio usuário logado.');
   header('Location: admin.php');
   exit;
 }
 
-$stmt = $pdo->prepare('DELETE FROM users WHERE id=?');
-$stmt->execute([$id]);
+$stmt = $pdo->prepare('DELETE FROM usuario WHERE id_usuario=?');
+$stmt->execute([$id_usuario]);
 flash_set('success', 'Usuário excluído.');
 header('Location: admin.php');
 exit;
