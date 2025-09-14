@@ -17,12 +17,12 @@ $success = false;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   csrf_check();
-  $first_name = trim($_POST['nome_completo'] ?? '');
+  $nome_completo = trim($_POST['nome_completo'] ?? '');
   $email      = trim($_POST['email'] ?? '');
   $password   = $_POST['password'] ?? '';
   $password2  = $_POST['password2'] ?? '';
 
-  if ($first_name === '') $errors[] = 'Nome é obrigatório.';
+  if ($nome_completo === '') $errors[] = 'Nome é obrigatório.';
   if (!filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = 'E-mail inválido.';
 
   if ($password !== '' || $password2 !== '') {
@@ -39,13 +39,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
       if ($password) {
         $stmt = $pdo->prepare('UPDATE usuario SET nome_completo=?, email=?, password_hash=? WHERE id_usuario=?');
-        $stmt->execute([$first_name, $email, password_hash($password, PASSWORD_DEFAULT), $userId]);
+        $stmt->execute([$nome_completo, $email, password_hash($password, PASSWORD_DEFAULT), $userId]);
       } else {
         $stmt = $pdo->prepare('UPDATE usuario SET nome_completo=?, email=? WHERE id_usuario=?');
-        $stmt->execute([$first_name, $email, $userId]);
+        $stmt->execute([$nome_completo, $email, $userId]);
       }
       // Atualiza sessão
-      $_SESSION['nome_completo'] = $first_name;
+      $_SESSION['nome_completo'] = $nome_completo;
       $_SESSION['email'] = $email;
       flash_set('success', 'Perfil atualizado com sucesso!');
       header('Location: profile.php');
@@ -75,7 +75,7 @@ flash_show();
   <div class="row g-3">
     <div class="col-md-6">
       <label class="form-label">Nome</label>
-      <input type="text" name="first_name" class="form-control" value="<?php echo htmlspecialchars($user['nome_completo']); ?>" required>
+      <input type="text" name="nome_completo" class="form-control" value="<?php echo htmlspecialchars($user['nome_completo']); ?>" required>
     </div>
     <div class="col-md-6">
       <label class="form-label">E-mail</label>

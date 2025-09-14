@@ -44,7 +44,7 @@ if (isset($_SESSION['id_usuario'])) {
               <button type="submit" class="btn btn-primary w-100">Entrar</button>
             </form>
             <hr>
-            <p class="text-muted small mb-0">Aqui você pode colocar o que quiser!</p>
+            <p class="text-muted small mb-0">Bem vindo ao nosso portal de alunos!</p>
           </div>
         </div>
       </div>

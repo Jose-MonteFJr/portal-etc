@@ -10,7 +10,7 @@ require __DIR__ . '/helpers.php';
 ensure_admin();
 
 // Parâmetros de busca/filtro
-$q          = trim($_GET['q'] ?? '');
+$q          = trim($_GET['q'] ?? ''); // DANDO ERRO, AJUSTAR
 $roleFilter = $_GET['tipo'] ?? '';
 $page       = max(1, (int)($_GET['page'] ?? 1));
 $perPage    = 8;
@@ -27,7 +27,7 @@ if ($q !== '') {
     $params[] = $like;
 }
 
-if ($roleFilter === 'secretaria' || $roleFilter === 'usuario') {
+if ($roleFilter === 'secretaria' || $roleFilter === 'aluno' || $roleFilter === 'professor' || $roleFilter === 'coordenador') {
     $clauses[] = "tipo = ?";
     $params[]  = $roleFilter;
 }
@@ -55,7 +55,7 @@ include __DIR__ . '/partials/header.php';
 ?>
 <div class="d-flex align-items-center justify-content-between mb-3">
   <h2 class="h4 mb-0">Dashboard de administração</h2>
-  <span class="badge text-bg-primary">Perfil: Admin</span>
+  <span class="badge text-bg-primary">Perfil: Secretaria</span>
 </div>
 
 <?php flash_show(); ?>
@@ -70,10 +70,15 @@ include __DIR__ . '/partials/header.php';
       <label class="form-label">Perfil</label>
       <select name="tipo" class="form-select">
         <option value="">Todos</option>
-        <option value="usuario"  <?php echo $roleFilter==='usuario'  ? 'selected' : ''; ?>>Usuario</option>
-        <option value="secretaria" <?php echo $roleFilter==='secretaria' ? 'selected' : ''; ?>>Admin</option>
+        <option value="aluno"  <?php echo $roleFilter==='aluno'  ? 'selected' : ''; ?>>Aluno</option>
+        <option value="secretaria" <?php echo $roleFilter==='secretaria' ? 'selected' : ''; ?>>Secretaria</option>
+        <option value="professor" <?php echo $roleFilter==='professor' ? 'selected' : ''; ?>>Professor</option>
+        <option value="coordenador" <?php echo $roleFilter==='coordenador' ? 'selected' : ''; ?>>Coordenador</option>
       </select>
     </div>
+
+<!-- BOTOES(ADICIONAR + NOVA TURMA) -->
+
     <div class="col-md-3 text-end">
       <a class="btn btn-outline-secondary" href="admin.php">Limpar</a>
       <button class="btn btn-primary">Filtrar</button>
