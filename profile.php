@@ -3,9 +3,9 @@ require __DIR__ . '/protect.php';
 require __DIR__ . '/config/db.php';
 require __DIR__ . '/helpers.php';
 
-$userId = (int)$_SESSION['user_id'];
+$userId = (int)$_SESSION['id_usuario'];
 
-$stmt = $pdo->prepare('SELECT id, first_name, last_name, email FROM users WHERE id=?');
+$stmt = $pdo->prepare('SELECT id_usuario, nome_completo, email FROM usuario WHERE id_usuario=?');
 $stmt->execute([$userId]);
 $user = $stmt->fetch();
 if (!$user) {
@@ -17,40 +17,37 @@ $success = false;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   csrf_check();
-  $first_name = trim($_POST['first_name'] ?? '');
-  $last_name  = trim($_POST['last_name'] ?? '');
+  $first_name = trim($_POST['nome_completo'] ?? '');
   $email      = trim($_POST['email'] ?? '');
   $password   = $_POST['password'] ?? '';
   $password2  = $_POST['password2'] ?? '';
 
-  if ($first_name === '') $errors[] = 'Primeiro nome é obrigatório.';
-  if ($last_name === '')  $errors[] = 'Sobrenome é obrigatório.';
+  if ($first_name === '') $errors[] = 'Nome é obrigatório.';
   if (!filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = 'E-mail inválido.';
 
   if ($password !== '' || $password2 !== '') {
     if ($password !== $password2) $errors[] = 'As senhas não conferem.';
-    if (strlen($password) > 0 && strlen($password) < 6) $errors[] = 'Senha deve ter pelo menos 6 caracteres.';
+    if (strlen($password) > 0 && strlen($password) < 8) $errors[] = 'Senha deve ter pelo menos 8 caracteres.';
   }
 
   if (!$errors) {
     // verificar duplicidade de e-mail
-    $chk = $pdo->prepare('SELECT id FROM users WHERE email=? AND id<>?');
+    $chk = $pdo->prepare('SELECT id_usuario FROM usuario WHERE email=? AND id_usuario<>?');
     $chk->execute([$email, $userId]);
     if ($chk->fetch()) {
       $errors[] = 'Já existe um usuário com este e-mail.';
     } else {
       if ($password) {
-        $stmt = $pdo->prepare('UPDATE users SET first_name=?, last_name=?, email=?, password_hash=? WHERE id=?');
-        $stmt->execute([$first_name, $last_name, $email, password_hash($password, PASSWORD_DEFAULT), $userId]);
+        $stmt = $pdo->prepare('UPDATE usuario SET nome_completo=?, email=?, password_hash=? WHERE id_usuario=?');
+        $stmt->execute([$first_name, $email, password_hash($password, PASSWORD_DEFAULT), $userId]);
       } else {
-        $stmt = $pdo->prepare('UPDATE users SET first_name=?, last_name=?, email=? WHERE id=?');
-        $stmt->execute([$first_name, $last_name, $email, $userId]);
+        $stmt = $pdo->prepare('UPDATE usuario SET nome_completo=?, email=? WHERE id_usuario=?');
+        $stmt->execute([$first_name, $email, $userId]);
       }
       // Atualiza sessão
-      $_SESSION['first_name'] = $first_name;
-      $_SESSION['last_name']  = $last_name;
-      $_SESSION['email']      = $email;
-      flash_set('success', 'Perfil atualizado com sucesso.');
+      $_SESSION['nome_completo'] = $first_name;
+      $_SESSION['email'] = $email;
+      flash_set('success', 'Perfil atualizado com sucesso!');
       header('Location: profile.php');
       exit;
     }
@@ -62,7 +59,7 @@ flash_show();
 ?>
 <div class="d-flex align-items-center justify-content-between mb-3">
   <h2 class="h4 mb-0">Meu Perfil</h2>
-  <a class="btn btn-outline-secondary btn-sm" href="<?php echo $_SESSION['role']==='admin' ? 'admin.php' : 'user.php'; ?>">Voltar</a>
+  <a class="btn btn-outline-secondary btn-sm" href="<?php echo $_SESSION['tipo']==='secretaria' ? 'admin.php' : 'user.php'; ?>">Voltar</a>
 </div>
 
 <?php if ($errors): ?>
@@ -77,12 +74,8 @@ flash_show();
   <?php csrf_input(); ?>
   <div class="row g-3">
     <div class="col-md-6">
-      <label class="form-label">Primeiro Nome</label>
-      <input type="text" name="first_name" class="form-control" value="<?php echo htmlspecialchars($user['first_name']); ?>" required>
-    </div>
-    <div class="col-md-6">
-      <label class="form-label">Sobrenome</label>
-      <input type="text" name="last_name" class="form-control" value="<?php echo htmlspecialchars($user['last_name']); ?>" required>
+      <label class="form-label">Nome</label>
+      <input type="text" name="first_name" class="form-control" value="<?php echo htmlspecialchars($user['nome_completo']); ?>" required>
     </div>
     <div class="col-md-6">
       <label class="form-label">E-mail</label>

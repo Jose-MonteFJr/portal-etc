@@ -1,8 +1,8 @@
 <?php
 // partials/header.php
 if (session_status() === PHP_SESSION_NONE) session_start();
-$userName = $_SESSION['first_name'] ?? null;
-$userRole = $_SESSION['role'] ?? null;
+$userName = $_SESSION['nome_completo'] ?? null;
+$userRole = $_SESSION['tipo'] ?? null;
 ?>
 <!DOCTYPE html>
 <html lang="pt-br" data-bs-theme="light">
@@ -15,13 +15,13 @@ $userRole = $_SESSION['role'] ?? null;
 <body>
 <nav class="navbar navbar-expand-lg bg-body-tertiary border-bottom mb-4">
   <div class="container">
-    <a class="navbar-brand fw-bold" href="#">Sistema ETC 2025.2</a>
+    <a class="navbar-brand fw-bold" href="#">Portal ETC</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div id="nav" class="collapse navbar-collapse">
       <ul class="navbar-nav me-auto">
-        <?php if ($userRole === 'admin'): ?>
+        <?php if ($userRole === 'secretaria'): ?>
           <li class="nav-item"><a class="nav-link" href="admin.php">Dashboard</a></li>
         <?php endif; ?>
       </ul>
