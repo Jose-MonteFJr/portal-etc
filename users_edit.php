@@ -3,10 +3,10 @@ require __DIR__ . '/protect.php';
 require __DIR__ . '/config/db.php';
 require __DIR__ . '/helpers.php';
 ensure_admin();
-
-$id = (int)($_GET['id'] ?? 0);
-$stmt = $pdo->prepare('SELECT id, first_name, last_name, email, role FROM users WHERE id=?');
-$stmt->execute([$id]);
+// Dados para trocar - nome, email, telefone e o tipo
+$id_usuario = (int)($_GET['id_usuario'] ?? 0);
+$stmt = $pdo->prepare('SELECT id_usuario, nome_completo, email, telefone, tipo FROM usuario WHERE id_usuario=?');
+$stmt->execute([$id_usuario]);
 $user = $stmt->fetch();
 if (!$user) {
   flash_set('danger', 'Usuário não encontrado.');
@@ -15,19 +15,27 @@ if (!$user) {
 }
 
 $errors = [];
-$first_name = $user['first_name'];
-$last_name = $user['last_name'];
+$nome_completo = $user['nome_completo'];
 $email = $user['email'];
-$role = $user['role'];
+$telefone = $user['telefone'];
+$tipo = $user['tipo'];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   csrf_check();
-  $first_name = trim($_POST['first_name'] ?? '');
+
+  // Captura dados do formulário
+    $nome_completo   = trim($_POST['nome_completo'] ?? '');
+    $email           = trim($_POST['email'] ?? '');
+    $password        = $_POST['password'] ?? '';
+    $telefone        = trim($_POST['telefone'] ?? '');
+    $tipo            = $_POST['tipo'] ?? 'aluno';
+
+  /*$first_name = trim($_POST['first_name'] ?? '');
   $last_name  = trim($_POST['last_name'] ?? '');
   $email      = trim($_POST['email'] ?? '');
   $password   = $_POST['password'] ?? '';
-  $role       = $_POST['role'] ?? 'user';
-
+  $role       = $_POST['role'] ?? 'user';*/
+// Continuar a partir daqui!
   if ($first_name === '') $errors[] = 'Primeiro nome é obrigatório.';
   if ($last_name === '')  $errors[] = 'Sobrenome é obrigatório.';
   if (!filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = 'E-mail inválido.';

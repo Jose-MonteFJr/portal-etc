@@ -135,30 +135,24 @@ DELIMITER ;
 -- INSERTS PADRÃO
 
 INSERT INTO usuario (nome_completo, cpf, email, password_hash, telefone, data_nascimento, tipo) 
-VALUES 
--- SECRETARIA/ADMIN
-('Jose Jose','123.123.123-23','jose@admin.com','$2y$10$4v3s86.rU8.Bq7UfqQ2mYuFmbv2voXZxdoeTDb4XdsX0w9AGUlrHG','(61) 91234-1234','2000-02-24','secretaria'), 
--- PROFESSOR
-('Joao Joao','902.123.123-09','joao@joao.com','$2y$10$sIAToRWB9iPfexeKqf6tquxaPy4nvBsDH9lrV5DHuXzJt0QPsYwc6','(61) 90123-1234','2001-02-25','professor'),
--- COORDENADOR
-('Sara Sara','223.123.123-00','sara@gmail.com','$2y$10$A5thQ3yREy.eLqp5fi.C/O8TRRblpPPfTopf75bP8HSqDsqheo.H2','(61) 99999-1234','2002-09-01','coordenador'),
--- ALUNO
-('Antonio Jose','000.000.000-00','ant@ant.com','$2y$10$A5thQ3yREy.eLqp5fi.C/O8TRRblpPPfTopf75bP8HSqDsqheo.H1','(61) 90321-3219','2005-02-22','aluno');
+VALUE 
+-- SECRETARIA/ADMIN 
+('Jose Jose','123.123.123-23','jose@admin.com','$2y$10$4v3s86.rU8.Bq7UfqQ2mYuFmbv2voXZxdoeTDb4XdsX0w9AGUlrHG','(61) 91234-1234','2000-02-24','secretaria'); -- Senha: admin123
 
 
 -- INSERTS DE TESTE
 
--- PRIMEIRO, INSERIR UM CURSO PARA OBTER UM ID VÁLIDO
-INSERT INTO curso (nome, turno, carga_horaria) 
-VALUES ('Técnico em Informática', 'noturno', 1200);
--- Supondo que este curso recebeu o id_curso = 1
+-- -- PRIMEIRO, INSERIR UM CURSO PARA OBTER UM ID VÁLIDO
+-- INSERT INTO curso (nome, turno, carga_horaria) 
+-- VALUES ('Técnico em Informática', 'noturno', 1200);
+-- -- Supondo que este curso recebeu o id_curso = 1
 
--- DEPOIS, CORRIGIR O INSERT DE ALUNOS, ADICIONANDO O id_curso
-INSERT INTO aluno (id_usuario, id_curso, data_ingresso)
-VALUES
-(1, 1, '2025-01-15'), -- Aluno 1 matriculado no curso 1
-(2, 1, '2025-02-10'), -- Aluno 2 matriculado no curso 1
-(3, 1, '2025-03-05'); -- Aluno 3 matriculado no curso 1
+-- -- DEPOIS, CORRIGIR O INSERT DE ALUNOS, ADICIONANDO O id_curso
+-- INSERT INTO aluno (id_usuario, id_curso, data_ingresso)
+-- VALUES
+-- (1, 1, '2025-01-15'), -- Aluno 1 matriculado no curso 1
+-- (2, 1, '2025-02-10'), -- Aluno 2 matriculado no curso 1
+-- (3, 1, '2025-03-05'); -- Aluno 3 matriculado no curso 1
 
 
 -- CREATE TABLE `users` (
