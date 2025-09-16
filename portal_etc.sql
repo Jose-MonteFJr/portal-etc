@@ -142,7 +142,7 @@ VALUE
 
 -- INSERTS TESTE
 
-/* INSERT INTO curso (nome, carga_horaria) VALUES
+ INSERT INTO curso (nome, carga_horaria) VALUES
 ('Técnico em Informática', 1200),
 ('Técnico em Administração', 1000);
 
@@ -155,7 +155,7 @@ INSERT INTO turma (nome, ano, semestre, turno, id_curso) VALUES
 -- Turmas do curso de Administração
 INSERT INTO turma (nome, ano, semestre, turno, id_curso) VALUES
 ('Admin 1', 2025, 1, 'matutino', 2),
-('Admin 2', 2025, 2, 'vespertino', 2); */
+('Admin 2', 2025, 2, 'vespertino', 2); 
 
 -- CREATE TABLE `users` (
 --   `id` int(11) NOT NULL,

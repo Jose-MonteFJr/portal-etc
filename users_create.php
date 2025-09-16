@@ -202,6 +202,10 @@ include __DIR__ . '/partials/header.php';
       <input type="text" name="cep" id="cep" class="form-control" placeholder="00000-000" maxlength="9" value="<?php echo htmlspecialchars($cep); ?>" required>
     </div>
 
+    <div class="spinner-border" role="status"  id="spinner" style="display: none;">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+
     <div id="cep-error" class="text-danger small mt-1"></div>
 
     <div class="col-md-6">
@@ -286,6 +290,7 @@ include __DIR__ . '/partials/header.php';
       <div class="col-md-6">
         <label class="form-label">Turma:</label>
         <select name="id_turma" class="form-select" required>
+          <option value="">Selecione</option>
           <?php foreach ($turmas as $turma): ?>
             <option value="<?php echo $turma['id_turma']; ?>" <?php echo (isset($_POST['id_turma']) && $_POST['id_turma'] == $turma['id_turma']) ? 'selected' : ''; ?>>
               <?php echo htmlspecialchars($turma['nome'] . " - " . $turma['ano'] .  " - " . $turma['semestre'] . "º Semestre - " . $turma['turno']); ?>
@@ -302,6 +307,7 @@ include __DIR__ . '/partials/header.php';
   </div>
 
   <div class="mt-3 text-end">
+    <input type="reset" class="btn btn-danger" value="limpar" />
     <button class="btn btn-primary">Salvar</button>
   </div>
 </form>
@@ -363,6 +369,9 @@ include __DIR__ . '/partials/header.php';
   };
 
   const pesquisarCep = async () => {
+
+    document.getElementById("spinner").style.display = 'block';
+
     limparFormulario();
     document.getElementById("cep-error").textContent = ""; //Limpar mensagem anterior
 
@@ -371,6 +380,7 @@ include __DIR__ . '/partials/header.php';
     // Se o campo estiver vazio
     if (!cep) {
       document.getElementById("cep-error").textContent = "Cep é obrigatório!";
+      document.getElementById("spinner").style.display = 'none';
       return;
     }
 
@@ -386,6 +396,8 @@ include __DIR__ . '/partials/header.php';
     } else {
       document.getElementById("cep-error").textContent = "CEP incorreto!";
     }
+    document.getElementById("spinner").style.display = 'none';
+
   };
   document.getElementById("cep").addEventListener("focusout", pesquisarCep);
 
