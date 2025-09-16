@@ -10,7 +10,7 @@ require __DIR__ . '/helpers.php';
 ensure_admin();
 
 // Parâmetros de busca/filtro
-$q          = trim($_GET['q'] ?? ''); // DANDO ERRO, AJUSTAR
+$q          = trim($_GET['q'] ?? ''); 
 $roleFilter = $_GET['tipo'] ?? '';
 $page       = max(1, (int)($_GET['page'] ?? 1));
 $perPage    = 8;
@@ -20,11 +20,10 @@ $clauses = [];
 $params  = [];
 
 if ($q !== '') {
-    $clauses[] = "(nome_completo LIKE ? OR email LIKE ?)";
+    $clauses[] = "(nome_completo LIKE ? OR email LIKE ?)"; // Quando adicionar a matricula, adicionar um novo parametro
     $like = "%$q%";
     $params[] = $like; 
     $params[] = $like; 
-    $params[] = $like;
 }
 
 if ($roleFilter === 'secretaria' || $roleFilter === 'aluno' || $roleFilter === 'professor' || $roleFilter === 'coordenador') {
@@ -42,7 +41,7 @@ $pages  = max(1, (int)ceil($total / $perPage));
 $offset = ($page - 1) * $perPage;
 
 // Busca usuários
-$sql = "SELECT id_usuario, nome_completo, email, tipo, created_at
+$sql = "SELECT id_usuario, nome_completo, cpf, email, tipo, created_at
         FROM usuario
         $whereSql
         ORDER BY id_usuario DESC
@@ -115,7 +114,7 @@ include __DIR__ . '/partials/header.php';
               </td>
               <td><?php echo htmlspecialchars($u['created_at']); ?></td>
               <td class="text-end">
-                <a class="btn btn-sm btn-outline-secondary" href="users_edit.php?id=<?php echo (int)$u['id_usuario']; ?>">Editar</a>
+                <a class="btn btn-sm btn-outline-secondary" href="users_edit.php?id_usuario=<?php echo (int)$u['id_usuario']; ?>">Editar</a>
                 <form action="users_delete.php" method="post" class="d-inline" onsubmit="return confirm('Tem certeza que deseja excluir?');">
                   <?php require_once __DIR__ . '/helpers.php'; csrf_input(); ?>
                   <input type="hidden" name="id_usuario" value="<?php echo (int)$u['id_usuario']; ?>">

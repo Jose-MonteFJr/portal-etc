@@ -130,7 +130,7 @@ include __DIR__ . '/partials/header.php';
     </div>
     <div class="col-md-3">
       <label class="form-label">Perfil: </label>
-      <select name="tipo" class="form-select">
+      <select name="tipo" id="perfil" class="form-select" onchange="mostrarCampos()">
         <option value="aluno" <?php echo $tipo==='aluno'?'selected':''; ?>>Aluno</option>
         <option value="secretaria" <?php echo $tipo==='secretaria'?'selected':''; ?>>Secretaria</option>
         <option value="professor" <?php echo $tipo==='professor'?'selected':''; ?>>Professor</option>
@@ -142,6 +142,20 @@ include __DIR__ . '/partials/header.php';
       <input type="password" name="password" class="form-control" placeholder="Conter no mínimo 8 dígitos" required>
     </div>
   </div>
+  <!-- Campo aluno específico -->
+   <div id="campos-aluno" style="display:none;" class="row g-3 mt-3">
+  <div class="col-md-6">
+    <label class="form-label">Matrícula:</label>
+    <input type="text" name="matricula" class="form-control">
+  </div>
+
+  <div class="col-md-6">
+    <label class="form-label">Curso:</label>
+    <input type="text" name="curso" class="form-control">
+  </div>
+</div>
+ 
+
   <div class="mt-3 text-end">
     <button class="btn btn-primary">Salvar</button>
   </div>
@@ -173,5 +187,15 @@ include __DIR__ . '/partials/header.php';
     }
     this.value = v;
   });
+
+  function mostrarCampos() {
+    document.getElementById("campos-aluno").style.display = "none";
+ 
+    let tipo = document.getElementById("perfil").value;
+    if(tipo === "aluno") {
+        document.getElementById("campos-aluno").style.display = "block";
+    } 
+}
+window.addEventListener("DOMContentLoaded", mostrarCampos);
 </script>
 <?php include __DIR__ . '/partials/footer.php'; ?>

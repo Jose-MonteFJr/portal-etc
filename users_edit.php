@@ -36,29 +36,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $password   = $_POST['password'] ?? '';
   $role       = $_POST['role'] ?? 'user';*/
 // Continuar a partir daqui!
-  if ($first_name === '') $errors[] = 'Primeiro nome é obrigatório.';
+
+// --- Validações ---
+    if ($nome_completo === '') $errors[] = 'Nome completo é obrigatório.';
+
+// E-mail
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $errors[] = 'E-mail inválido.';
+    }
+
+// Telefone
+    if ($telefone === '') $errors[] = 'Telefone é obrigatório.';
+
+// Tipo de usuário
+    if (!in_array($tipo, ['secretaria','aluno', 'professor', 'coordenador'], true)) {
+        $errors[] = 'Perfil inválido.';
+    }
+
+/*if ($first_name === '') $errors[] = 'Primeiro nome é obrigatório.';
   if ($last_name === '')  $errors[] = 'Sobrenome é obrigatório.';
   if (!filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = 'E-mail inválido.';
-  if (!in_array($role, ['admin','user'], true)) $errors[] = 'Perfil inválido.';
+  if (!in_array($role, ['admin','user'], true)) $errors[] = 'Perfil inválido.'; */
 
   if (!$errors) {
     try {
       if ($password) {
-        if (strlen($password) < 6) $errors[] = 'Senha deve ter pelo menos 6 caracteres.';
+        if (strlen($password) < 8) $errors[] = 'Senha deve ter pelo menos 8 caracteres.';
       }
       if (!$errors) {
         // verificar duplicidade de e-mail em outro ID
-        $chk = $pdo->prepare('SELECT id FROM users WHERE email=? AND id<>?');
-        $chk->execute([$email, $id]);
+        $chk = $pdo->prepare('SELECT id_usuario FROM usuario WHERE email=? AND id_usuario<>?');
+        $chk->execute([$email, $id_usuario]);
         if ($chk->fetch()) {
           $errors[] = 'Já existe um usuário com este e-mail.';
         } else {
           if ($password) {
-            $stmt = $pdo->prepare('UPDATE users SET first_name=?, last_name=?, email=?, role=?, password_hash=? WHERE id=?');
-            $stmt->execute([$first_name, $last_name, $email, $role, password_hash($password, PASSWORD_DEFAULT), $id]);
+            $stmt = $pdo->prepare('UPDATE usuario SET nome_completo=?, email=?, telefone=?, tipo=?, password_hash=? WHERE id_usuario=?');
+            $stmt->execute([$nome_completo, $email, $telefone, $tipo, password_hash($password, PASSWORD_DEFAULT), $id_usuario]);
           } else {
-            $stmt = $pdo->prepare('UPDATE users SET first_name=?, last_name=?, email=?, role=? WHERE id=?');
-            $stmt->execute([$first_name, $last_name, $email, $role, $id]);
+            $stmt = $pdo->prepare('UPDATE usuario SET nome_completo=?, email=?, telefone=?, tipo=? WHERE id_usuario=?');
+            $stmt->execute([$nome_completo, $email, $telefone, $tipo, $id_usuario]);
           }
           flash_set('success', 'Usuário atualizado com sucesso.');
           header('Location: admin.php');
@@ -74,7 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 include __DIR__ . '/partials/header.php';
 ?>
 <div class="d-flex align-items-center justify-content-between mb-3">
-  <h2 class="h4 mb-0">Editar Usuário #<?php echo (int)$user['id']; ?></h2>
+  <h2 class="h4 mb-0">Editar Usuário #<?php echo (int)$user['id_usuario']; ?></h2>
   <a class="btn btn-outline-secondary btn-sm" href="admin.php">Voltar</a>
 </div>
 
@@ -90,26 +107,30 @@ include __DIR__ . '/partials/header.php';
   <?php csrf_input(); ?>
   <div class="row g-3">
     <div class="col-md-6">
-      <label class="form-label">Primeiro Nome</label>
-      <input type="text" name="first_name" class="form-control" value="<?php echo htmlspecialchars($first_name); ?>" required>
+      <label class="form-label">Nome completo: </label>
+      <input type="text" name="nome_completo" maxlength="150" class="form-control" placeholder="Digite o nome" value="<?php echo htmlspecialchars($nome_completo); ?>" required>
     </div>
     <div class="col-md-6">
-      <label class="form-label">Sobrenome</label>
-      <input type="text" name="last_name" class="form-control" value="<?php echo htmlspecialchars($last_name); ?>" required>
+      <label class="form-label">E-mail: </label>
+      <input type="email" name="email" maxlength="150" class="form-control" placeholder="exemplo@exemplo.com" value="<?php echo htmlspecialchars($email); ?>" required>
     </div>
     <div class="col-md-6">
-      <label class="form-label">E-mail</label>
-      <input type="email" name="email" class="form-control" value="<?php echo htmlspecialchars($email); ?>" required>
+      <label class="form-label">Telefone: </label>
+      <input type="tel" name="telefone" maxlength="20" class="form-control" placeholder="(XX) XXXXX-XXXX" value="<?php echo htmlspecialchars($telefone); ?>" required>
     </div>
     <div class="col-md-3">
-      <label class="form-label">Perfil</label>
-      <select name="role" class="form-select">
-        <option value="user" <?php echo $role==='user'?'selected':''; ?>>User</option>
-        <option value="admin" <?php echo $role==='admin'?'selected':''; ?>>Admin</option>
+      <label class="form-label">Perfil: </label>
+      <select name="tipo" class="form-select">
+        <option value="aluno" <?php echo $tipo==='aluno'?'selected':''; ?>>Aluno</option>
+        <option value="secretaria" <?php echo $tipo==='secretaria'?'selected':''; ?>>Secretaria</option>
+        <option value="professor" <?php echo $tipo==='professor'?'selected':''; ?>>Professor</option>
+        <option value="coordenador" <?php echo $tipo==='coordenador'?'selected':''; ?>>Coordenador</option>
       </select>
     </div>
+
+    <!-- NÃO ALTERAR -->
     <div class="col-md-3">
-      <label class="form-label">Nova Senha (opcional)</label>
+      <label class="form-label">Nova Senha: (opcional)</label>
       <input type="password" name="password" class="form-control" placeholder="Deixe em branco para manter">
     </div>
   </div>
@@ -117,5 +138,22 @@ include __DIR__ . '/partials/header.php';
     <button class="btn btn-primary">Salvar</button>
   </div>
 </form>
+<script>
+  // Máscara para telefone
+  const telInput = document.querySelector('input[name="telefone"]');
+  telInput.addEventListener('input', function(e) {
+    let v = this.value.replace(/\D/g,''); // remove tudo que não é número
+    if (v.length > 10) { // celular 11 dígitos
+      v = v.replace(/^(\d{2})(\d{5})(\d{4}).*/,'($1) $2-$3');
+    } else if (v.length > 5) { // telefone fixo 10 dígitos
+      v = v.replace(/^(\d{2})(\d{4})(\d{0,4}).*/,'($1) $2-$3');
+    } else if (v.length > 2) {
+      v = v.replace(/^(\d{2})(\d{0,5})/,'($1) $2');
+    } else if (v.length > 0) {
+      v = v.replace(/^(\d*)/,'($1');
+    }
+    this.value = v;
+  });
+</script>
 
 <?php include __DIR__ . '/partials/footer.php'; ?>
