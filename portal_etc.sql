@@ -140,7 +140,22 @@ VALUE
 ('Jose Jose','123.123.123-23','jose@admin.com','$2y$10$4v3s86.rU8.Bq7UfqQ2mYuFmbv2voXZxdoeTDb4XdsX0w9AGUlrHG','(61) 91234-1234','2000-02-24','secretaria'); -- Senha: admin123
 
 
+-- INSERTS TESTE
 
+/* INSERT INTO curso (nome, carga_horaria) VALUES
+('Técnico em Informática', 1200),
+('Técnico em Administração', 1000);
+
+-- Turmas do curso de Informática
+INSERT INTO turma (nome, ano, semestre, turno, id_curso) VALUES
+('Informática 1', 2025, 1, 'matutino', 1),
+('Informática 2', 2025, 1, 'vespertino', 1),
+('Informática 3', 2025, 2, 'noturno', 1);
+
+-- Turmas do curso de Administração
+INSERT INTO turma (nome, ano, semestre, turno, id_curso) VALUES
+('Admin 1', 2025, 1, 'matutino', 2),
+('Admin 2', 2025, 2, 'vespertino', 2); */
 
 -- CREATE TABLE `users` (
 --   `id` int(11) NOT NULL,
