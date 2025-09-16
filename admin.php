@@ -10,7 +10,7 @@ require __DIR__ . '/helpers.php';
 ensure_admin();
 
 // Parâmetros de busca/filtro
-$q          = trim($_GET['q'] ?? ''); 
+$q          = trim($_GET['q'] ?? '');
 $roleFilter = $_GET['tipo'] ?? '';
 $page       = max(1, (int)($_GET['page'] ?? 1));
 $perPage    = 8;
@@ -20,31 +20,31 @@ $clauses = [];
 $params  = [];
 
 if ($q !== '') {
-    $clauses[] = "(nome_completo LIKE ? OR email LIKE ?)"; // Quando adicionar a matricula, adicionar um novo parametro
-    $like = "%$q%";
-    $params[] = $like; 
-    $params[] = $like; 
+  $clauses[] = "(nome_completo LIKE ? OR email LIKE ?)"; // Quando adicionar a matricula, adicionar um novo parametro
+  $like = "%$q%";
+  $params[] = $like;
+  $params[] = $like;
 }
 
 if ($roleFilter === 'secretaria' || $roleFilter === 'aluno' || $roleFilter === 'professor' || $roleFilter === 'coordenador') {
-    $clauses[] = "tipo = ?";
-    $params[]  = $roleFilter;
+  $clauses[] = "tipo = ?";
+  $params[]  = $roleFilter;
 }
 
 $whereSql = $clauses ? ('WHERE ' . implode(' AND ', $clauses)) : '';
 
 // Total para paginação
-$stmt = $pdo->prepare("SELECT COUNT(*) AS total FROM usuario $whereSql");
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM usuario u LEFT JOIN aluno a ON a.id_usuario = u.id_usuario $whereSql");
 $stmt->execute($params);
 $total  = (int)$stmt->fetchColumn();
 $pages  = max(1, (int)ceil($total / $perPage));
 $offset = ($page - 1) * $perPage;
 
 // Busca usuários
-$sql = "SELECT id_usuario, nome_completo, cpf, email, tipo, created_at
-        FROM usuario
+$sql = "SELECT u.id_usuario, u.nome_completo, u.email, u.tipo, u.status, a.matricula, a.status_academico, t.nome
+        FROM usuario u LEFT JOIN aluno a ON a.id_usuario = u.id_usuario LEFT JOIN turma t ON t.id_turma = a.id_turma
         $whereSql
-        ORDER BY id_usuario DESC
+        ORDER BY u.id_usuario DESC
         LIMIT $perPage OFFSET $offset";
 $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
@@ -69,14 +69,14 @@ include __DIR__ . '/partials/header.php';
       <label class="form-label">Perfil</label>
       <select name="tipo" class="form-select">
         <option value="">Todos</option>
-        <option value="aluno"  <?php echo $roleFilter==='aluno'  ? 'selected' : ''; ?>>Aluno</option>
-        <option value="secretaria" <?php echo $roleFilter==='secretaria' ? 'selected' : ''; ?>>Secretaria</option>
-        <option value="professor" <?php echo $roleFilter==='professor' ? 'selected' : ''; ?>>Professor</option>
-        <option value="coordenador" <?php echo $roleFilter==='coordenador' ? 'selected' : ''; ?>>Coordenador</option>
+        <option value="aluno" <?php echo $roleFilter === 'aluno'  ? 'selected' : ''; ?>>Aluno</option>
+        <option value="secretaria" <?php echo $roleFilter === 'secretaria' ? 'selected' : ''; ?>>Secretaria</option>
+        <option value="professor" <?php echo $roleFilter === 'professor' ? 'selected' : ''; ?>>Professor</option>
+        <option value="coordenador" <?php echo $roleFilter === 'coordenador' ? 'selected' : ''; ?>>Coordenador</option>
       </select>
     </div>
 
-<!-- BOTOES(ADICIONAR + NOVA TURMA) -->
+    <!-- BOTOES(ADICIONAR + NOVA TURMA + NOVO CURSO) -->
 
     <div class="col-md-3 text-end">
       <a class="btn btn-outline-secondary" href="admin.php">Limpar</a>
@@ -85,6 +85,8 @@ include __DIR__ . '/partials/header.php';
     </div>
   </div>
 </form>
+
+<!-- TABELA VIEW -->
 
 <div class="card shadow-sm">
   <div class="card-header">Usuários cadastrados (<?php echo $total; ?>)</div>
@@ -97,7 +99,10 @@ include __DIR__ . '/partials/header.php';
             <th>Nome</th>
             <th>E-mail</th>
             <th>Perfil</th>
-            <th>Criado em</th>
+            <th>Status</th>
+            <th>Matrícula</th>
+            <th>Turma</th>
+            <th>Situação acadêmica</th>
             <th class="text-end">Ações</th>
           </tr>
         </thead>
@@ -107,16 +112,26 @@ include __DIR__ . '/partials/header.php';
               <td><?php echo (int)$u['id_usuario']; ?></td>
               <td><?php echo htmlspecialchars($u['nome_completo']); ?></td>
               <td><?php echo htmlspecialchars($u['email']); ?></td>
+              <!-- Tipo destacado -->
               <td>
-                <span class="badge text-bg-<?php echo $u['tipo']==='secretaria' ? 'danger' : 'secondary'; ?>">
+                <span class="badge text-bg-<?php echo $u['tipo'] === 'secretaria' ? 'danger' : 'secondary'; ?>">
                   <?php echo htmlspecialchars($u['tipo']); ?>
                 </span>
               </td>
-              <td><?php echo htmlspecialchars($u['created_at']); ?></td>
+              <!-- Status destacado -->
+              <td>
+                <span class="badge text-bg-<?php echo $u['status'] === 'ativo' ? 'success' : 'danger'; ?>">
+                  <?php echo htmlspecialchars($u['status']); ?>
+                </span>
+              </td>
+              <td><?php echo htmlspecialchars($u['matricula']); ?></td>
+              <td><?php echo htmlspecialchars($u['nome']); ?></td>
+              <td><?php echo htmlspecialchars($u['status_academico']); ?></td>
               <td class="text-end">
                 <a class="btn btn-sm btn-outline-secondary" href="users_edit.php?id_usuario=<?php echo (int)$u['id_usuario']; ?>">Editar</a>
                 <form action="users_delete.php" method="post" class="d-inline" onsubmit="return confirm('Tem certeza que deseja excluir?');">
-                  <?php require_once __DIR__ . '/helpers.php'; csrf_input(); ?>
+                  <?php require_once __DIR__ . '/helpers.php';
+                  csrf_input(); ?>
                   <input type="hidden" name="id_usuario" value="<?php echo (int)$u['id_usuario']; ?>">
                   <button type="submit" class="btn btn-sm btn-outline-danger">Excluir</button>
                 </form>
@@ -124,7 +139,9 @@ include __DIR__ . '/partials/header.php';
             </tr>
           <?php endforeach; ?>
           <?php if (!$users): ?>
-            <tr><td colspan="6" class="text-center text-muted py-4">Nenhum usuário encontrado.</td></tr>
+            <tr>
+              <td colspan="6" class="text-center text-muted py-4">Nenhum usuário encontrado.</td>
+            </tr>
           <?php endif; ?>
         </tbody>
       </table>
@@ -133,20 +150,20 @@ include __DIR__ . '/partials/header.php';
 </div>
 
 <?php if ($pages > 1): ?>
-<nav class="mt-3">
-  <ul class="pagination justify-content-center">
-    <?php
+  <nav class="mt-3">
+    <ul class="pagination justify-content-center">
+      <?php
       $baseQuery = $_GET;
       for ($i = 1; $i <= $pages; $i++):
         $baseQuery['page'] = $i;
         $href = 'admin.php?' . http_build_query($baseQuery);
-    ?>
-      <li class="page-item <?php echo $i === $page ? 'active' : ''; ?>">
-        <a class="page-link" href="<?php echo htmlspecialchars($href); ?>"><?php echo $i; ?></a>
-      </li>
-    <?php endfor; ?>
-  </ul>
-</nav>
+      ?>
+        <li class="page-item <?php echo $i === $page ? 'active' : ''; ?>">
+          <a class="page-link" href="<?php echo htmlspecialchars($href); ?>"><?php echo $i; ?></a>
+        </li>
+      <?php endfor; ?>
+    </ul>
+  </nav>
 <?php endif; ?>
 
 <?php include __DIR__ . '/partials/footer.php'; ?>
