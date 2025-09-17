@@ -159,6 +159,8 @@ include __DIR__ . '/partials/header.php';
   </div>
 <?php endif; ?>
 
+<!-- Formulario  -->
+
 <form method="post" class="card shadow-sm p-3">
   <?php csrf_input(); ?>
   <div class="row g-3">
