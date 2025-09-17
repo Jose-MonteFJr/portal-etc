@@ -188,11 +188,15 @@ include __DIR__ . '/partials/header.php';
 
     <div class="col-md-6">
       <label class="form-label">Cep: </label>
-      <input type="text" name="cep" id="cep" class="form-control" placeholder="00000-000" maxlength="9" value="<?php echo htmlspecialchars($cep); ?>" required>
-    </div>
+      <div class="input-group">
+        <input type="text" name="cep" id="cep" class="form-control" placeholder="00000-000" maxlength="9" value="<?php echo htmlspecialchars($cep); ?>" required>
 
-    <div class="spinner-border" role="status" id="spinner" style="display: none;">
-      <span class="visually-hidden">Loading...</span>
+         <span class="input-group-text" id="spinner" style="display: none;">
+            <div class="spinner-grow spinner-grow-sm text-danger" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </span>
+      </div>
     </div>
 
     <div id="cep-error" class="text-danger small mt-1"></div>
@@ -359,7 +363,7 @@ include __DIR__ . '/partials/header.php';
 
   const pesquisarCep = async () => {
 
-    document.getElementById("spinner").style.display = 'block';
+    document.getElementById("spinner").style.display = 'inline-block';
 
     limparFormulario();
     document.getElementById("cep-error").textContent = ""; //Limpar mensagem anterior
