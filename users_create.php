@@ -1,22 +1,17 @@
 <?php
-/* Debug */
-/* ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL); */
-
 require __DIR__ . '/protect.php';
 require __DIR__ . '/config/db.php';
 require __DIR__ . '/helpers.php';
 ensure_admin();
+//Variavel de array vazio para receber futuros erros
+$errors = [];
+$nome_completo = $email = $tipo = $cpf = $telefone = $data_nascimento = $cep = $logradouro = $numero = $complemento = $bairro = $cidade = $estado = '';
 
 // Busca todas as turmas
 $stmt = $pdo->query("SELECT id_turma, nome, ano, semestre, turno FROM turma ORDER BY ano DESC, semestre DESC, nome ASC");
 $turmas = $stmt->fetchAll(PDO::FETCH_ASSOC);
 $tem_turmas = count($turmas) > 0;
 
-//Variavel de array vazio para receber futuros erros
-$errors = [];
-$nome_completo = $email = $tipo = $cpf = $telefone = $data_nascimento = $cep = $logradouro = $numero = $complemento = $bairro = $cidade = $estado = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   csrf_check(); // Proteção CSRF
@@ -49,14 +44,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   if ($cpf === '') $errors[] = 'CPF é obrigatório.';
 
   // E-mail
-  if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    $errors[] = 'E-mail inválido.';
-  }
+  if (!filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = 'E-mail inválido.';
 
   // Senha
-  if (strlen($password) < 8) {
-    $errors[] = 'Senha deve ter pelo menos 8 caracteres.';
-  }
+  if (strlen($password) < 8) $errors[] = 'Senha deve ter pelo menos 8 caracteres.';
 
   // Telefone
   if ($telefone === '') $errors[] = 'Telefone é obrigatório.';
@@ -69,17 +60,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   }
 
   // Tipo de usuário
-  if (!in_array($tipo, ['secretaria', 'aluno', 'professor', 'coordenador'], true)) {
-    $errors[] = 'Perfil inválido.';
-  }
+  if (!in_array($tipo, ['secretaria', 'aluno', 'professor', 'coordenador'], true)) $errors[] = 'Perfil inválido.';
 
   // --- Validações específicas para aluno ---
   if ($tipo === 'aluno' && $tem_turmas) {
     if (!$id_turma) $errors[] = 'Selecione a turma do aluno.';
     if (!$data_ingresso) $errors[] = 'Data de ingresso é obrigatória.';
-    elseif (!DateTime::createFromFormat('Y-m-d', $data_ingresso)) {
-      $errors[] = 'Data de ingresso inválida.';
-    }
+    elseif (!DateTime::createFromFormat('Y-m-d', $data_ingresso)) $errors[] = 'Data de ingresso inválida.';
   }
 
   // Validações endereço
@@ -108,45 +95,47 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($stmt->fetchColumn() > 0) $errors[] = 'E-mail já cadastrado.';
   }
 
-  // --- Se houver erros ---
-  if ($errors) {
-    $_SESSION['form_errors'] = $errors;
-    $_SESSION['old_data'] = $_POST;
-    header('Location: users_create.php');
-    exit;
-  }
-
-  // --- Inserção no banco ---
-  $password_hash = password_hash($password, PASSWORD_DEFAULT);
-  $stmt = $pdo->prepare("
+  if (!$errors) {
+    try {
+      // --- Inserção no banco ---
+      $password_hash = password_hash($password, PASSWORD_DEFAULT);
+      $stmt = $pdo->prepare("
         INSERT INTO usuario 
         (nome_completo, cpf, email, password_hash, telefone, data_nascimento, tipo) 
         VALUES (?, ?, ?, ?, ?, ?, ?)
     ");
-  $stmt->execute([$nome_completo, $cpf, $email, $password_hash, $telefone, $data_nascimento, $tipo]);
+      $stmt->execute([$nome_completo, $cpf, $email, $password_hash, $telefone, $data_nascimento, $tipo]);
 
-  $id_usuario = $pdo->lastInsertId();
+      $id_usuario = $pdo->lastInsertId();
 
-  // --- Inserção na tabela endereco ---
-  $stmt = $pdo->prepare("
+      // --- Inserção na tabela endereco ---
+      $stmt = $pdo->prepare("
     INSERT INTO endereco 
     (id_usuario, logradouro, numero, complemento, bairro, cidade, estado, cep)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
 ");
-  $stmt->execute([$id_usuario, $logradouro, $numero, $complemento ?: null, $bairro, $cidade, $estado, $cep]);
+      $stmt->execute([$id_usuario, $logradouro, $numero, $complemento ?: null, $bairro, $cidade, $estado, $cep]);
 
-  // --- Inserção na tabela aluno, se for aluno ---
-  if ($tipo === 'aluno' && $tem_turmas) {
-    $stmt = $pdo->prepare("
+      // --- Inserção na tabela aluno, se for aluno ---
+      if ($tipo === 'aluno' && $tem_turmas) {
+        $stmt = $pdo->prepare("
           INSERT INTO aluno (id_usuario, data_ingresso, status_academico, id_turma)
           VALUES (?, ?, 'cursando', ?)
       ");
-    $stmt->execute([$id_usuario, $data_ingresso, $id_turma]);
-  }
+        $stmt->execute([$id_usuario, $data_ingresso, $id_turma]);
+      }
 
-  $_SESSION['success'] = 'Usuário cadastrado com sucesso!';
-  header('Location: admin.php');
-  exit;
+      $_SESSION['success'] = 'Usuário cadastrado com sucesso!';
+      header('Location: admin.php');
+      exit;
+    } catch (PDOException $e) {
+      if ($e->getCode() === '23000') { // Se já existe um e-mail cadastrado
+        $errors[] = 'Já existe um usuário com este e-mail.';
+      } else {
+        $errors[] = 'Erro ao salvar: ' . $e->getMessage();
+      }
+    }
+  }
 }
 
 include __DIR__ . '/partials/header.php';
@@ -202,7 +191,7 @@ include __DIR__ . '/partials/header.php';
       <input type="text" name="cep" id="cep" class="form-control" placeholder="00000-000" maxlength="9" value="<?php echo htmlspecialchars($cep); ?>" required>
     </div>
 
-    <div class="spinner-border" role="status"  id="spinner" style="display: none;">
+    <div class="spinner-border" role="status" id="spinner" style="display: none;">
       <span class="visually-hidden">Loading...</span>
     </div>
 
@@ -238,33 +227,33 @@ include __DIR__ . '/partials/header.php';
       <label class="form-label">Estados: </label>
       <select name="estado" id="estado" class="form-select" required>
         <option value="">Selecione</option>
-        <option value="AC">Acre (AC)</option>
-        <option value="AL">Alagoas (AL)</option>
-        <option value="AP">Amapá (AP)</option>
-        <option value="AM">Amazonas (AM)</option>
-        <option value="BA">Bahia (BA)</option>
-        <option value="CE">Ceará (CE)</option>
-        <option value="DF">Distrito Federal (DF)</option>
-        <option value="ES">Espírito Santo (ES)</option>
-        <option value="GO">Goiás (GO)</option>
-        <option value="MA">Maranhão (MA)</option>
-        <option value="MT">Mato Grosso (MT)</option>
-        <option value="MS">Mato Grosso do Sul (MS)</option>
-        <option value="MG">Minas Gerais (MG)</option>
-        <option value="PA">Pará (PA)</option>
-        <option value="PB">Paraíba (PB)</option>
-        <option value="PR">Paraná (PR)</option>
-        <option value="PE">Pernambuco (PE)</option>
-        <option value="PI">Piauí (PI)</option>
-        <option value="RJ">Rio de Janeiro (RJ)</option>
-        <option value="RN">Rio Grande do Norte (RN)</option>
-        <option value="RS">Rio Grande do Sul (RS)</option>
-        <option value="RO">Rondônia (RO)</option>
-        <option value="RR">Roraima (RR)</option>
-        <option value="SC">Santa Catarina (SC)</option>
-        <option value="SP">São Paulo (SP)</option>
-        <option value="SE">Sergipe (SE)</option>
-        <option value="TO">Tocantins (TO)</option>
+        <option value="AC" <?php echo ($estado === 'AC') ? 'selected' : ''; ?>>Acre (AC)</option>
+        <option value="AL" <?php echo ($estado === 'AL') ? 'selected' : ''; ?>>Alagoas (AL)</option>
+        <option value="AP" <?php echo ($estado === 'AP') ? 'selected' : ''; ?>>Amapá (AP)</option>
+        <option value="AM" <?php echo ($estado === 'AM') ? 'selected' : ''; ?>>Amazonas (AM)</option>
+        <option value="BA" <?php echo ($estado === 'BA') ? 'selected' : ''; ?>>Bahia (BA)</option>
+        <option value="CE" <?php echo ($estado === 'CE') ? 'selected' : ''; ?>>Ceará (CE)</option>
+        <option value="DF" <?php echo ($estado === 'DF') ? 'selected' : ''; ?>>Distrito Federal (DF)</option>
+        <option value="ES" <?php echo ($estado === 'ES') ? 'selected' : ''; ?>>Espírito Santo (ES)</option>
+        <option value="GO" <?php echo ($estado === 'GO') ? 'selected' : ''; ?>>Goiás (GO)</option>
+        <option value="MA" <?php echo ($estado === 'MA') ? 'selected' : ''; ?>>Maranhão (MA)</option>
+        <option value="MT" <?php echo ($estado === 'MT') ? 'selected' : ''; ?>>Mato Grosso (MT)</option>
+        <option value="MS" <?php echo ($estado === 'MS') ? 'selected' : ''; ?>>Mato Grosso do Sul (MS)</option>
+        <option value="MG" <?php echo ($estado === 'MG') ? 'selected' : ''; ?>>Minas Gerais (MG)</option>
+        <option value="PA" <?php echo ($estado === 'PA') ? 'selected' : ''; ?>>Pará (PA)</option>
+        <option value="PB" <?php echo ($estado === 'PB') ? 'selected' : ''; ?>>Paraíba (PB)</option>
+        <option value="PR" <?php echo ($estado === 'PR') ? 'selected' : ''; ?>>Paraná (PR)</option>
+        <option value="PE" <?php echo ($estado === 'PE') ? 'selected' : ''; ?>>Pernambuco (PE)</option>
+        <option value="PI" <?php echo ($estado === 'PI') ? 'selected' : ''; ?>>Piauí (PI)</option>
+        <option value="RJ" <?php echo ($estado === 'RJ') ? 'selected' : ''; ?>>Rio de Janeiro (RJ)</option>
+        <option value="RN" <?php echo ($estado === 'RN') ? 'selected' : ''; ?>>Rio Grande do Norte (RN)</option>
+        <option value="RS" <?php echo ($estado === 'RS') ? 'selected' : ''; ?>>Rio Grande do Sul (RS)</option>
+        <option value="RO" <?php echo ($estado === 'RO') ? 'selected' : ''; ?>>Rondônia (RO)</option>
+        <option value="RR" <?php echo ($estado === 'RR') ? 'selected' : ''; ?>>Roraima (RR)</option>
+        <option value="SC" <?php echo ($estado === 'SC') ? 'selected' : ''; ?>>Santa Catarina (SC)</option>
+        <option value="SP" <?php echo ($estado === 'SP') ? 'selected' : ''; ?>>São Paulo (SP)</option>
+        <option value="SE" <?php echo ($estado === 'SE') ? 'selected' : ''; ?>>Sergipe (SE)</option>
+        <option value="TO" <?php echo ($estado === 'TO') ? 'selected' : ''; ?>>Tocantins (TO)</option>
       </select>
     </div>
 
@@ -289,7 +278,7 @@ include __DIR__ . '/partials/header.php';
     <?php if ($tem_turmas): ?>
       <div class="col-md-6">
         <label class="form-label">Turma:</label>
-        <select name="id_turma" class="form-select" required>
+        <select name="id_turma" class="form-select">
           <option value="">Selecione</option>
           <?php foreach ($turmas as $turma): ?>
             <option value="<?php echo $turma['id_turma']; ?>" <?php echo (isset($_POST['id_turma']) && $_POST['id_turma'] == $turma['id_turma']) ? 'selected' : ''; ?>>
@@ -307,7 +296,7 @@ include __DIR__ . '/partials/header.php';
   </div>
 
   <div class="mt-3 text-end">
-    <input type="reset" class="btn btn-danger" value="limpar" />
+    <input type="reset" class="btn btn-danger" value="Limpar">
     <button class="btn btn-primary">Salvar</button>
   </div>
 </form>
