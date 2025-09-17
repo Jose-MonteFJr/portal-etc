@@ -1,9 +1,4 @@
 <?php
-// Para Debug
-//ini_set('display_errors', 1);
-//ini_set('display_startup_errors', 1);
-//error_reporting(E_ALL);
-
 require __DIR__ . '/protect.php';
 require __DIR__ . '/config/db.php';
 require __DIR__ . '/helpers.php';
@@ -20,8 +15,10 @@ $clauses = [];
 $params  = [];
 
 if ($q !== '') {
-  $clauses[] = "(nome_completo LIKE ? OR email LIKE ?)"; // Quando adicionar a matricula, adicionar um novo parametro
+  $clauses[] = "(u.nome_completo LIKE ? OR u.email LIKE ? OR t.nome LIKE ? OR a.matricula LIKE ?)"; // Quando adicionar a matricula, adicionar um novo parametro
   $like = "%$q%";
+  $params[] = $like;
+  $params[] = $like;
   $params[] = $like;
   $params[] = $like;
 }
@@ -34,7 +31,7 @@ if ($roleFilter === 'secretaria' || $roleFilter === 'aluno' || $roleFilter === '
 $whereSql = $clauses ? ('WHERE ' . implode(' AND ', $clauses)) : '';
 
 // Total para paginação
-$stmt = $pdo->prepare("SELECT COUNT(*) FROM usuario u LEFT JOIN aluno a ON a.id_usuario = u.id_usuario $whereSql");
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM usuario u LEFT JOIN aluno a ON a.id_usuario = u.id_usuario LEFT JOIN turma t ON t.id_turma = a.id_turma $whereSql");
 $stmt->execute($params);
 $total  = (int)$stmt->fetchColumn();
 $pages  = max(1, (int)ceil($total / $perPage));
@@ -63,7 +60,7 @@ include __DIR__ . '/partials/header.php';
   <div class="row g-2 align-items-end">
     <div class="col-md-6">
       <label class="form-label">Buscar</label>
-      <input type="text" name="q" class="form-control" value="<?php echo htmlspecialchars($q); ?>" placeholder="Nome ou e-mail">
+      <input type="text" name="q" class="form-control" value="<?php echo htmlspecialchars($q); ?>" placeholder="Nome, e-mail, turma ou matrícula">
     </div>
     <div class="col-md-3">
       <label class="form-label">Perfil</label>
