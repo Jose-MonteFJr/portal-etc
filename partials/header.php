@@ -22,7 +22,7 @@ $userRole = $_SESSION['tipo'] ?? null;
     <div id="nav" class="collapse navbar-collapse">
       <ul class="navbar-nav me-auto">
         <?php if ($userRole === 'secretaria'): ?>
-          <li class="nav-item"><a class="nav-link" href="admin.php">Dashboard</a></li>
+          <li class="nav-item"><a class="nav-link" href="#">Dashboard</a></li>
         <?php endif; ?>
       </ul>
       <ul class="navbar-nav ms-auto">

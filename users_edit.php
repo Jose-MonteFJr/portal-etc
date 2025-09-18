@@ -6,6 +6,7 @@ ensure_admin();
 // Dados para trocar - nome, email, telefone e o tipo
 $id_usuario = (int)($_GET['id_usuario'] ?? 0);
 $stmt = $pdo->prepare('SELECT id_usuario, nome_completo, email, telefone, tipo FROM usuario WHERE id_usuario=?');
+
 $stmt->execute([$id_usuario]);
 $user = $stmt->fetch();
 if (!$user) {
@@ -30,13 +31,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $telefone        = trim($_POST['telefone'] ?? '');
     $tipo            = $_POST['tipo'] ?? 'aluno';
 
-  /*$first_name = trim($_POST['first_name'] ?? '');
-  $last_name  = trim($_POST['last_name'] ?? '');
-  $email      = trim($_POST['email'] ?? '');
-  $password   = $_POST['password'] ?? '';
-  $role       = $_POST['role'] ?? 'user';*/
-// Continuar a partir daqui!
-
 // --- Validações ---
     if ($nome_completo === '') $errors[] = 'Nome completo é obrigatório.';
 
@@ -53,11 +47,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors[] = 'Perfil inválido.';
     }
 
-/*if ($first_name === '') $errors[] = 'Primeiro nome é obrigatório.';
-  if ($last_name === '')  $errors[] = 'Sobrenome é obrigatório.';
-  if (!filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = 'E-mail inválido.';
-  if (!in_array($role, ['admin','user'], true)) $errors[] = 'Perfil inválido.'; */
-
   if (!$errors) {
     try {
       if ($password) {
@@ -67,6 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // verificar duplicidade de e-mail em outro ID
         $chk = $pdo->prepare('SELECT id_usuario FROM usuario WHERE email=? AND id_usuario<>?');
         $chk->execute([$email, $id_usuario]);
+        
         if ($chk->fetch()) {
           $errors[] = 'Já existe um usuário com este e-mail.';
         } else {
