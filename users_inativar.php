@@ -17,15 +17,19 @@ if ($id_usuario <= 0) {
   exit;
 }
 
-// Evita deletar a si mesmo
 if ($id_usuario === (int)$_SESSION['id_usuario']) {
-  flash_set('warning', 'Você não pode excluir o próprio usuário logado.');
+  flash_set('warning', 'Você não pode inativar o próprio usuário logado.');
   header('Location: admin.php');
   exit;
 }
 
-$stmt = $pdo->prepare('DELETE FROM usuario WHERE id_usuario=?');
-$stmt->execute([$id_usuario]);
-flash_set('success', 'Usuário excluído.');
-header('Location: admin.php');
-exit;
+try {
+    $stmt = $pdo->prepare('UPDATE usuario SET status = "inativo" WHERE id_usuario = ?');
+    $stmt->execute([$id_usuario]);
+    flash_set('success', 'Usuário inativado com sucesso.');
+    header('Location: admin.php');
+    exit;
+} catch (PDOException $e) {
+    flash_set('danger', 'Erro ao inativar usuário: ' . $e->getMessage());
+}
+?>

@@ -122,7 +122,7 @@ include __DIR__ . '/partials/header.php';
               </td>
               <!-- Status destacado -->
               <td>
-                <span class="badge text-bg-<?php echo $u['status'] === 'ativo' ? 'success' : 'danger'; ?>">
+                <span class="badge text-bg-<?php echo $u['status'] === 'ativo' ? 'success' : 'warning'; ?>">
                   <?php echo htmlspecialchars($u['status']); ?>
                 </span>
               </td>
@@ -131,12 +131,24 @@ include __DIR__ . '/partials/header.php';
               <td><?php echo htmlspecialchars($u['status_academico']); ?></td>
               <td class="text-end">
                 <a class="btn btn-sm btn-outline-secondary" href="users_edit.php?id_usuario=<?php echo (int)$u['id_usuario']; ?>">Editar</a>
+                
+              <!-- Inativar usuario -->
+                <form action="users_inativar.php" method="post" class="d-inline" onsubmit="return confirm('Tem certeza que deseja inativar esse usuário?');">
+                  <?php require_once __DIR__ . '/helpers.php';
+                  csrf_input(); ?>
+                  <input type="hidden" name="id_usuario" value="<?php echo (int)$u['id_usuario']; ?>">
+                  <button type="submit" class="btn btn-sm btn-outline-warning">Inativar</button>
+                </form> 
+
+              <!-- Excluir usuario -->
                 <form action="users_delete.php" method="post" class="d-inline" onsubmit="return confirm('Tem certeza que deseja excluir?');">
                   <?php require_once __DIR__ . '/helpers.php';
                   csrf_input(); ?>
                   <input type="hidden" name="id_usuario" value="<?php echo (int)$u['id_usuario']; ?>">
                   <button type="submit" class="btn btn-sm btn-outline-danger">Excluir</button>
                 </form>
+
+               
               </td>
             </tr>
           <?php endforeach; ?>

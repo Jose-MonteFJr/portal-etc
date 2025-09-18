@@ -54,8 +54,8 @@ include '../partials/header.php';
 <form method="get" class="card card-body shadow-sm mb-3">
   <div class="row g-2 align-items-end">
     <div class="col-md-6">
-      <label class="form-label">Buscar</label>
-      <input type="text" name="q" class="form-control" value="<?php echo htmlspecialchars($q); ?>" placeholder="Nome do curso">
+      <label class="form-label" for="q">Buscar</label>
+      <input type="text" id="q" name="q" class="form-control" value="<?php echo htmlspecialchars($q); ?>" placeholder="Nome do curso">
     </div>
     <div class="col-md-6 text-end">
       <a class="btn btn-outline-secondary" href="cursos_view.php">Limpar</a>

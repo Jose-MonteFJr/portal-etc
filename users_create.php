@@ -165,31 +165,31 @@ include __DIR__ . '/partials/header.php';
   <?php csrf_input(); ?>
   <div class="row g-3">
     <div class="col-md-6">
-      <label class="form-label">Nome completo: </label>
-      <input type="text" name="nome_completo" maxlength="150" class="form-control" placeholder="Digite o nome" value="<?php echo htmlspecialchars($nome_completo); ?>" required>
+      <label class="form-label" for="nome_completo">Nome completo: </label>
+      <input type="text" id="nome_completo" name="nome_completo" maxlength="150" class="form-control" placeholder="Digite o nome" value="<?php echo htmlspecialchars($nome_completo); ?>" required>
     </div>
     <div class="col-md-6">
-      <label class="form-label">Cpf: </label>
+      <label class="form-label" for="cpf">Cpf: </label>
       <input type="text" id="cpf" name="cpf" maxlength="14" class="form-control" placeholder="XXX.XXX.XXX-XX" value="<?php echo htmlspecialchars($cpf); ?>" required>
     </div>
     <div class="col-md-6">
-      <label class="form-label">E-mail: </label>
-      <input type="email" name="email" maxlength="150" class="form-control" placeholder="exemplo@exemplo.com" value="<?php echo htmlspecialchars($email); ?>" required>
+      <label class="form-label" for="email">E-mail: </label>
+      <input type="email" id="email" name="email" maxlength="150" class="form-control" placeholder="exemplo@exemplo.com" value="<?php echo htmlspecialchars($email); ?>" required>
     </div>
     <div class="col-md-3">
-      <label class="form-label">Telefone: </label>
-      <input type="tel" name="telefone" maxlength="20" class="form-control" placeholder="(XX) XXXXX-XXXX" value="<?php echo htmlspecialchars($telefone); ?>" required>
+      <label class="form-label" for="telefone">Telefone: </label>
+      <input type="tel" id="telefone" name="telefone" maxlength="20" class="form-control" placeholder="(XX) XXXXX-XXXX" value="<?php echo htmlspecialchars($telefone); ?>" required>
     </div>
 
     <div class="col-md-3">
-      <label class="form-label">Data de nascimento: </label>
-      <input type="date" name="data_nascimento" class="form-control" value="<?php echo htmlspecialchars($data_nascimento); ?>" required>
+      <label class="form-label" for="data_nascimento">Data de nascimento: </label>
+      <input type="date" id="data_nascimento" name="data_nascimento" class="form-control" value="<?php echo htmlspecialchars($data_nascimento); ?>" required>
     </div>
 
     <!-- CAMPOS ENDEREÇO  -->
 
     <div class="col-md-6">
-      <label class="form-label">Cep: </label>
+      <label class="form-label" for="cep">Cep: </label>
       <div class="input-group">
         <input type="text" name="cep" id="cep" class="form-control" placeholder="00000-000" maxlength="9" value="<?php echo htmlspecialchars($cep); ?>" required>
 
@@ -204,33 +204,33 @@ include __DIR__ . '/partials/header.php';
     <div id="cep-error" class="text-danger small mt-1"></div>
 
     <div class="col-md-6">
-      <label class="form-label">Logradouro: </label>
+      <label class="form-label" for="logradouro">Logradouro: </label>
       <input type="text" name="logradouro" id="logradouro" class="form-control" value="<?php echo htmlspecialchars($logradouro); ?>" required>
     </div>
 
     <div class="col-md-6">
-      <label class="form-label">Número: </label>
+      <label class="form-label" for="numero">Número: </label>
       <input type="text" name="numero" id="numero" class="form-control" value="<?php echo htmlspecialchars($numero); ?>" required>
     </div>
 
     <div class="col-md-6">
-      <label class="form-label">Complemento: </label>
+      <label class="form-label" for="complemento">Complemento: </label>
       <input type="text" name="complemento" id="complemento" class="form-control" value="<?php echo htmlspecialchars($complemento); ?>">
     </div>
 
     <div class="col-md-6">
-      <label class="form-label">Bairro: </label>
+      <label class="form-label" for="bairro">Bairro: </label>
       <input type="text" name="bairro" id="bairro" class="form-control" value="<?php echo htmlspecialchars($bairro); ?>" required>
     </div>
 
     <div class="col-md-6">
-      <label class="form-label">Cidade: </label>
+      <label class="form-label" for="cidade">Cidade: </label>
       <input type="text" name="cidade" id="cidade" class="form-control" value="<?php echo htmlspecialchars($cidade); ?>" required>
     </div>
 
     <!-- SELECT ESTADOS -->
     <div class="col-md-6">
-      <label class="form-label">Estados: </label>
+      <label class="form-label" for="estado">Estados: </label>
       <select name="estado" id="estado" class="form-select" required>
         <option value="">Selecione</option>
         <option value="AC" <?php echo ($estado === 'AC') ? 'selected' : ''; ?>>Acre (AC)</option>
@@ -265,7 +265,7 @@ include __DIR__ . '/partials/header.php';
 
     <!-- SELECT PERFIL -->
     <div class="col-md-3">
-      <label class="form-label">Perfil: </label>
+      <label class="form-label" for="perfil">Perfil: </label>
       <select name="tipo" id="perfil" class="form-select" onchange="mostrarCampos()">
         <option value="aluno" <?php echo $tipo === 'aluno' ? 'selected' : ''; ?>>Aluno</option>
         <option value="secretaria" <?php echo $tipo === 'secretaria' ? 'selected' : ''; ?>>Secretaria</option>
@@ -274,8 +274,8 @@ include __DIR__ . '/partials/header.php';
       </select>
     </div>
     <div class="col-md-3">
-      <label class="form-label">Senha: </label>
-      <input type="password" name="password" class="form-control" placeholder="Conter no mínimo 8 dígitos" required>
+      <label class="form-label" for="password">Senha: </label>
+      <input type="password" id="password" name="password" class="form-control" placeholder="Conter no mínimo 8 dígitos" required>
     </div>
   </div>
 
@@ -283,8 +283,8 @@ include __DIR__ . '/partials/header.php';
   <div id="campos-aluno" style="<?php echo $tem_turmas ? 'display:block;' : 'display:none;'; ?>" class="row g-3 mt-3">
     <?php if ($tem_turmas): ?>
       <div class="col-md-6">
-        <label class="form-label">Turma:</label>
-        <select name="id_turma" class="form-select">
+        <label class="form-label" for="turma">Turma:</label>
+        <select id="turma" name="id_turma" class="form-select">
           <option value="">Selecione</option>
           <?php foreach ($turmas as $turma): ?>
             <option value="<?php echo $turma['id_turma']; ?>" <?php echo (isset($_POST['id_turma']) && $_POST['id_turma'] == $turma['id_turma']) ? 'selected' : ''; ?>>
@@ -295,8 +295,8 @@ include __DIR__ . '/partials/header.php';
         </select>
       </div>
       <div class="col-md-6">
-        <label class="form-label">Data de ingresso:</label>
-        <input type="date" name="data_ingresso" class="form-control" value="<?php echo date('Y-m-d'); ?>" required>
+        <label class="form-label" for="data_ingresso">Data de ingresso:</label>
+        <input type="date" id="data_ingresso" name="data_ingresso" class="form-control" value="<?php echo date('Y-m-d'); ?>" required>
       </div>
     <?php endif; ?>
   </div>
