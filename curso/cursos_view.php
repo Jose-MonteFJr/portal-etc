@@ -1,12 +1,11 @@
 <?php
-require __DIR__ . '/protect.php';
-require __DIR__ . '/config/db.php';
-require __DIR__ . '/helpers.php';
+require  '../protect.php';
+require  '../config/db.php';
+require  '../helpers.php';
 ensure_admin();
 
 // Parâmetros de busca/filtro
 $q          = trim($_GET['q'] ?? '');
-$roleFilter = $_GET['tipo'] ?? '';
 $page       = max(1, (int)($_GET['page'] ?? 1));
 $perPage    = 8;
 
@@ -14,41 +13,36 @@ $perPage    = 8;
 $clauses = [];
 $params  = [];
 
+// Busca dinâmica
+
 if ($q !== '') {
-  $clauses[] = "(u.nome_completo LIKE ? OR u.email LIKE ? OR t.nome LIKE ? OR a.matricula LIKE ?)"; // Quando adicionar a matricula, adicionar um novo parametro
+  $clauses[] = "(nome LIKE ?)"; 
   $like = "%$q%";
   $params[] = $like;
-  $params[] = $like;
-  $params[] = $like;
-  $params[] = $like;
-}
-
-if ($roleFilter === 'secretaria' || $roleFilter === 'aluno' || $roleFilter === 'professor' || $roleFilter === 'coordenador') {
-  $clauses[] = "tipo = ?";
-  $params[]  = $roleFilter;
 }
 
 $whereSql = $clauses ? ('WHERE ' . implode(' AND ', $clauses)) : '';
 
 // Total para paginação
-$stmt = $pdo->prepare("SELECT COUNT(*) FROM usuario u LEFT JOIN aluno a ON a.id_usuario = u.id_usuario LEFT JOIN turma t ON t.id_turma = a.id_turma $whereSql");
+$stmt = $pdo->prepare("SELECT COUNT(*) AS total FROM curso $whereSql");
 $stmt->execute($params);
 $total  = (int)$stmt->fetchColumn();
 $pages  = max(1, (int)ceil($total / $perPage));
 $offset = ($page - 1) * $perPage;
 
-// Busca usuários
-$sql = "SELECT u.id_usuario, u.nome_completo, u.email, u.tipo, u.status, a.matricula, a.status_academico, t.nome
-        FROM usuario u LEFT JOIN aluno a ON a.id_usuario = u.id_usuario LEFT JOIN turma t ON t.id_turma = a.id_turma
+// Busca cursos
+$sql = "SELECT id_curso, nome, carga_horaria, created_at, updated_at
+        FROM curso
         $whereSql
-        ORDER BY u.id_usuario DESC
+        ORDER BY id_curso DESC
         LIMIT $perPage OFFSET $offset";
 $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $users = $stmt->fetchAll();
 
-include __DIR__ . '/partials/header.php';
+include '../partials/header.php';
 ?>
+
 <div class="d-flex align-items-center justify-content-between mb-3">
   <h2 class="h4 mb-0">Dashboard de administração</h2>
   <span class="badge text-bg-primary">Perfil: Secretaria</span>
@@ -60,33 +54,14 @@ include __DIR__ . '/partials/header.php';
   <div class="row g-2 align-items-end">
     <div class="col-md-6">
       <label class="form-label">Buscar</label>
-      <input type="text" name="q" class="form-control" value="<?php echo htmlspecialchars($q); ?>" placeholder="Nome, e-mail, turma ou matrícula">
+      <input type="text" name="q" class="form-control" value="<?php echo htmlspecialchars($q); ?>" placeholder="Nome do curso">
     </div>
-    <div class="col-md-3">
-      <label class="form-label">Perfil</label>
-      <select name="tipo" class="form-select">
-        <option value="">Todos</option>
-        <option value="aluno" <?php echo $roleFilter === 'aluno'  ? 'selected' : ''; ?>>Aluno</option>
-        <option value="secretaria" <?php echo $roleFilter === 'secretaria' ? 'selected' : ''; ?>>Secretaria</option>
-        <option value="professor" <?php echo $roleFilter === 'professor' ? 'selected' : ''; ?>>Professor</option>
-        <option value="coordenador" <?php echo $roleFilter === 'coordenador' ? 'selected' : ''; ?>>Coordenador</option>
-      </select>
-    </div>
-
     <div class="col-md-3 text-end">
-      <a class="btn btn-outline-secondary" href="admin.php">Limpar</a>
+      <a class="btn btn-outline-secondary" href="cursos_view.php">Limpar</a>
       <button class="btn btn-primary">Filtrar</button>
     </div>
   </div>
 </form>
-
-<div class="card card-body shadow-sm mb-3">
-  <div class="d-flex justify-content-around">
-    <a class="btn btn-outline-success" href="curso/cursos_create.php">+ Novo Curso</a>
-    <a class="btn btn-outline-success" href="turma/turmas_create.php">+ Nova Turma</a>
-    <a class="btn btn-outline-success" href="users_create.php">+ Novo Usuário</a>
-  </div>  
-</div>
 
 <!-- TABELA VIEW -->
 
@@ -132,7 +107,7 @@ include __DIR__ . '/partials/header.php';
               <td class="text-end">
                 <a class="btn btn-sm btn-outline-secondary" href="users_edit.php?id_usuario=<?php echo (int)$u['id_usuario']; ?>">Editar</a>
                 <form action="users_delete.php" method="post" class="d-inline" onsubmit="return confirm('Tem certeza que deseja excluir?');">
-                  <?php require_once __DIR__ . '/helpers.php';
+                  <?php require_once '../helpers.php';
                   csrf_input(); ?>
                   <input type="hidden" name="id_usuario" value="<?php echo (int)$u['id_usuario']; ?>">
                   <button type="submit" class="btn btn-sm btn-outline-danger">Excluir</button>
@@ -158,7 +133,7 @@ include __DIR__ . '/partials/header.php';
       $baseQuery = $_GET;
       for ($i = 1; $i <= $pages; $i++):
         $baseQuery['page'] = $i;
-        $href = 'admin.php?' . http_build_query($baseQuery);
+        $href = '../admin.php?' . http_build_query($baseQuery);
       ?>
         <li class="page-item <?php echo $i === $page ? 'active' : ''; ?>">
           <a class="page-link" href="<?php echo htmlspecialchars($href); ?>"><?php echo $i; ?></a>
@@ -168,4 +143,4 @@ include __DIR__ . '/partials/header.php';
   </nav>
 <?php endif; ?>
 
-<?php include __DIR__ . '/partials/footer.php'; ?>
+<?php include '../partials/footer.php'; ?>
