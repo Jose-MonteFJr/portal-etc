@@ -81,9 +81,9 @@ include __DIR__ . '/partials/header.php';
 </form>
 
 <div class="card card-body shadow-sm mb-3">
-  <div class="d-flex justify-content-around">
-    <a class="btn btn-outline-success" href="curso/cursos_create.php">+ Novo Curso</a>
-    <a class="btn btn-outline-success" href="turma/turmas_create.php">+ Nova Turma</a>
+  <div class="d-flex justify-content-around align-items-center flex-wrap gap-4">
+    <a class="btn btn-outline-secondary" href="curso/cursos_view.php">Ver Cursos</a>
+     <a class="btn btn-outline-secondary" href="#">Ver Turmas</a>
     <a class="btn btn-outline-success" href="users_create.php">+ Novo Usuário</a>
   </div>  
 </div>
@@ -142,7 +142,7 @@ include __DIR__ . '/partials/header.php';
           <?php endforeach; ?>
           <?php if (!$users): ?>
             <tr>
-              <td colspan="6" class="text-center text-muted py-4">Nenhum usuário encontrado.</td>
+              <td colspan="9" class="text-center text-muted py-4">Nenhum usuário encontrado.</td>
             </tr>
           <?php endif; ?>
         </tbody>

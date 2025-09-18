@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->execute([$nome, (int)$carga_horaria]);
 
         $_SESSION['success'] = 'Curso cadastrado com sucesso!';
-        header('Location: ../admin.php');
+        header('Location: cursos_view.php');
         exit;
 
         } catch (PDOException $e) {
@@ -52,7 +52,7 @@ include '../partials/header.php';
 ?>
 <div class="d-flex align-items-center justify-content-between mb-3">
   <h2 class="h4 mb-0">Nova Turma</h2>
-  <a class="btn btn-outline-secondary btn-sm" href="../admin.php">Voltar</a>
+  <a class="btn btn-outline-secondary btn-sm" href="cursos_view.php">Voltar</a>
 </div>
 
     <!-- Lista de erros na tela -->

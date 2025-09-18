@@ -46,6 +46,7 @@ include '../partials/header.php';
 <div class="d-flex align-items-center justify-content-between mb-3">
   <h2 class="h4 mb-0">Dashboard de administração</h2>
   <span class="badge text-bg-primary">Perfil: Secretaria</span>
+  <a class="btn btn-outline-secondary" href="../admin.php">Voltar</a>
 </div>
 
 <?php flash_show(); ?>
@@ -56,9 +57,10 @@ include '../partials/header.php';
       <label class="form-label">Buscar</label>
       <input type="text" name="q" class="form-control" value="<?php echo htmlspecialchars($q); ?>" placeholder="Nome do curso">
     </div>
-    <div class="col-md-3 text-end">
+    <div class="col-md-6 text-end">
       <a class="btn btn-outline-secondary" href="cursos_view.php">Limpar</a>
       <button class="btn btn-primary">Filtrar</button>
+      <a class="btn btn-outline-success" href="cursos_create.php">+ Novo Curso</a>
     </div>
   </div>
 </form>
@@ -66,7 +68,7 @@ include '../partials/header.php';
 <!-- TABELA VIEW -->
 
 <div class="card shadow-sm">
-  <div class="card-header">Usuários cadastrados (<?php echo $total; ?>)</div>
+  <div class="card-header">Cursos cadastrados (<?php echo $total; ?>)</div>
   <div class="card-body p-0">
     <div class="table-responsive">
       <table class="table table-striped table-hover mb-0 align-middle">
@@ -74,42 +76,26 @@ include '../partials/header.php';
           <tr>
             <th>#</th>
             <th>Nome</th>
-            <th>E-mail</th>
-            <th>Perfil</th>
-            <th>Status</th>
-            <th>Matrícula</th>
-            <th>Turma</th>
-            <th>Situação acadêmica</th>
+            <th>Carga horária</th>
+            <th>Criado em</th>
+            <th>Atualizado em</th>
             <th class="text-end">Ações</th>
           </tr>
         </thead>
         <tbody>
           <?php foreach ($users as $u): ?>
             <tr>
-              <td><?php echo (int)$u['id_usuario']; ?></td>
-              <td><?php echo htmlspecialchars($u['nome_completo']); ?></td>
-              <td><?php echo htmlspecialchars($u['email']); ?></td>
-              <!-- Tipo destacado -->
-              <td>
-                <span class="badge text-bg-<?php echo $u['tipo'] === 'secretaria' ? 'danger' : 'secondary'; ?>">
-                  <?php echo htmlspecialchars($u['tipo']); ?>
-                </span>
-              </td>
-              <!-- Status destacado -->
-              <td>
-                <span class="badge text-bg-<?php echo $u['status'] === 'ativo' ? 'success' : 'danger'; ?>">
-                  <?php echo htmlspecialchars($u['status']); ?>
-                </span>
-              </td>
-              <td><?php echo htmlspecialchars($u['matricula']); ?></td>
+              <td><?php echo (int)$u['id_curso']; ?></td>
               <td><?php echo htmlspecialchars($u['nome']); ?></td>
-              <td><?php echo htmlspecialchars($u['status_academico']); ?></td>
+              <td><?php echo htmlspecialchars($u['carga_horaria']); ?></td>
+              <td><?php echo htmlspecialchars($u['created_at']); ?></td>
+              <td><?php echo htmlspecialchars($u['updated_at']); ?></td>
               <td class="text-end">
-                <a class="btn btn-sm btn-outline-secondary" href="users_edit.php?id_usuario=<?php echo (int)$u['id_usuario']; ?>">Editar</a>
-                <form action="users_delete.php" method="post" class="d-inline" onsubmit="return confirm('Tem certeza que deseja excluir?');">
+                <a class="btn btn-sm btn-outline-secondary" href="cursos_edit.php?id_curso=<?php echo (int)$u['id_curso']; ?>">Editar</a>
+                <form action="cursos_delete.php" method="post" class="d-inline" onsubmit="return confirm('Tem certeza que deseja excluir?');">
                   <?php require_once '../helpers.php';
                   csrf_input(); ?>
-                  <input type="hidden" name="id_usuario" value="<?php echo (int)$u['id_usuario']; ?>">
+                  <input type="hidden" name="id_curso" value="<?php echo (int)$u['id_curso']; ?>">
                   <button type="submit" class="btn btn-sm btn-outline-danger">Excluir</button>
                 </form>
               </td>
@@ -117,7 +103,7 @@ include '../partials/header.php';
           <?php endforeach; ?>
           <?php if (!$users): ?>
             <tr>
-              <td colspan="6" class="text-center text-muted py-4">Nenhum usuário encontrado.</td>
+              <td colspan="6" class="text-center text-muted py-4">Nenhum curso encontrado.</td>
             </tr>
           <?php endif; ?>
         </tbody>
