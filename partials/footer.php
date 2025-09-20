@@ -2,7 +2,7 @@
 <div aria-live="polite" aria-atomic="true" class="position-relative">
   <div id="toastArea" class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1080;"></div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="./js/bootstrap.bundle.min.js"></script>
 <script>
 // O tema é armazenado em localStorage
 (function() {

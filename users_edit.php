@@ -288,7 +288,7 @@ include __DIR__ . '/partials/header.php';
     <!-- SELECT PERFIL -->
     <div class="col-md-3">
       <label class="form-label" for="perfil">Perfil: </label>
-      <select name="tipo" id="perfil" class="form-select" onchange="mostrarCampos()">
+      <select name="tipo" id="perfil" class="form-select" onchange="mostrarCampos()" <?php echo $id_usuario ? "disabled" : ""; ?> >
         <option value="aluno" <?php echo $tipo === 'aluno' ? 'selected' : ''; ?>>Aluno</option>
         <option value="secretaria" <?php echo $tipo === 'secretaria' ? 'selected' : ''; ?>>Secretaria</option>
         <option value="professor" <?php echo $tipo === 'professor' ? 'selected' : ''; ?>>Professor</option>
