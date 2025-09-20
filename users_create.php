@@ -12,7 +12,6 @@ $stmt = $pdo->query("SELECT id_turma, nome, ano, semestre, turno FROM turma ORDE
 $turmas = $stmt->fetchAll(PDO::FETCH_ASSOC);
 $tem_turmas = count($turmas) > 0;
 
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   csrf_check(); // Proteção CSRF
 

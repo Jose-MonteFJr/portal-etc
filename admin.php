@@ -15,7 +15,7 @@ $clauses = [];
 $params  = [];
 
 if ($q !== '') {
-  $clauses[] = "(u.nome_completo LIKE ? OR u.email LIKE ? OR t.nome LIKE ? OR a.matricula LIKE ?)"; // Quando adicionar a matricula, adicionar um novo parametro
+  $clauses[] = "(u.nome_completo LIKE ? OR u.email LIKE ? OR t.nome LIKE ? OR a.matricula LIKE ?)"; 
   $like = "%$q%";
   $params[] = $like;
   $params[] = $like;

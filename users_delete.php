@@ -19,7 +19,7 @@ if ($id_usuario <= 0) {
 
 // Evita deletar a si mesmo
 if ($id_usuario === (int)$_SESSION['id_usuario']) {
-  flash_set('warning', 'Você não pode excluir o próprio usuário logado.');
+  flash_set('danger', 'Você não pode excluir o próprio usuário logado.');
   header('Location: admin.php');
   exit;
 }
