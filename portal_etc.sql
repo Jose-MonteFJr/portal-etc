@@ -191,7 +191,6 @@ INSERT INTO curso (nome, descricao) VALUES
 ('Técnico em Informática', 'Curso voltado para o desenvolvimento de sistemas, redes e manutenção de computadores.'),
 ('Técnico em Enfermagem', 'Curso para formação de profissionais da área da saúde, com foco em cuidados e procedimentos de enfermagem.');
 
-
 -- 2. MÓDULOS
 -- Agora, criamos os módulos para cada curso, usando os IDs que acabamos de criar.
 -- Assumindo que 'Técnico em Informática' tem id_curso = 1
