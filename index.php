@@ -20,7 +20,7 @@ if (isset($_SESSION['id_usuario'])) {
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Login</title>
-  <link href="./partials/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/portal-etc/partials/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="bg-light d-flex align-items-center" style="min-height:100vh;">
   <div class="container">
@@ -50,6 +50,6 @@ if (isset($_SESSION['id_usuario'])) {
       </div>
     </div>
   </div>
-<script src="./partials/js/bootstrap.bundle.min.js"></script>
+<script src="/portal-etc/partials/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -60,19 +60,44 @@ CREATE TABLE endereco (
 
 CREATE TABLE curso (
     id_curso INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    nome VARCHAR(150) UNIQUE NOT NULL, -- Adicionado UNIQUE para evitar cursos com o mesmo nome
-    carga_horaria SMALLINT UNSIGNED NOT NULL,
+    nome VARCHAR(150) UNIQUE NOT NULL,
+    descricao TEXT,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+CREATE TABLE modulo (
+  id_modulo INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  id_curso INT UNSIGNED NOT NULL,
+  nome VARCHAR(150) NOT NULL,
+  ordem TINYINT UNSIGNED NOT NULL,  -- Sequencia do modulo, ex - 1, 2, 3...
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+  CONSTRAINT fk_modulo_curso FOREIGN KEY (id_curso) REFERENCES curso(id_curso) ON DELETE RESTRICT,
+  CONSTRAINT uq_modulo_curso UNIQUE (id_curso, nome)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE disciplina (
+  id_disciplina INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  id_modulo INT UNSIGNED NOT NULL,
+  nome VARCHAR(150) NOT NULL,
+  carga_horaria SMALLINT UNSIGNED NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+  CONSTRAINT fk_disciplina_modulo FOREIGN KEY (id_modulo) REFERENCES modulo(id_modulo) ON DELETE RESTRICT,
+  CONSTRAINT uq_disciplina_modulo UNIQUE (id_modulo, nome)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 CREATE TABLE turma (
     id_turma INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    id_curso INT UNSIGNED NOT NULL,
     nome VARCHAR(100) NOT NULL,
     ano YEAR NOT NULL,
-    semestre TINYINT UNSIGNED NOT NULL, -- Ex - 1 ou 2
+    semestre ENUM('1', '2') NOT NULL, 
     turno ENUM('matutino','vespertino','noturno') NOT NULL,
-    id_curso INT UNSIGNED NOT NULL,
+    status ENUM('aberta', 'fechada') NOT NULL DEFAULT 'aberta',
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
@@ -81,13 +106,31 @@ CREATE TABLE turma (
 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+-- Tabela associativa
+
+CREATE TABLE alocacao_professor (
+    id_alocacao INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    id_usuario INT UNSIGNED NOT NULL, -- Ligação direta com o usuário (professor)
+    id_turma INT UNSIGNED NOT NULL,
+    id_disciplina INT UNSIGNED NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_alocacao_usuario FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario) ON DELETE RESTRICT,
+    CONSTRAINT fk_alocacao_turma FOREIGN KEY (id_turma) REFERENCES turma(id_turma) ON DELETE RESTRICT,
+    CONSTRAINT fk_alocacao_disciplina FOREIGN KEY (id_disciplina) REFERENCES disciplina(id_disciplina) ON DELETE RESTRICT,
+
+    CONSTRAINT uq_alocacao UNIQUE (id_usuario, id_turma, id_disciplina)
+
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 CREATE TABLE aluno (
   id_aluno INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   id_usuario INT UNSIGNED NOT NULL,
+  id_turma INT UNSIGNED NULL,
   matricula CHAR(8) UNIQUE, -- 23000001 - PRIMEIROS 2 DIGITOS REFERENTE AO ANO E O RESTO É A MATRICULA
   data_ingresso DATE NOT NULL,
   status_academico ENUM('cursando', 'formado', 'trancado', 'desistente') NOT NULL DEFAULT 'cursando',
-  id_turma INT UNSIGNED NULL,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
@@ -142,20 +185,57 @@ VALUE
 
 -- INSERTS TESTE
 
- INSERT INTO curso (nome, carga_horaria) VALUES
-('Técnico em Informática', 1200),
-('Técnico em Administração', 1000);
+-- 1. CURSOS
+-- Primeiro, criamos os cursos principais.
+INSERT INTO curso (nome, descricao) VALUES 
+('Técnico em Informática', 'Curso voltado para o desenvolvimento de sistemas, redes e manutenção de computadores.'),
+('Técnico em Enfermagem', 'Curso para formação de profissionais da área da saúde, com foco em cuidados e procedimentos de enfermagem.');
 
--- Turmas do curso de Informática
-INSERT INTO turma (nome, ano, semestre, turno, id_curso) VALUES
-('Informática 1', 2025, 1, 'matutino', 1),
-('Informática 2', 2025, 1, 'vespertino', 1),
-('Informática 3', 2025, 2, 'noturno', 1);
 
--- Turmas do curso de Administração
-INSERT INTO turma (nome, ano, semestre, turno, id_curso) VALUES
-('Admin 1', 2025, 1, 'matutino', 2),
-('Admin 2', 2025, 2, 'vespertino', 2); 
+-- 2. MÓDULOS
+-- Agora, criamos os módulos para cada curso, usando os IDs que acabamos de criar.
+-- Assumindo que 'Técnico em Informática' tem id_curso = 1
+INSERT INTO modulo (id_curso, nome, ordem) VALUES
+(1, 'Módulo I - Fundamentos de TI', 1),
+(1, 'Módulo II - Desenvolvimento Web', 2),
+(1, 'Módulo III - Banco de Dados Avançado', 3);
+
+-- Assumindo que 'Técnico em Enfermagem' tem id_curso = 2
+INSERT INTO modulo (id_curso, nome, ordem) VALUES
+(2, 'Módulo I - Cuidados Básicos e Ética', 1),
+(2, 'Módulo II - Procedimentos Hospitalares', 2);
+
+
+-- 3. DISCIPLINAS
+-- Criamos as disciplinas para cada módulo.
+-- Assumindo que os módulos de Informática são id_modulo = 1, 2, 3
+INSERT INTO disciplina (id_modulo, nome, carga_horaria) VALUES
+(1, 'Lógica de Programação', 80),
+(1, 'Hardware e Redes', 60),
+(2, 'HTML5 e CSS3', 80),
+(2, 'JavaScript Básico', 80),
+(3, 'SQL Avançado', 100),
+(3, 'Modelação de Dados', 60);
+
+-- Assumindo que os módulos de Enfermagem são id_modulo = 4, 5
+INSERT INTO disciplina (id_modulo, nome, carga_horaria) VALUES
+(4, 'Anatomia e Fisiologia Humana', 80),
+(4, 'Ética em Enfermagem', 40),
+(5, 'Técnicas de Curativo', 100),
+(5, 'Farmacologia Aplicada', 80);
+
+
+-- 4. TURMAS
+-- Por fim, criamos instâncias (turmas) dos cursos.
+-- Assumindo que 'Técnico em Informática' tem id_curso = 1
+INSERT INTO turma (id_curso, nome, ano, semestre, turno, status) VALUES
+(1, 'INF-2025.1-NOT', 2025, '1', 'noturno', 'inscrições abertas'),
+(1, 'INF-2024.2-MAT', 2024, '2', 'matutino', 'concluída');
+
+-- Assumindo que 'Técnico em Enfermagem' tem id_curso = 2
+INSERT INTO turma (id_curso, nome, ano, semestre, turno, status) VALUES
+(2, 'ENF-2025.1-VES', 2025, '1', 'vespertino', 'em andamento');
+
 
 -- CREATE TABLE `users` (
 --   `id` int(11) NOT NULL,
