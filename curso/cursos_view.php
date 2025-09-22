@@ -16,7 +16,7 @@ $params  = [];
 // Busca dinâmica
 
 if ($q !== '') {
-  $clauses[] = "(curso.nome LIKE ?)";
+  $clauses[] = "(c.nome LIKE ?)";
   $like = "%$q%";
   $params[] = $like;
 }
