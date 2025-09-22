@@ -5,7 +5,7 @@ require  '../helpers.php';
 ensure_admin();
 
 $id_curso = (int)($_GET['id_curso'] ?? 0);
-$stmt = $pdo->prepare('SELECT id_curso, nome, carga_horaria FROM curso WHERE id_curso=?');
+$stmt = $pdo->prepare('SELECT id_curso, nome, descricao FROM curso WHERE id_curso=?');
 
 $stmt->execute([$id_curso]);
 $user = $stmt->fetch();
@@ -17,7 +17,7 @@ if (!$user) {
 
 $errors = [];
 $nome = $user['nome'];
-$carga_horaria = $user['carga_horaria'];
+$descricao = $user['descricao'];
 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -25,11 +25,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Captura dados do formulário
     $nome            = trim($_POST['nome'] ?? '');
-    $carga_horaria   = trim($_POST['carga_horaria'] ?? '');
+    $descricao   = trim($_POST['descricao'] ?? '');
 
     // --- Validações ---
     if ($nome === '') $errors[] = 'Nome do curso é obrigatório.';
-    if ($carga_horaria === '') $errors[] = 'Carga horária do curso é obrigatório.';
 
         // Checagem de unicidade no banco
     if (empty($errors)) {
@@ -42,8 +41,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (!$errors) {
         try {
-            $stmt = $pdo->prepare('UPDATE curso SET nome=?, carga_horaria=? WHERE id_curso=?');
-            $stmt->execute([$nome, $carga_horaria, $id_curso]);
+            $stmt = $pdo->prepare('UPDATE curso SET nome=?, descricao=? WHERE id_curso=?');
+            $stmt->execute([$nome, $descricao, $id_curso]);
 
             flash_set('success', 'Curso atualizado com sucesso.');
             header('Location: cursos_view.php');
@@ -72,15 +71,15 @@ include '../partials/header.php';
 <form method="post" class="card shadow-sm p-3">
     <?php csrf_input(); ?>
     <div class="row g-3">
-        <div class="col-md-6">
+        <div class="col-md-12">
             <label class="form-label" for="nome">Nome do curso: </label>
-            <input type="text" name="nome" id="nome" maxlength="150" class="form-control" placeholder="Ex: Engenharia de Software" value="<?php echo htmlspecialchars($nome); ?>" required>
+            <input type="text" name="nome" id="nome" maxlength="150" class="form-control" placeholder="Ex: Técnico em Informática" value="<?php echo htmlspecialchars($nome); ?>" required>
         </div> 
 
-        <div class="col-md-6">
-            <label class="form-label" for="carga_horaria">Carga horária: </label>
-            <input type="number" name="carga_horaria" id="carga_horaria" class="form-control" placeholder="Ex: 1200" min="1" value="<?php echo htmlspecialchars($carga_horaria); ?>" required>
-        </div>        
+        <div class="col-12">
+            <label class="form-label" for="descricao">Descrição:</label>
+            <textarea name="descricao" id="descricao" class="form-control" rows="4" placeholder="Digite uma breve descrição sobre o curso."><?php echo htmlspecialchars($descricao ?? ''); ?></textarea>
+        </div>     
     </div>
   <div class="mt-3 text-end">
     <input type="reset" class="btn btn-danger" value="Limpar">
