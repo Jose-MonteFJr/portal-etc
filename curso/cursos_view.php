@@ -16,7 +16,7 @@ $params  = [];
 // Busca dinâmica
 
 if ($q !== '') {
-  $clauses[] = "(nome LIKE ?)"; 
+  $clauses[] = "(nome LIKE ?)";
   $like = "%$q%";
   $params[] = $like;
 }
@@ -31,7 +31,7 @@ $pages  = max(1, (int)ceil($total / $perPage));
 $offset = ($page - 1) * $perPage;
 
 // Busca cursos
-$sql = "SELECT id_curso, nome, carga_horaria, created_at, updated_at
+$sql = "SELECT id_curso, nome, descricao, created_at, updated_at
         FROM curso
         $whereSql
         ORDER BY id_curso DESC
@@ -76,7 +76,7 @@ include '../partials/header.php';
           <tr>
             <th>#</th>
             <th>Nome</th>
-            <th>Carga horária</th>
+            <th>Descrição</th>
             <th>Criado em</th>
             <th>Atualizado em</th>
             <th class="text-end">Ações</th>
@@ -87,17 +87,19 @@ include '../partials/header.php';
             <tr>
               <td><?php echo (int)$u['id_curso']; ?></td>
               <td><?php echo htmlspecialchars($u['nome']); ?></td>
-              <td><?php echo htmlspecialchars($u['carga_horaria']); ?></td>
+              <td><?php echo htmlspecialchars($u['descricao']); ?></td>
               <td><?php echo htmlspecialchars($u['created_at']); ?></td>
               <td><?php echo htmlspecialchars($u['updated_at']); ?></td>
               <td class="text-end">
-                <a class="btn btn-sm btn-outline-secondary" href="cursos_edit.php?id_curso=<?php echo (int)$u['id_curso']; ?>">Editar</a>
-                <form action="cursos_delete.php" method="post" class="d-inline" onsubmit="return confirm('Tem certeza que deseja excluir?');">
-                  <?php require_once '../helpers.php';
-                  csrf_input(); ?>
-                  <input type="hidden" name="id_curso" value="<?php echo (int)$u['id_curso']; ?>">
-                  <button type="submit" class="btn btn-sm btn-outline-danger">Excluir</button>
-                </form>
+                <div class="d-flex justify-content-end gap-2">
+                  <a class="btn btn-sm btn-outline-secondary" href="cursos_edit.php?id_curso=<?php echo (int)$u['id_curso']; ?>">Editar</a>
+                  <form action="cursos_delete.php" method="post" class="d-inline" onsubmit="return confirm('Tem certeza que deseja excluir?');">
+                    <?php require_once '../helpers.php';
+                    csrf_input(); ?>
+                    <input type="hidden" name="id_curso" value="<?php echo (int)$u['id_curso']; ?>">
+                    <button type="submit" class="btn btn-sm btn-outline-danger">Excluir</button>
+                  </form>
+                </div>
               </td>
             </tr>
           <?php endforeach; ?>

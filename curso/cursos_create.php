@@ -6,18 +6,17 @@ ensure_admin();
 
 //Variavel de array vazio para receber futuros erros
 $errors = [];
-$nome = $carga_horaria = '';
+$nome = $descricao = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   csrf_check(); // Proteção CSRF
 
     // Captura dados do formulário
       $nome   = trim($_POST['nome'] ?? '');
-      $carga_horaria   = trim($_POST['carga_horaria'] ?? '');
+      $descricao   = trim($_POST['descricao'] ?? '');
 
     // --- Validações ---
     if ($nome === '') $errors[] = 'Nome do curso é obrigatório.';
-    if ($carga_horaria === '') $errors[] = 'Carga horária do curso é obrigatória.';
 
     // Checagem de unicidade no banco
     if (empty($errors)) {
@@ -31,10 +30,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // --- Inserção no banco ---
         $stmt = $pdo->prepare("
             INSERT INTO curso 
-            (nome, carga_horaria) 
+            (nome, descricao) 
             VALUES (?, ?)
     ");
-        $stmt->execute([$nome, (int)$carga_horaria]);
+        $stmt->execute([$nome, $descricao]);
 
         $_SESSION['success'] = 'Curso cadastrado com sucesso!';
         header('Location: cursos_view.php');
@@ -68,15 +67,15 @@ include '../partials/header.php';
 <form method="post" class="card shadow-sm p-3">
     <?php csrf_input(); ?>
     <div class="row g-3">
-        <div class="col-md-6">
+        <div class="col-md-12">
             <label class="form-label" for="nome">Nome do curso: </label>
-            <input type="text" name="nome" id="nome" maxlength="150" class="form-control" placeholder="Ex: Engenharia de Software" value="<?php echo htmlspecialchars($nome); ?>" required>
+            <input type="text" name="nome" id="nome" maxlength="150" class="form-control" placeholder="Ex: Técnico em Informática" value="<?php echo htmlspecialchars($nome); ?>" required>
         </div> 
 
-        <div class="col-md-6">
-            <label class="form-label" for="carga_horaria">Carga horária: </label>
-            <input type="number" name="carga_horaria" id="carga_horaria" class="form-control" placeholder="Ex: 1200" min="1" value="<?php echo htmlspecialchars($carga_horaria); ?>" required>
-        </div>        
+        <div class="col-12">
+            <label class="form-label" for="descricao">Descrição:</label>
+            <textarea name="descricao" id="descricao" class="form-control" rows="4" placeholder="Digite uma breve descrição sobre o curso."><?php echo htmlspecialchars($descricao ?? ''); ?></textarea>
+        </div>     
     </div>
   <div class="mt-3 text-end">
     <input type="reset" class="btn btn-danger" value="Limpar">
