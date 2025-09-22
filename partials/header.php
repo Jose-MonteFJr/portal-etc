@@ -29,7 +29,7 @@ $userRole = $_SESSION['tipo'] ?? null;
         <?php if ($userName): ?>
           <li class="nav-item me-3 align-self-center text-secondary">Olá, <strong><?php echo htmlspecialchars($userName); ?></strong></li>
           <li class="nav-item me-2"><a class="btn btn-outline-secondary btn-sm" href="profile.php">Meu Perfil</a></li>
-          <li class="nav-item"><a class="btn btn-outline-danger btn-sm" href="logout.php">Sair</a></li>
+          <li class="nav-item"><a class="btn btn-outline-danger btn-sm" href="/portal-etc/logout.php">Sair</a></li>
         <?php endif; ?>
       </ul>
       <div class="ms-3 d-flex">
