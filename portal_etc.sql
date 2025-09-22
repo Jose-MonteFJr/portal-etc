@@ -204,7 +204,6 @@ INSERT INTO modulo (id_curso, nome, ordem) VALUES
 (2, 'Módulo I - Cuidados Básicos e Ética', 1),
 (2, 'Módulo II - Procedimentos Hospitalares', 2);
 
-
 -- 3. DISCIPLINAS
 -- Criamos as disciplinas para cada módulo.
 -- Assumindo que os módulos de Informática são id_modulo = 1, 2, 3

@@ -84,6 +84,13 @@ include '../partials/header.php';
   </div>
 </form>
 
+<div class="card card-body shadow-sm mb-3">
+  <div class="d-flex justify-content-around align-items-center flex-wrap gap-4">
+    <a class="btn btn-outline-secondary" href="../modulo/modulos_view.php">Ver módulos</a>
+    <a class="btn btn-outline-secondary" href="#">Ver turmas</a>
+  </div>  
+</div>
+
 <!-- TABELA VIEW -->
 
 <div class="card shadow-sm">

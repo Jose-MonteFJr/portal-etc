@@ -81,9 +81,8 @@ include __DIR__ . '/partials/header.php';
 </form>
 
 <div class="card card-body shadow-sm mb-3">
-  <div class="d-flex justify-content-around align-items-center flex-wrap gap-4">
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-4">
     <a class="btn btn-outline-secondary" href="curso/cursos_view.php">Ver Cursos</a>
-     <a class="btn btn-outline-secondary" href="#">Ver Turmas</a>
     <a class="btn btn-outline-success" href="users_create.php">+ Novo Usuário</a>
   </div>  
 </div>
@@ -116,7 +115,7 @@ include __DIR__ . '/partials/header.php';
               <td><?php echo htmlspecialchars($u['email']); ?></td>
               <!-- Tipo destacado -->
               <td>
-                <span class="badge text-bg-<?php echo $u['tipo'] === 'secretaria' ? 'danger' : 'secondary'; ?>">
+                <span class="badge text-bg-<?php echo $u['tipo'] === 'secretaria' ? 'primary' : 'secondary'; ?>">
                   <?php echo htmlspecialchars($u['tipo']); ?>
                 </span>
               </td>
