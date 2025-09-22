@@ -24,12 +24,7 @@ if ($q !== '') {
 $whereSql = $clauses ? ('WHERE ' . implode(' AND ', $clauses)) : '';
 
 // Total para paginação
-$countSql = "SELECT COUNT(DISTINCT curso.id_curso) AS total FROM curso 
-  LEFT JOIN modulo ON curso.id_curso = modulo.id_curso
-  LEFT JOIN disciplina ON modulo.id_modulo = disciplina.id_modulo
-  LEFT JOIN turma ON curso.id_curso = turma.id_curso
-  LEFT JOIN aluno ON turma.id_turma = aluno.id_turma
-  $whereSql";
+$countSql = "SELECT COUNT(*) FROM curso c $whereSql";
 $stmt = $pdo->prepare($countSql);
 $stmt->execute($params);
 $total = (int)$stmt->fetchColumn();
@@ -38,23 +33,27 @@ $offset = ($page - 1) * $perPage;
 
 // Busca cursos
 $sql = "SELECT
-            curso.id_curso,
-            curso.nome,
-            curso.descricao,
-            curso.created_at,
-            curso.updated_at,
-            COALESCE(SUM(disciplina.carga_horaria), 0) AS carga_horaria_total,
-            COUNT(DISTINCT aluno.id_aluno) AS total_alunos
-        FROM curso
-        LEFT JOIN modulo ON curso.id_curso = modulo.id_curso
-        LEFT JOIN disciplina ON modulo.id_modulo = disciplina.id_modulo
-        LEFT JOIN turma ON curso.id_curso = turma.id_curso
-        LEFT JOIN aluno ON turma.id_turma = aluno.id_turma
-        $whereSql -- O filtro de busca entra aqui
-        GROUP BY
-            curso.id_curso
-        ORDER BY
-            curso.id_curso DESC -- Sua ordenação original
+            c.id_curso,
+            c.nome,
+            c.descricao,
+            c.created_at,
+            c.updated_at,
+            COALESCE(ch.carga_horaria_total, 0) AS carga_horaria_total,
+            COALESCE(ta.total_alunos, 0) AS total_alunos
+        FROM
+            curso c
+        LEFT JOIN (
+            SELECT m.id_curso, SUM(d.carga_horaria) AS carga_horaria_total
+            FROM modulo m JOIN disciplina d ON m.id_modulo = d.id_modulo
+            GROUP BY m.id_curso
+        ) AS ch ON c.id_curso = ch.id_curso
+        LEFT JOIN (
+            SELECT t.id_curso, COUNT(a.id_aluno) AS total_alunos
+            FROM turma t JOIN aluno a ON t.id_turma = a.id_turma
+            GROUP BY t.id_curso
+        ) AS ta ON c.id_curso = ta.id_curso
+        $whereSql
+        ORDER BY c.id_curso DESC
         LIMIT $perPage OFFSET $offset";
 $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
