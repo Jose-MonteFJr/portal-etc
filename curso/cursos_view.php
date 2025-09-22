@@ -92,7 +92,6 @@ include '../partials/header.php';
 </div>
 
 <!-- TABELA VIEW -->
-
 <div class="card shadow-sm">
   <div class="card-header">Cursos cadastrados (<?php echo $total; ?>)</div>
   <div class="card-body p-0">
