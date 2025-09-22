@@ -228,12 +228,12 @@ INSERT INTO disciplina (id_modulo, nome, carga_horaria) VALUES
 -- Por fim, criamos instâncias (turmas) dos cursos.
 -- Assumindo que 'Técnico em Informática' tem id_curso = 1
 INSERT INTO turma (id_curso, nome, ano, semestre, turno, status) VALUES
-(1, 'INF-2025.1-NOT', 2025, '1', 'noturno', 'inscrições abertas'),
-(1, 'INF-2024.2-MAT', 2024, '2', 'matutino', 'concluída');
+(1, 'INF-2025.1-NOT', 2025, '1', 'noturno', 'aberta'),
+(1, 'INF-2024.2-MAT', 2024, '2', 'matutino', 'aberta');
 
 -- Assumindo que 'Técnico em Enfermagem' tem id_curso = 2
 INSERT INTO turma (id_curso, nome, ano, semestre, turno, status) VALUES
-(2, 'ENF-2025.1-VES', 2025, '1', 'vespertino', 'em andamento');
+(2, 'ENF-2025.1-VES', 2025, '1', 'vespertino', 'aberta');
 
 
 -- CREATE TABLE `users` (

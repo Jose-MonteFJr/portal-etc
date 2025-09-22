@@ -16,7 +16,7 @@ $params  = [];
 // Busca dinâmica
 
 if ($q !== '') {
-  $clauses[] = "(nome LIKE ?)";
+  $clauses[] = "(curso.nome LIKE ?)";
   $like = "%$q%";
   $params[] = $like;
 }
@@ -24,17 +24,37 @@ if ($q !== '') {
 $whereSql = $clauses ? ('WHERE ' . implode(' AND ', $clauses)) : '';
 
 // Total para paginação
-$stmt = $pdo->prepare("SELECT COUNT(*) AS total FROM curso $whereSql");
+$countSql = "SELECT COUNT(DISTINCT curso.id_curso) AS total FROM curso 
+  LEFT JOIN modulo ON curso.id_curso = modulo.id_curso
+  LEFT JOIN disciplina ON modulo.id_modulo = disciplina.id_modulo
+  LEFT JOIN turma ON curso.id_curso = turma.id_curso
+  LEFT JOIN aluno ON turma.id_turma = aluno.id_turma
+  $whereSql";
+$stmt = $pdo->prepare($countSql);
 $stmt->execute($params);
-$total  = (int)$stmt->fetchColumn();
+$total = (int)$stmt->fetchColumn();
 $pages  = max(1, (int)ceil($total / $perPage));
 $offset = ($page - 1) * $perPage;
 
 // Busca cursos
-$sql = "SELECT id_curso, nome, descricao, created_at, updated_at
+$sql = "SELECT
+            curso.id_curso,
+            curso.nome,
+            curso.descricao,
+            curso.created_at,
+            curso.updated_at,
+            COALESCE(SUM(disciplina.carga_horaria), 0) AS carga_horaria_total,
+            COUNT(DISTINCT aluno.id_aluno) AS total_alunos
         FROM curso
-        $whereSql
-        ORDER BY id_curso DESC
+        LEFT JOIN modulo ON curso.id_curso = modulo.id_curso
+        LEFT JOIN disciplina ON modulo.id_modulo = disciplina.id_modulo
+        LEFT JOIN turma ON curso.id_curso = turma.id_curso
+        LEFT JOIN aluno ON turma.id_turma = aluno.id_turma
+        $whereSql -- O filtro de busca entra aqui
+        GROUP BY
+            curso.id_curso
+        ORDER BY
+            curso.id_curso DESC -- Sua ordenação original
         LIMIT $perPage OFFSET $offset";
 $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
@@ -76,7 +96,9 @@ include '../partials/header.php';
           <tr>
             <th>#</th>
             <th>Nome</th>
-            <th>Descrição</th>
+            <th class="text-center">Carga horária</th>
+            <th class="text-center">Qtd alunos</th>
+            <th class="text-center">Descrição</th>
             <th>Criado em</th>
             <th>Atualizado em</th>
             <th class="text-end">Ações</th>
@@ -87,7 +109,9 @@ include '../partials/header.php';
             <tr>
               <td><?php echo (int)$u['id_curso']; ?></td>
               <td><?php echo htmlspecialchars($u['nome']); ?></td>
-              <td><?php echo htmlspecialchars($u['descricao']); ?></td>
+              <td class="text-center"><?php echo ((int)$u['carga_horaria_total']); ?>h</td>
+              <td class="text-center"><?php echo ((int)$u['total_alunos']); ?></td>
+              <td class="text-truncate" style="max-width: 250px;" title="<?php echo htmlspecialchars($u['descricao']); ?>"> <?php echo htmlspecialchars($u['descricao']); ?></td>
               <td><?php echo htmlspecialchars($u['created_at']); ?></td>
               <td><?php echo htmlspecialchars($u['updated_at']); ?></td>
               <td class="text-end">
@@ -105,7 +129,7 @@ include '../partials/header.php';
           <?php endforeach; ?>
           <?php if (!$users): ?>
             <tr>
-              <td colspan="6" class="text-center text-muted py-4">Nenhum curso encontrado.</td>
+              <td colspan="8" class="text-center text-muted py-4">Nenhum curso encontrado.</td>
             </tr>
           <?php endif; ?>
         </tbody>
