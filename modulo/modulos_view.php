@@ -66,7 +66,7 @@ include '../partials/header.php';
 ?>
 
 <div class="d-flex align-items-center justify-content-between mb-3">
-    <h2 class="h4 mb-0">Dashboard de administração</h2>
+    <h2 class="h4 mb-0">Dashboard de administração: módulos</h2>
     <span class="badge text-bg-primary">Perfil: Secretaria</span>
     <a class="btn btn-outline-secondary" href="../curso/cursos_view.php">Voltar</a>
 </div>
@@ -112,7 +112,7 @@ include '../partials/header.php';
                         <th>#</th>
                         <th>Nome</th>
                         <th>Curso</th>
-                        <th class="text-center">Ordem</th>
+                        <th class="text-center">Ordem módulos</th>
                         <th class="text-center">Qtd disciplinas</th>
                         <th>Carga horária</th>
                         <th>Criado em</th>

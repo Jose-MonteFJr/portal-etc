@@ -63,7 +63,7 @@ include '../partials/header.php';
 ?>
 
 <div class="d-flex align-items-center justify-content-between mb-3">
-  <h2 class="h4 mb-0">Dashboard de administração</h2>
+  <h2 class="h4 mb-0">Dashboard de administração: cursos</h2>
   <span class="badge text-bg-primary">Perfil: Secretaria</span>
   <a class="btn btn-outline-secondary" href="../admin.php">Voltar</a>
 </div>

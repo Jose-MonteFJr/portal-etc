@@ -50,7 +50,7 @@ $users = $stmt->fetchAll();
 include __DIR__ . '/partials/header.php';
 ?>
 <div class="d-flex align-items-center justify-content-between mb-3">
-  <h2 class="h4 mb-0">Dashboard de administração</h2>
+  <h2 class="h4 mb-0">Dashboard de administração: usuários</h2>
   <span class="badge text-bg-primary">Perfil: Secretaria</span>
 </div>
 

@@ -7,7 +7,7 @@ ensure_admin();
 $errors = [];
 $nome_completo = $email = $tipo = $cpf = $telefone = $data_nascimento = $cep = $logradouro = $numero = $complemento = $bairro = $cidade = $estado = '';
 
-// Busca todas as turmas
+// Busca todas as turmas para verificar se existe ou não
 $stmt = $pdo->query("SELECT id_turma, nome, ano, semestre, turno FROM turma ORDER BY ano DESC, semestre DESC, nome ASC");
 $turmas = $stmt->fetchAll(PDO::FETCH_ASSOC);
 $tem_turmas = count($turmas) > 0;
@@ -151,6 +151,8 @@ include __DIR__ . '/partials/header.php';
     </ul>
   </div>
 <?php endif; ?>
+
+<!-- AVISO DE CADASTRAR TURMA -->
 <?php if (!$tem_turmas): ?>
   <div class="alert alert-warning">
     Não há turmas cadastradas.
@@ -159,9 +161,9 @@ include __DIR__ . '/partials/header.php';
 <?php endif; ?>
 
 <!-- Formulario  -->
-
 <form method="post">
   <?php csrf_input(); ?>
+
   <!-- CAMPOS USUARIO -->
   <div class="card shadow-sm p-3">
     <div class="row g-3">
