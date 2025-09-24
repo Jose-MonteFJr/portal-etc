@@ -129,6 +129,10 @@ include __DIR__ . '/partials/header.php';
               <td><?php echo htmlspecialchars($u['nome']); ?></td>
               <td><?php echo htmlspecialchars($u['status_academico']); ?></td>
               <td class="text-end">
+                <!-- Button trigger modal -->
+                <button type="button" class="btn btn-primary btn-detalhes-usuario" data-bs-toggle="modal" data-id="<?php echo $u['id_usuario']; ?>" data-bs-target="#modalDetalhesUsuario">
+                  detalhe
+                </button>
                 <a class="btn btn-sm btn-outline-secondary" href="users_edit.php?id_usuario=<?php echo (int)$u['id_usuario']; ?>">Editar</a>
                 
               <!-- Inativar usuario -->
@@ -178,5 +182,58 @@ include __DIR__ . '/partials/header.php';
     </ul>
   </nav>
 <?php endif; ?>
+
+<!-- Modal -->
+<div class="modal fade" id="modalDetalhesUsuario" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <!-- CAMPOS PARA APARECER NO MODAL -->
+        <p><strong>ID:</strong> <span id="modal-id"></span></p>
+        <p><strong>Nome:</strong> <span id="modal-nome"></span></p>
+        <p><strong>CPF:</strong> <span id="modal-cpf"></span></p> <!-- COPIAR PARA BAIXO - MUDAR O ID -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="/portal-etc/partials/js/jquery-3.7.1.min.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    // Quando o botão de detalhes for clicado
+    $(".btn-detalhes-usuario").click(function() {
+      var userId = $(this).data("id"); // Pega o ID do usuário
+
+      // Faz a requisição AJAX para buscar os dados do usuário
+      $.ajax({
+        url: 'user_details.php', // Arquivo que irá processar a requisição
+        type: 'GET',
+        data: { id: userId }, // Passa o ID do usuário como parâmetro
+        success: function(response) {
+          // Resposta do servidor (dados do usuário)
+          var usuario = JSON.parse(response);
+
+          // Preenche os campos do modal com os dados recebidos
+          $("#modal-id").text(usuario.id_usuario);
+          $("#modal-nome").text(usuario.nome_completo);
+          $("#modal-cpf").text(usuario.cpf); // COPIAR PARA BAIXO MAS ALTERAR O text.(usuario.campo)
+
+          // Exibe o modal
+          $('#modalDetalhes').modal('show');
+        },
+        error: function() {
+          alert("Erro ao buscar dados do usuário.");
+        }
+      });
+    });
+  });
+</script>
 
 <?php include __DIR__ . '/partials/footer.php'; ?>

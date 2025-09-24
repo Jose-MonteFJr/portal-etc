@@ -36,8 +36,8 @@ $sql = "SELECT
             c.id_curso,
             c.nome,
             c.descricao,
-            c.created_at,
-            c.updated_at,
+            DATE_FORMAT(c.created_at, '%d/%m/%Y %H:%i') as created_at,
+            DATE_FORMAT(c.updated_at, '%d/%m/%Y %H:%i') as updated_at,
             COALESCE(ch.carga_horaria_total, 0) AS carga_horaria_total,
             COALESCE(ta.total_alunos, 0) AS total_alunos
         FROM
@@ -121,6 +121,10 @@ include '../partials/header.php';
               <td><?php echo htmlspecialchars($u['updated_at']); ?></td>
               <td class="text-end">
                 <div class="d-flex justify-content-end gap-2">
+                  <a href="../modulo/modulos_view.php?q=&id_curso=<?php echo (int)$u['id_curso']; ?>"
+                      class="btn btn-sm btn-outline-info">
+                      Módulos
+                  </a>
                   <a class="btn btn-sm btn-outline-secondary" href="cursos_edit.php?id_curso=<?php echo (int)$u['id_curso']; ?>">Editar</a>
                   <form action="cursos_delete.php" method="post" class="d-inline" onsubmit="return confirm('Tem certeza que deseja excluir?');">
                     <?php require_once '../helpers.php';

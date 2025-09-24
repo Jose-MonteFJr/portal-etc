@@ -22,9 +22,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Checagem de unicidade no banco
     if (empty($errors)) {
-        $stmt = $pdo->prepare("SELECT COUNT(*) FROM modulo WHERE nome = ? AND id_curso = ?");
-        $stmt->execute([$nome, $id_curso]);
-        if ($stmt->fetchColumn() > 0) $errors[] = 'Módulo já cadastrado neste curso.';
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM modulo WHERE ordem = ? AND id_curso = ?");
+        $stmt->execute([$ordem, $id_curso]);
+        if ($stmt->fetchColumn() > 0) $errors[] = 'Ordem do módulo já cadastrado neste curso.';
     }
 
     if (!$errors) {
