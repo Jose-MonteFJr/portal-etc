@@ -38,13 +38,13 @@ $stmt->execute($params);
 $total = (int)$stmt->fetchColumn();
 $pages  = max(1, (int)ceil($total / $perPage));
 $offset = ($page - 1) * $perPage;
-
+// DATE_FORMAT(c.created_at, '%d/%m/%Y %H:%i') as created_at
 $sql = "SELECT 
     m.id_modulo,
     m.nome AS nome_modulo,
     m.ordem,
-    m.created_at,
-    m.updated_at,
+    DATE_FORMAT(m.created_at, '%d/%m/%Y %H:%i') AS created_at,
+    DATE_FORMAT(m.updated_at, '%d/%m/%Y %H:%i') AS updated_at,
     c.nome AS nome_curso,
     COUNT(d.id_disciplina) AS total_disciplinas,
     COALESCE(SUM(d.carga_horaria), 0) AS carga_horaria_modulo
@@ -93,10 +93,12 @@ include '../partials/header.php';
             </select>
         </div>
 
-        <div class="col-md-3 text-end">
-            <a class="btn btn-outline-secondary" href="modulos_view.php">Limpar</a>
-            <button class="btn btn-primary">Filtrar</button>
-            <a class="btn btn-outline-success" href="modulos_create.php">+ Novo Módulo</a>
+        <div class="col-md-3">
+            <div class="d-flex justify-content-end gap-2">
+                <a class="btn btn-outline-secondary" href="modulos_view.php">Limpar</a>
+                <button class="btn btn-primary">Filtrar</button>
+                <a class="btn btn-outline-success" href="modulos_create.php">+ Novo Módulo</a>
+            </div>
         </div>
     </div>
 </form>

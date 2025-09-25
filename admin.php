@@ -130,8 +130,8 @@ include __DIR__ . '/partials/header.php';
               <td><?php echo htmlspecialchars($u['status_academico']); ?></td>
               <td class="text-end">
                 <!-- Button trigger modal -->
-                <button type="button" class="btn btn-primary btn-detalhes-usuario" data-bs-toggle="modal" data-id="<?php echo $u['id_usuario']; ?>" data-bs-target="#modalDetalhesUsuario">
-                  detalhe
+                <button type="button" class="btn btn-sm btn-outline-info btn-detalhes-usuario" data-bs-toggle="modal" data-id="<?php echo $u['id_usuario']; ?>" data-bs-target="#modalDetalhesUsuario">
+                  Detalhes
                 </button>
                 <a class="btn btn-sm btn-outline-secondary" href="users_edit.php?id_usuario=<?php echo (int)$u['id_usuario']; ?>">Editar</a>
                 
@@ -188,18 +188,34 @@ include __DIR__ . '/partials/header.php';
   <div class="modal-dialog modal-dialog-scrollable">
     <div class="modal-content">
       <div class="modal-header">
-        <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Detalhes dos usuários</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <!-- CAMPOS PARA APARECER NO MODAL -->
-        <p><strong>ID:</strong> <span id="modal-id"></span></p>
+        <p><strong>Id:</strong> <span id="modal-id"></span></p> <!-- COPIAR PARA BAIXO - MUDAR O ID -->
         <p><strong>Nome:</strong> <span id="modal-nome"></span></p>
-        <p><strong>CPF:</strong> <span id="modal-cpf"></span></p> <!-- COPIAR PARA BAIXO - MUDAR O ID -->
+        <p><strong>Cpf:</strong> <span id="modal-cpf"></span></p>
+        <p><strong>Email:</strong> <span id="modal-email"></span></p> 
+        <p><strong>Telefone:</strong> <span id="modal-telefone"></span></p> 
+        <p><strong>Data de nascimento:</strong> <span id="modal-data_nascimento"></span></p> 
+        <p><strong>Status:</strong> <span id="modal-status"></span></p> 
+        <p><strong>Perfil:</strong> <span id="modal-tipo"></span></p> 
+        <br>
+        <p><strong>Turma:</strong> <span id="modal-tNome"></span></p> 
+        <p><strong>Data de ingresso:</strong> <span id="modal-data_ingresso"></span></p> 
+        <p><strong>Status acadêmico:</strong> <span id="modal-status_academico"></span></p> 
+        <br>
+        <p><strong>Cep:</strong> <span id="modal-cep"></span></p> 
+        <p><strong>Logradouro:</strong> <span id="modal-logradouro"></span></p> 
+        <p><strong>Número:</strong> <span id="modal-numero"></span></p> 
+        <p><strong>Complemento:</strong> <span id="modal-complemento"></span></p> 
+        <p><strong>bairro:</strong> <span id="modal-bairro"></span></p> 
+        <p><strong>Cidade:</strong> <span id="modal-cidade"></span></p> 
+        <p><strong>Estado:</strong> <span id="modal-estado"></span></p> 
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
       </div>
     </div>
   </div>
@@ -222,8 +238,27 @@ include __DIR__ . '/partials/header.php';
 
           // Preenche os campos do modal com os dados recebidos
           $("#modal-id").text(usuario.id_usuario);
-          $("#modal-nome").text(usuario.nome_completo);
-          $("#modal-cpf").text(usuario.cpf); // COPIAR PARA BAIXO MAS ALTERAR O text.(usuario.campo)
+          $("#modal-nome").text(usuario.nome_completo); // COPIAR PARA BAIXO MAS ALTERAR O text.(usuario.campo)e o ID
+          $("#modal-cpf").text(usuario.cpf); 
+          $("#modal-email").text(usuario.email); 
+          $("#modal-telefone").text(usuario.telefone); 
+          $("#modal-data_nascimento").text(usuario.data_nascimento); 
+          $("#modal-status").text(usuario.status); 
+          $("#modal-tipo").text(usuario.tipo); 
+
+          // TURMA
+          $("#modal-tNome").text(usuario.nome); 
+          $("#modal-data_ingresso").text(usuario.data_ingresso); 
+          $("#modal-status_academico").text(usuario.status_academico); 
+
+          $("#modal-cep").text(usuario.cep); 
+          $("#modal-logradouro").text(usuario.logradouro); 
+          $("#modal-numero").text(usuario.numero); 
+          $("#modal-complemento").text(usuario.complemento); 
+          $("#modal-bairro").text(usuario.bairro); 
+          $("#modal-cidade").text(usuario.cidade); 
+          $("#modal-estado").text(usuario.estado); 
+
 
           // Exibe o modal
           $('#modalDetalhes').modal('show');
