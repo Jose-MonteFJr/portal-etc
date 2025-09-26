@@ -1,0 +1,236 @@
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Poppins:wght@400;500;700&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap');
+        :root {
+          --cor-primaria: #0e223e;    /* Azul */
+          --cor-secundaria:#6c757d;  /* Cinza */
+          --cor-fundo: #f8f9fa;       /* Fundo claro */
+          --cor-texto: #212529;       /* Texto padrão */
+}
+
+        ::after,
+        ::before {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        li {
+            list-style: none;
+        }
+
+        h1 {
+            font-weight: 600;
+            font-size: 1.5rem;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: (--cor-texto);
+        }
+
+        /* Navbar fixa no topo */
+        .top-navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 76px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            z-index: 1001;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 0 1.5rem;
+            border-bottom: 5px solid var(--cor-primaria);
+        }
+
+        .top-navbar a.logo {
+            font-weight: 700;
+            color: #0e223e;
+            font-size: 1.5rem;
+        }
+
+        .wrapper {
+            display: block; /* Alterado para empilhamento vertical */
+            padding-top: 56px; /* Adiciona espaço para a navbar fixa */
+        }
+
+        .main {
+            min-height: 100vh;
+            width: 100%;
+            overflow: hidden;
+            transition: all 0.3s ease-in-out;
+            padding: 2rem;
+        }
+
+        #sidebar {
+            width: 100px;
+            min-height: 100vh; /* Ajustado para ocupar toda a altura */
+            z-index: 1000;
+            background: #0e223e;
+            transition: all 0.25s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            height: 100px;
+            margin-top: 20px;
+            /* Removido position: fixed */
+        }
+
+        #sidebar.expand {
+            width: 460px;
+            min-width: 260px;
+        }
+
+        #toggle-btn {
+            background-color: transparent;
+            cursor: pointer;
+            border: 0;
+            padding: 1rem 1.0rem;
+            
+            
+        }
+
+        #toggle-btn i {
+            font-size: 1.5rem;
+            color: #221a7d;
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        #sidebar.expand .sidebar-logo {
+            display: flex;
+        }
+
+        .sidebar-logo a {
+            color: #20448d;
+            font-size: 1.5rem;
+            font-weight: 600;
+            display: block;
+        }
+
+        #sidebar:not(.expand) .sidebar-logo,
+        #sidebar:not(.expand) a.sidebar-link span {
+            display: none;
+        }
+
+        #sidebar-nav {
+            padding: 0;
+            flex: 1 1 auto;
+        }
+
+        a.sidebar-link {
+            padding: .625rem 1.625rem;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            border-left: 3px solid transparent;
+            position: relative;
+        }
+
+        .sidebar-link i {
+            font-size: 1.5rem;
+            margin-right: .75rem;
+        }
+
+        a.sidebar-link:hover {
+            background-color: #1b2a44;
+            border-left: 3px solid #3b7ddd;
+            color: #fff;
+        }
+
+        .sidebar-item {
+            position: relative;
+        }
+
+        #sidebar:not(.expand) .sidebar-item .sidebar-dropdown {
+            position: absolute;
+            top: 0;
+            left: 70px;
+            background-color: #0e223e;
+            padding: 0;
+            min-width: 15rem;
+            display: none;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-radius: 0.5rem;
+        }
+
+        #sidebar:not(.expand) .sidebar-item:hover .sidebar-dropdown {
+            display: block;
+        }
+
+        #sidebar:not(.expand) .sidebar-item:hover .has-dropdown + .sidebar-dropdown {
+            display: block;
+            max-height: 15rem;
+            width: 100%;
+            opacity: 1;
+        }
+
+        #sidebar.expand .sidebar-link[data-toggle="collapse"]::after {
+            content: "\e945"; /* Ícone de seta do lineicons */
+            font-family: 'LineIcons';
+            font-size: 0.75rem;
+            margin-left: auto;
+            transition: transform .2s ease-out;
+            transform: rotate(0deg);
+        }
+
+        #sidebar.expand .sidebar-link[data-toggle="collapse"].collapsed::after {
+            transform: rotate(180deg);
+        }
+
+        .sidebar-dropdown a {
+            padding: 0.5rem 1.5rem;
+        }
+
+        .content {
+            padding: 2rem;
+        }
+
+        @media (min-width: 769px) {
+            .wrapper {
+                display: flex; /* Retorna ao layout flexível em telas maiores */
+                padding-top: 56px;
+            }
+
+            #sidebar {
+                width: 260px;
+                min-width: 260px;
+            }
+
+            #sidebar:not(.expand) {
+                width: 70px;
+                min-width: 95px;
+            }
+
+            .main {
+                flex-grow: 1; /* Permite que o conteúdo principal ocupe o espaço restante */
+                margin-left: 0 !important; /* Reseta a margem para o layout flex */
+            }
+        }
+
+        @media (max-width: 768px) {
+            #sidebar.expand {
+                width: 260px;
+                min-width: 260px;
+                /* Permite que o menu se expanda em telas menores */
+            }
+            #sidebar {
+                position: fixed; /* Voltou a ser fixo para o comportamento de slide-in */
+                transform: translateX(-100%);
+            }
+            #sidebar.expand {
+                transform: translateX(0);
+            }
+        }

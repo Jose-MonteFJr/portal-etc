@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"> 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+  
+  <title>Barra de Navegação</title> <!-- Título da página -->
+
+  <!-- Biblioteca de ícones Lineicons -->
+  <link href="https://cdn.lineicons.com/4.0/lineicons.css" rel="stylesheet" />
+
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" 
+        rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" 
+        crossorigin="anonymous">
+
+  <!-- Arquivo CSS personalizado -->
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+   <nav class="navbar navbar-light bg-white fixed-top shadow-sm">
+  <div class="container-fluid">
+    <!-- Botão abre/fecha sidebar -->
+    <button id="toggle-btn" class="btn btn-outline-primary">
+      <i class="lni lni-grid-alt"></i>
+    </button>
+
+    <!-- Logo ETC -->
+    <a class="navbar-brand ms-2 fw-bold text-primary" href="#">ETC</a>
+  </div>
+</nav>
+
+ <div class="wrapper"> <!-- Wrapper principal que envolve sidebar e conteúdo -->
+ 
+    <!-- =================== SIDEBAR =================== -->
+    <aside id="sidebar">
+<!-- 
+      Cabeçalho da sidebar (logo + botão toggle) -->
+      <div class="d-flex">
+        <!-- Botão para expandir/recolher o menu -->
+        <!-- <button id="toggle-btn" type="button">
+       <!-- Ícone do Lineicons -->
+        </button> -->
+
+       
+      <!-- =================== MENU PRINCIPAL =================== -->
+      <ul class="sidebar-nav">
+
+        <!-- Item simples: Home -->
+        <li class="sidebar-item">
+          <a href="#" class="sidebar-link">
+            <i class="lni lni-user"></i> <!-- Ícone de usuário -->
+            <span>Home</span>
+          </a>
+        </li>
+
+        <!-- Item simples: Task -->
+        <li class="sidebar-item">
+          <a href="#" class="sidebar-link">
+            <i class="lni lni-agenda"></i> <!-- Ícone de agenda -->
+            <span>Carga horária</span>
+          </a>
+        </li>
+
+        <!-- Dropdown: Autenticar -->
+        <li class="sidebar-item">
+          <a href="#" class="sidebar-link has-dropdown collapsed" 
+             data-bs-toggle="collapse" 
+             data-bs-target="#auth" 
+             aria-expanded="false" 
+             aria-controls="auth"> 
+            <i class="lni lni-lock"></i> <!-- Ícone de cadeado -->
+            <span>Solicitações</span>
+          </a>
+
+          <!-- Submenu de autenticação -->
+          <ul id="auth" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
+            <li class="sidebar-item">
+              <a href="#" class="sidebar-link">Declarações</a>
+            </li>
+            <li class="sidebar-item">
+              <a href="#" class="sidebar-link">Certificados</a>
+            </li>
+          </ul>
+        </li>
+
+        <!-- Dropdown multi-nível -->
+        <li class="sidebar-item">
+          <a href="#" class="sidebar-link has-dropdown collapsed" 
+             data-bs-toggle="collapse" 
+             data-bs-target="#multi" 
+             aria-expanded="false" 
+             aria-controls="multi">
+            <i class="lni lni-layers"></i> <!-- Ícone de camadas -->
+            <span>Auto Atendimento</span>
+          </a>
+
+          <!-- Submenu Multi -->
+          <ul id="multi" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
+
+            <!-- Subnível dentro do Multi -->
+            <li class="sidebar-item">
+              <a href="#" class="sidebar-link collapsed" 
+                 data-bs-toggle="collapse" 
+                 data-bs-target="#multi-two" 
+                 aria-expanded="false" 
+                 aria-controls="multi-two">
+                Matrículas
+              </a>
+
+              <!-- Submenu dentro do submenu (nível 2) -->
+              <ul id="multi-two" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#multi">
+                <li class="sidebar-item">
+                  <a href="#" class="sidebar-link">Rematrículas</a>
+                </li>
+                <li class="sidebar-item">
+                  <a href="#" class="sidebar-link">Trancar curso</a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+           <li class="sidebar-item">
+          <a href="#" class="sidebar-link">
+            <i class="lni lni-popup"></i> <!-- Ícone de agenda -->
+            <span>Feed</span>
+          </a>
+        </li>
+           <!-- <li class="sidebar-item">
+          <a href="#" class="sidebar-link">
+            <i class="lni lni-cog"></i> <!-- Ícone de agenda -->
+            <!-- <span>Setting</span>
+          </a>
+        </li> --> -->
+      </ul>     
+      <!-- =================== RODAPÉ DA SIDEBAR =================== -->
+      <div class="sidebar-footer">
+        <a href="#" class="sidebar-link">
+          <i class="lni lni-exit"></i> <!-- Ícone de logout -->
+          <span>Logout</span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- =================== CONTEÚDO PRINCIPAL =================== -->
+    <div class="main p-3">
+      <div class="text-center">
+        <h1>Bem-vindo ao Portal do Aluno</h1>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS + Popper (necessário para dropdowns funcionar) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+          crossorigin="anonymous"></script>
+
+  <!-- Arquivo JS personalizado -->
+  <script src="script.js"></script>
+</body>
+</html>

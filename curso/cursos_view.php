@@ -84,13 +84,6 @@ include '../partials/header.php';
   </div>
 </form>
 
-<div class="card card-body shadow-sm mb-3">
-  <div class="d-flex justify-content-around align-items-center flex-wrap gap-4">
-    <a class="btn btn-outline-secondary" href="../modulo/modulos_view.php">Ver módulos</a>
-    <a class="btn btn-outline-secondary" href="#">Ver turmas</a>
-  </div>  
-</div>
-
 <!-- TABELA VIEW -->
 <div class="card shadow-sm">
   <div class="card-header">Cursos cadastrados (<?php echo $total; ?>)</div>
@@ -121,6 +114,8 @@ include '../partials/header.php';
               <td><?php echo htmlspecialchars($u['updated_at']); ?></td>
               <td class="text-end">
                 <div class="d-flex justify-content-end gap-2">
+                  <a href="../turma/turmas_view.php?q=&id_curso=<?php echo (int)$u['id_curso']; ?>"
+                      class="btn btn-sm btn-outline-info">Turmas</a>
                   <a href="../modulo/modulos_view.php?q=&id_curso=<?php echo (int)$u['id_curso']; ?>"
                       class="btn btn-sm btn-outline-info">
                       Módulos

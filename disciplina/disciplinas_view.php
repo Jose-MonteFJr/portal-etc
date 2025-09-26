@@ -13,7 +13,7 @@ if ($id_modulo === 0) {
 }
 
 // BUSCA DE DADOS DO MÓDULO E CURSO PARA CONTEXTO
-$stmt = $pdo->prepare('SELECT m.nome AS nome_modulo, c.nome AS nome_curso 
+$stmt = $pdo->prepare('SELECT m.nome AS nome_modulo, c.nome AS nome_curso, c.id_curso 
                        FROM modulo m 
                        JOIN curso c ON m.id_curso = c.id_curso 
                        WHERE m.id_modulo = ?');
@@ -73,10 +73,8 @@ include '../partials/header.php';
         <h2 class="h4 mb-0">Disciplinas do Módulo: <?php echo htmlspecialchars($modulo_info['nome_modulo']); ?></h2>
         <small class="text-muted">Curso: <?php echo htmlspecialchars($modulo_info['nome_curso']); ?></small>
     </div>
-    <div>
-        <a class="btn btn-outline-secondary" href="../modulo/modulos_view.php">Voltar aos Módulos</a>
-        <a class="btn btn-success" href="disciplinas_create.php?id_modulo=<?php echo $id_modulo; ?>">+ Nova Disciplina</a>
-    </div>
+    <span class="badge text-bg-primary">Perfil: Secretaria</span>
+    <a class="btn btn-outline-secondary" href="../modulo/modulos_view.php?id_curso=<?php echo (int)$modulo_info['id_curso']; ?>">Voltar</a>
 </div>
 
 <?php flash_show(); ?>
@@ -92,6 +90,7 @@ include '../partials/header.php';
         <div class="col-md-6 text-end">
             <a class="btn btn-outline-secondary" href="disciplinas_view.php?id_modulo=<?php echo $id_modulo; ?>">Limpar</a>
             <button class="btn btn-primary">Filtrar</button>
+            <a class="btn btn-outline-success" href="disciplinas_create.php">+ Nova Disciplina</a>
         </div>
     </div>
 </form>

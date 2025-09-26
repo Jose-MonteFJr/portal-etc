@@ -66,7 +66,19 @@ include '../partials/header.php';
 ?>
 
 <div class="d-flex align-items-center justify-content-between mb-3">
-    <h2 class="h4 mb-0">Dashboard de administração: módulos</h2>
+    <div>
+        <h2 class="h4 mb-0">
+            <?php
+            if (!empty($modulos) && $id_curso > 0) {
+                // Se sim, pega o nome do curso do PRIMEIRO resultado do array
+                echo 'Módulos do Curso: ' . htmlspecialchars($modulos[0]['nome_curso']);
+            } else {
+                // Senão, exibe um título genérico
+                echo 'Gerenciamento de Módulos';
+            }
+            ?>
+        </h2>
+    </div>
     <span class="badge text-bg-primary">Perfil: Secretaria</span>
     <a class="btn btn-outline-secondary" href="../curso/cursos_view.php">Voltar</a>
 </div>
