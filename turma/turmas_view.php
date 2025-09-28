@@ -61,7 +61,7 @@ $sql = "SELECT
         ORDER BY
             t.ano DESC, c.nome ASC
         LIMIT $perPage OFFSET $offset";
-        
+
 $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $turmas = $stmt->fetchAll();
@@ -152,7 +152,11 @@ include '../partials/header.php';
                             <td class="text-center"><?php echo ((int)$t['ano']); ?></td>
                             <td class="text-center"><?php echo ((int)$t['semestre']); ?></td>
                             <td><?php echo htmlspecialchars($t['turno']); ?></td>
-                            <td><?php echo htmlspecialchars($t['status']); ?></td>
+                            <td>
+                                <span class="badge text-bg-<?php echo $t['status'] === 'aberta' ? 'success' : 'danger'; ?>">
+                                    <?php echo htmlspecialchars($t['status']); ?>
+                                </span>
+                            </td>
                             <td class="text-center"><?php echo htmlspecialchars($t['created_at']); ?></td>
                             <td class="text-center"><?php echo htmlspecialchars($t['updated_at']); ?></td>
                             <td class="text-end">

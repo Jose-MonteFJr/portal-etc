@@ -106,7 +106,7 @@ include '../partials/header.php';
                 <?php
                 // Gera opções para o ano anterior, o atual e os próximos dois
                 $ano_atual = date('Y');
-                for ($i = $ano_atual - 1; $i <= $ano_atual + 2; $i++):
+                for ($i = $ano_atual - 1; $i <= $ano_atual + 1; $i++):
                 ?>
                     <option value="<?php echo $i; ?>" <?php echo ($i == $ano ? 'selected' : ''); ?>>
                         <?php echo $i; ?>
