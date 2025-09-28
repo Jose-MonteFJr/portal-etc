@@ -90,7 +90,7 @@ include '../partials/header.php';
         <div class="col-md-6 text-end">
             <a class="btn btn-outline-secondary" href="disciplinas_view.php?id_modulo=<?php echo $id_modulo; ?>">Limpar</a>
             <button class="btn btn-primary">Filtrar</button>
-            <a class="btn btn-outline-success" href="disciplinas_create.php">+ Nova Disciplina</a>
+            <a class="btn btn-outline-success" href="disciplinas_create.php?id_modulo=<?php echo $id_modulo; ?>">+ Nova Disciplina</a>
         </div>
     </div>
 </form>
