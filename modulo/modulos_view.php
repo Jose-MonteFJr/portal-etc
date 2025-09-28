@@ -38,6 +38,7 @@ $stmt->execute($params);
 $total = (int)$stmt->fetchColumn();
 $pages  = max(1, (int)ceil($total / $perPage));
 $offset = ($page - 1) * $perPage;
+
 // DATE_FORMAT(c.created_at, '%d/%m/%Y %H:%i') as created_at
 $sql = "SELECT 
     m.id_modulo,
