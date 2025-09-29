@@ -15,7 +15,7 @@
     min-height: 100vh;
 }
 .side-image{
-    background-image: url("Img/login3.png");
+    background-image: url("../img/login3.png");
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
