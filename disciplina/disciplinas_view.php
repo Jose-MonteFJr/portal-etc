@@ -119,7 +119,7 @@ include '../partials/header.php';
                             <td class="text-center"><?php echo htmlspecialchars($d['created_at']); ?></td>
                             <td class="text-center"><?php echo htmlspecialchars($d['updated_at']); ?></td>
                             <td class="text-end">
-                                <div class="d-flex justify-content-end gap-2">
+                                <div class="btn-group" role="group" aria-label="Ações da disciplina">
                                     <a class="btn btn-sm btn-outline-secondary" href="disciplinas_edit.php?id_disciplina=<?php echo (int)$d['id_disciplina']; ?>">Editar</a>
                                     <form action="disciplinas_delete.php" method="post" class="d-inline" onsubmit="return confirm('Tem certeza que deseja excluir?');">
                                         <?php require_once '../helpers.php';

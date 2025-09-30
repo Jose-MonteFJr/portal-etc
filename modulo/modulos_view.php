@@ -162,11 +162,11 @@ include '../partials/header.php';
                                         <?php require_once '../helpers.php';
                                         csrf_input(); ?>
                                         <input type="hidden" name="id_modulo" value="<?php echo (int)$m['id_modulo']; ?>">
-                                        <button type="submit" class="btn btn-sm btn-outline-danger" style="border-top-left-radius: 0; border-bottom-left-radius: 0;">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">
                                             Excluir
                                         </button>
                                     </form>
-                                </div>
+                                
                             </td>
                         </tr>
                     <?php endforeach; ?>

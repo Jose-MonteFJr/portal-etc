@@ -11,6 +11,7 @@ $userRole = $_SESSION['tipo'] ?? null;
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Sistema de Login</title>
   <link href="/portal-etc/partials/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="icon" href="/portal-etc/partials/img/portal-etc-logo.png" type="image/png">
 </head>
 <body>
 <nav class="navbar navbar-expand-lg bg-body-tertiary border-bottom mb-4">
