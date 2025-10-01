@@ -22,7 +22,7 @@ $userRole = $_SESSION['tipo'] ?? null;
         <button id="toggle-btn">
             <i class="lni lni-grid-alt"></i>
         </button>
-        <a class="logo" href="user.php">
+        <a class="logo" href="portal_home.php">
             <img src="/portal-etc/partials/img/portal-etc-logo.png" alt="Logo portal etc" width="70px">
         </a>
     </nav>
@@ -36,7 +36,7 @@ $userRole = $_SESSION['tipo'] ?? null;
             
             <ul id="sidebar-nav">
                 <li class="sidebar-item">
-                    <a href="#" class="sidebar-link">
+                    <a href="/portal-etc/portal_home.php" class="sidebar-link">
                         <i class="lni lni-home"></i>
                         <span>Home</span>
                     </a>
@@ -55,7 +55,7 @@ $userRole = $_SESSION['tipo'] ?? null;
                     </a>
                     <ul id="solicitacoes" class="sidebar-dropdown collapse">
                         <li class="sidebar-item">
-                            <a href="#" class="sidebar-link">Declarações</a>
+                            <a href="/portal-etc/solicitacoes_view_aluno.php" class="sidebar-link">Declarações</a>
                         </li>
                         <li class="sidebar-item">
                             <a href="#" class="sidebar-link">Certificados</a>

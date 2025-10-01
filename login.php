@@ -25,7 +25,7 @@ if ($user && password_verify($password, $user['password_hash'])) {
   if ($user['tipo'] === 'secretaria') {
     header('Location: admin.php');
   } else {
-    header('Location: user.php');
+    header('Location: portal_home.php');
   }
   exit;
 }

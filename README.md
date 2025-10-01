@@ -23,7 +23,7 @@ portal-etc/
 ├─ login.php         # Processa o login
 ├─ logout.php        # Encerra sessão
 ├─ admin.php         # Dashboard do Admin (lista usuários)
-├─ user.php          # Página do usuário padrão (nome no topo)
+├─ portal_home.php          # Página do usuário padrão (nome no topo)
 ├─ protect.php       # Middleware simples de autenticação e autorização
 ├─ config/
 │  └─ db.php         # Conexão PDO
@@ -35,7 +35,7 @@ portal-etc/
 ## Notas importantes!
 - Usa `password_hash()` e `password_verify()`.
 - Sessões PHP para manter o usuário logado.
-- Redirecionamento por perfil (Admin → `admin.php`, User → `user.php`).
+- Redirecionamento por perfil (Admin → `admin.php`, User → `portal_home.php`).
 
 ## CRUD para Admin
 - **Criar usuário**: `users_create.php`

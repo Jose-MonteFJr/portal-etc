@@ -175,6 +175,18 @@ END$$
 
 DELIMITER ;
 
+CREATE TABLE solicitacao (
+    id_solicitacao INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    id_aluno INT UNSIGNED NOT NULL,
+    tipo ENUM('renovação de matrícula', 'emissão de diploma', 'emissão de certificado') NOT NULL,
+    status ENUM('pendente', 'em análise', 'aprovada', 'rejeitada', 'concluída') NOT NULL DEFAULT 'pendente',
+    observacao TEXT NULL, -- Campo para o aluno adicionar informações ou para a secretaria justificar uma decisão.
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_solicitacao_aluno FOREIGN KEY (id_aluno) REFERENCES aluno(id_aluno) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 -- INSERTS PADRÃO
 
 INSERT INTO usuario (nome_completo, cpf, email, password_hash, telefone, data_nascimento, tipo) 

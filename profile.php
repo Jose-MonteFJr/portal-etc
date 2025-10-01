@@ -59,7 +59,7 @@ flash_show();
 ?>
 <div class="d-flex align-items-center justify-content-between mb-3">
   <h2 class="h4 mb-0">Meu Perfil</h2>
-  <a class="btn btn-outline-secondary btn-sm" href="<?php echo $_SESSION['tipo']==='secretaria' ? 'admin.php' : 'user.php'; ?>">Voltar</a>
+  <a class="btn btn-outline-secondary btn-sm" href="<?php echo $_SESSION['tipo']==='secretaria' ? 'admin.php' : 'portal_home.php'; ?>">Voltar</a>
 </div>
 
 <?php if ($errors): ?>

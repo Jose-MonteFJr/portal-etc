@@ -9,7 +9,7 @@ if (isset($_SESSION['id_usuario'])) {
         exit;
     } else {
         //Se usuário normal
-        header('Location: user.php');
+        header('Location: portal_home.php');
         exit;
     }
 }
