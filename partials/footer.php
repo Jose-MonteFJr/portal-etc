@@ -2,6 +2,7 @@
 <div aria-live="polite" aria-atomic="true" class="position-relative">
   <div id="toastArea" class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1080;"></div>
 </div>
+<script src="/portal-etc/partials/js/script.js"></script>
 <script src="/portal-etc/partials/js/bootstrap.bundle.min.js"></script>
 <script>
 // O tema é armazenado em localStorage

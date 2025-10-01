@@ -5,13 +5,13 @@ $userName = $_SESSION['nome_completo'] ?? null;
 $userRole = $_SESSION['tipo'] ?? null;
 ?>
 <!DOCTYPE html>
-<html lang="pt-br" data-bs-theme="light">
+<html lang="pt-br" data-bs-theme="dark">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Sistema de Login</title>
   <link href="/portal-etc/partials/css/bootstrap.min.css" rel="stylesheet">
   <link rel="icon" href="/portal-etc/partials/img/portal-etc-logo.png" type="image/png">
+  <title>Sistema de Login</title>
 </head>
 <body>
 <nav class="navbar navbar-expand-lg bg-body-tertiary border-bottom mb-4">
