@@ -18,7 +18,7 @@ $userRole = $_SESSION['tipo'] ?? null;
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sidebar + Navbar</title>
+  <title>Portal ETC</title>
   <link href="https://cdn.lineicons.com/4.0/lineicons.css" rel="stylesheet">
   <link href="partials/css/style.css" rel="stylesheet">
   <link rel="stylesheet" href="partials/css/style.css">
