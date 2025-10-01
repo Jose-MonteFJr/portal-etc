@@ -255,3 +255,26 @@ a.sidebar-link:hover {
         transform: translateX(0);
     }
 }
+
+/* =================================================================== */
+/* == CORREÇÃO ROBUSTA PARA DROPDOWN COM FLEXBOX E SUB-MENUS == */
+/* =================================================================== */
+
+/* Força TODOS os menus dropdown a organizarem seus itens 
+  em uma coluna (verticalmente).
+*/
+#sidebar:not(.expand) .sidebar-dropdown {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Alinha os itens à esquerda */
+}
+
+/*
+  Corrige o posicionamento de SUB-MENUS (menus dentro de menus).
+  Isso fará com que o menu 'Matrículas' apareça ao lado do item pai,
+  e não em cima dele.
+*/
+#sidebar:not(.expand) .sidebar-dropdown .sidebar-item .sidebar-dropdown {
+    top: 0;
+    left: 50%; /* Posiciona 100% à direita do item pai */
+}

@@ -22,7 +22,9 @@ $userRole = $_SESSION['tipo'] ?? null;
         <button id="toggle-btn">
             <i class="lni lni-grid-alt"></i>
         </button>
-        <a class="logo" href="#">ETC</a>
+        <a class="logo" href="user.php">
+            <img src="/portal-etc/partials/img/portal-etc-logo.png" alt="Logo portal etc" width="70px">
+        </a>
     </nav>
     
     <div class="wrapper">
