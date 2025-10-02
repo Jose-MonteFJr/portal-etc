@@ -6,7 +6,7 @@
 }
 
 .wrapper {
-    background: #ececec;
+    background: #d6d5d5; /* Alterado */
     padding: 0 20px 0 20px;
 }
 
@@ -18,21 +18,22 @@
 }
 
 .side-image {
-    background-image: url("../img/login3.png");
+    background-image: url("../img/etc_login.png");
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
     border-radius: 10px 0 0 10px;
     position: relative;
+    border-right: thick solid #d4b366;
 }
 
 .row {
     width: 900px;
     height: 550px;
     border-radius: 10px;
-    background: #fff;
+    background: #FFFFFF; /* Alterado */
     padding: 0px;
-    box-shadow: 5px 5px 10px 1px rgba(0, 0, 0, 0.2);
+    box-shadow: 5px 5px 10px 1px rgba(0, 0, 0, 0.1); /* Sombra mais suave */
 }
 
 .text {
@@ -75,6 +76,7 @@ img {
     font-weight: 700;
     text-align: center;
     margin-bottom: 45px;
+    color: #1C2938; /* Alterado */
 }
 
 .input-field {
@@ -89,10 +91,10 @@ img {
     width: 100%;
     background: transparent;
     border: none;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+    border-bottom: 1px solid #CED4DA; /* Alterado */
     outline: none;
     margin-bottom: 20px;
-    color: #40414a;
+    color: #1C2938; /* Alterado */
 }
 
 .input-box .input-field label {
@@ -101,36 +103,35 @@ img {
     left: 10px;
     pointer-events: none;
     transition: .5s;
+    color: #6c757d; /* Cor do placeholder */
 }
 
-.input-field input:focus~label {
+.input-field input:focus~label,
+.input-field input:not(:placeholder-shown)~label {
     top: -10px;
     font-size: 13px;
-}
-
-.input-field input:valid~label {
-    top: -10px;
-    font-size: 13px;
-    color: #5d5076;
+    color: #d4b366; /* Alterado para dourado */
 }
 
 .input-field .input:focus,
-.input-field .input:valid {
-    border-bottom: 1px solid #743ae1;
+.input-field .input:not(:placeholder-shown) {
+    border-bottom: 1px solid #d4b366; /* Alterado para dourado */
 }
 
 .submit {
     border: none;
     outline: none;
     height: 45px;
-    background: #ececec;
+    background: #0A2540; /* Alterado para o azul principal */
+    color: #FFFFFF;      /* Alterado */
     border-radius: 5px;
     transition: .4s;
+    font-weight: 600; /* Dica: Deixar o texto do botão mais forte */
 }
 
 .submit:hover {
-    background: rgba(37, 95, 156, 0.937);
-    color: #fff;
+    background: #0a3d77; /* Alterado para um tom mais escuro no hover */
+    color: #d4b366;
 }
 
 .signin {
@@ -142,15 +143,16 @@ img {
 span a {
     text-decoration: none;
     font-weight: 700;
-    color: #000;
+    color: #0A2540; /* Alterado para o azul principal */
     transition: .5s;
 }
 
 span a:hover {
     text-decoration: underline;
-    color: #000;
+    color: #d4b366; /* Alterado para dourado no hover */
 }
 
+/* A parte de responsividade (@media) não precisa de alterações de cor */
 @media only screen and (max-width: 768px) {
     .side-image {
         border-radius: 10px 10px 0 0;

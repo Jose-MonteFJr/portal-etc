@@ -47,11 +47,11 @@ if (isset($_SESSION['id_usuario'])) {
                         <?php endif; ?>
                         <form method="post" action="login.php" autocomplete="off">
                             <div class="input-field">
-                                <input type="email" name="email" class="input" id="email" required>
+                                <input type="email" name="email" class="input" id="email" placeholder=" " required>
                                 <label for="email">Email</label>
                             </div>
                             <div class="input-field">
-                                <input type="password" name="password" class="input" id="password" required>
+                                <input type="password" name="password" class="input" id="password" placeholder=" " required>
                                 <label for="password">Senha</label>
                             </div>
                             <div class="input-field">
