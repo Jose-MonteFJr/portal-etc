@@ -56,7 +56,7 @@ $userRole = $_SESSION['tipo'] ?? null;
                     </a>
                     <ul id="solicitacoes" class="sidebar-dropdown collapse">
                         <li class="sidebar-item">
-                            <a href="/portal-etc/solicitacoes_view_aluno.php" class="sidebar-link">Declarações</a>
+                            <a href="/portal-etc/solicitacao/solicitacoes_view_aluno.php" class="sidebar-link">Declarações</a>
                         </li>
                         <li class="sidebar-item">
                             <a href="#" class="sidebar-link">Certificados</a>

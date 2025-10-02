@@ -1,13 +1,13 @@
 <?php
 //Inclui o arquivo de proteção, só loga se for um usuário cadastrado
-require __DIR__ . '/protect.php';
-require __DIR__ . '/config/db.php';
-require __DIR__ . '/helpers.php';
+require  '../protect.php';
+require  '../config/db.php';
+require  '../helpers.php';
 
 if ($_SESSION['tipo'] !== 'aluno') {
     flash_set('danger', 'Acesso negado. Apenas alunos podem criar solicitações.');
     // Redireciona para a página inicial do perfil do usuário logado (ex: admin.php ou user.php)
-    header('Location: ' . ($_SESSION['tipo'] === 'secretaria' ? 'admin.php' : 'portal_home.php'));
+    header('Location: ' . ($_SESSION['tipo'] === 'secretaria' ? './admin.php' : './portal_home.php'));
     exit;
 }
 
@@ -59,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-include __DIR__ . '/partials/portal_header.php';
+include '../partials/portal_header.php';
 ?>
 
 <!-- Conteúdo principal -->
@@ -111,4 +111,4 @@ include __DIR__ . '/partials/portal_header.php';
 </div>
 
 
-<?php include __DIR__ . '/partials/footer.php'; ?>
+<?php include '../partials/footer.php'; ?>

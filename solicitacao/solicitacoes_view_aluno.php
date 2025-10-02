@@ -1,12 +1,12 @@
 <?php
 //Inclui o arquivo de proteção, só loga se for um usuário cadastrado
-require __DIR__ . '/protect.php';
-require __DIR__ . '/config/db.php';
-require __DIR__ . '/helpers.php';
+require  '../protect.php';
+require  '../config/db.php';
+require  '../helpers.php';
 
 if ($_SESSION['tipo'] !== 'aluno') {
     flash_set('danger', 'Acesso negado.');
-    header('Location: ../admin.php'); // Se for admin, manda para o dashboard de admin
+    header('Location: ./admin.php'); // Se for admin, manda para o dashboard de admin
     exit;
 }
 
@@ -24,7 +24,7 @@ if ($resultado_aluno) {
     // Se não encontrar um perfil de aluno, é uma situação de erro.
     // Impede o resto do script de rodar para evitar problemas.
     flash_set('danger', 'Perfil de aluno não encontrado para este usuário.');
-    header('Location: portal_home.php'); // Redireciona para uma página de erro ou home do usuário
+    header('Location: ./portal_home.php'); // Redireciona para uma página de erro ou home do usuário
     exit;
 }
 
@@ -51,7 +51,7 @@ function get_status_badge_class($status)
     }
 }
 
-include __DIR__ . '/partials/portal_header.php';
+include '../partials/portal_header.php';
 ?>
 
 <!-- Conteúdo principal -->
@@ -114,4 +114,4 @@ include __DIR__ . '/partials/portal_header.php';
     </div>
 </div>
 
-<?php include __DIR__ . '/partials/footer.php'; ?>
+<?php include '../partials/footer.php'; ?>
