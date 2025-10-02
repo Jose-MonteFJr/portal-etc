@@ -7,7 +7,7 @@ require  '../helpers.php';
 if ($_SESSION['tipo'] !== 'aluno') {
     flash_set('danger', 'Acesso negado. Apenas alunos podem criar solicitações.');
     // Redireciona para a página inicial do perfil do usuário logado (ex: admin.php ou user.php)
-    header('Location: ' . ($_SESSION['tipo'] === 'secretaria' ? './admin.php' : './portal_home.php'));
+    header('Location: ' . ($_SESSION['tipo'] === 'secretaria' ? '../admin.php' : '../portal_home.php'));
     exit;
 }
 

@@ -6,7 +6,7 @@ require  '../helpers.php';
 
 if ($_SESSION['tipo'] !== 'aluno') {
     flash_set('danger', 'Acesso negado.');
-    header('Location: ./admin.php'); // Se for admin, manda para o dashboard de admin
+    header('Location: ../admin.php'); // Se for admin, manda para o dashboard de admin
     exit;
 }
 
@@ -24,7 +24,7 @@ if ($resultado_aluno) {
     // Se não encontrar um perfil de aluno, é uma situação de erro.
     // Impede o resto do script de rodar para evitar problemas.
     flash_set('danger', 'Perfil de aluno não encontrado para este usuário.');
-    header('Location: ./portal_home.php'); // Redireciona para uma página de erro ou home do usuário
+    header('Location: ../portal_home.php'); // Redireciona para uma página de erro ou home do usuário
     exit;
 }
 

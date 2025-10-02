@@ -83,6 +83,7 @@ include __DIR__ . '/partials/header.php';
 <div class="card card-body shadow-sm mb-3">
   <div class="d-flex justify-content-between align-items-center flex-wrap gap-4">
     <a class="btn btn-outline-secondary" href="curso/cursos_view.php">Ver Cursos</a>
+    <a class="btn btn-outline-secondary" href="solicitacao/solicitacoes_view_admin.php">Ver Solicitações</a>
     <a class="btn btn-outline-success" href="users_create.php">+ Novo Usuário</a>
   </div>
 </div>
