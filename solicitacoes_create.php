@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $observacao = trim($_POST['observacao'] ?? '');
 
     // 2. Validação dos dados
-    $tipos_validos = ['renovação de matrícula', 'emissão de diploma', 'emissão de certificado'];
+    $tipos_validos = ['renovação de matrícula', 'emissão de diploma', 'emissão de certificado', 'trancamento de matrícula'];
     if (empty($tipo)) {
         $errors[] = 'O tipo da solicitação é obrigatório.';
     } elseif (!in_array($tipo, $tipos_validos)) {
@@ -64,59 +64,51 @@ include __DIR__ . '/partials/portal_header.php';
 
         <!-- Conteúdo principal -->
         <div class="main">
-            <div class="content">
-                <h1 class="text-3xl font-bold">Nova solicitação</h1>
-            </div>
+    <div class="content">
 
-            <div class="container mt-4">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-
-            <div class="d-flex align-items-center justify-content-between mb-3">
-                <h2 class="h4 mb-0">Nova Solicitação</h2>
-                <a class="btn btn-outline-secondary btn-sm" href="solicitacoes_view_aluno.php">Minhas Solicitações</a>
+        <div class="page-container">
+            <div class="page-header">
+                <h1>Nova Solicitação</h1>
+                <a class="header-link" href="solicitacoes_view_aluno.php">Minhas Solicitações</a>
             </div>
 
             <?php if (!empty($errors)): ?>
-                <div class="alert alert-danger">
-                    <ul class="mb-0">
+                <div class="error-box">
+                    <ul>
                         <?php foreach ($errors as $e) echo '<li>' . htmlspecialchars($e) . '</li>'; ?>
                     </ul>
                 </div>
             <?php endif; ?>
-
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <form method="post" action="">
-                        <?php csrf_input(); ?>
-                        
-                        <div class="mb-3">
-                            <label for="tipo" class="form-label">Tipo de Solicitação</label>
-                            <select name="tipo" id="tipo" class="form-select" required>
-                                <option value="" disabled <?php echo empty($tipo) ? 'selected' : ''; ?>>Selecione o que você deseja solicitar...</option>
-                                <option value="renovação de matrícula" <?php echo ($tipo === 'renovação de matrícula' ? 'selected' : ''); ?>>Renovação de Matrícula</option>
-                                <option value="emissão de diploma" <?php echo ($tipo === 'emissão de diploma' ? 'selected' : ''); ?>>Emissão de Diploma</option>
-                                <option value="emissão de certificado" <?php echo ($tipo === 'emissão de certificado' ? 'selected' : ''); ?>>Emissão de Certificado</option>
-                            </select>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label for="observacao" class="form-label">Observações (Opcional)</label>
-                            <textarea name="observacao" id="observacao" class="form-control" rows="5" placeholder="Se necessário, adicione aqui qualquer informação relevante para a sua solicitação."><?php echo htmlspecialchars($observacao); ?></textarea>
-                        </div>
-                        
-                        <div class="text-end">
-                            <button type="submit" class="btn btn-primary">Enviar Solicitação</button>
-                        </div>
-                    </form>
-                </div>
+            
+            <div class="form-container">
+                <form method="post" action="">
+                    <?php csrf_input(); ?>
+                    
+                    <div class="form-group">
+                        <label for="tipo">Tipo de Solicitação</label>
+                        <select name="tipo" id="tipo" class="form-input" required>
+                            <option value="" disabled <?php echo empty($tipo) ? 'selected' : ''; ?>>Selecione o que você deseja solicitar...</option>
+                            <option value="renovação de matrícula" <?php echo ($tipo === 'renovação de matrícula' ? 'selected' : ''); ?>>Renovação de Matrícula</option>
+                            <option value="emissão de diploma" <?php echo ($tipo === 'emissão de diploma' ? 'selected' : ''); ?>>Emissão de Diploma</option>
+                            <option value="emissão de certificado" <?php echo ($tipo === 'emissão de certificado' ? 'selected' : ''); ?>>Emissão de Certificado</option>
+                            <option value="trancamento de matrícula" <?php echo ($tipo === 'trancamento de matrícula' ? 'selected' : ''); ?>>Trancamento de matrícula</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="observacao">Observações (Opcional)</label>
+                        <textarea name="observacao" id="observacao" class="form-input" rows="5" placeholder="Se necessário, adicione aqui qualquer informação relevante..."><?php echo htmlspecialchars($observacao); ?></textarea>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="submit-btn">Enviar Solicitação</button>
+                    </div>
+                </form>
             </div>
-
         </div>
+
     </div>
 </div>
 
-        </div>
-    </div>
 
 <?php include __DIR__ . '/partials/footer.php'; ?>

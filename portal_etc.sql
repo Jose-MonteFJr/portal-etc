@@ -178,7 +178,7 @@ DELIMITER ;
 CREATE TABLE solicitacao (
     id_solicitacao INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     id_aluno INT UNSIGNED NOT NULL,
-    tipo ENUM('renovação de matrícula', 'emissão de diploma', 'emissão de certificado') NOT NULL,
+    tipo ENUM('renovação de matrícula', 'emissão de diploma', 'emissão de certificado', 'trancamento de matrícula') NOT NULL,
     status ENUM('pendente', 'em análise', 'aprovada', 'rejeitada', 'concluída') NOT NULL DEFAULT 'pendente',
     observacao TEXT NULL, -- Campo para o aluno adicionar informações ou para a secretaria justificar uma decisão.
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -190,10 +190,9 @@ CREATE TABLE solicitacao (
 -- INSERTS PADRÃO
 
 INSERT INTO usuario (nome_completo, cpf, email, password_hash, telefone, data_nascimento, tipo) 
-VALUES
+VALUE
 -- SECRETARIA/ADMIN 
 ('Jose Admin','123.123.123-23','jose@admin.com','$2y$10$4v3s86.rU8.Bq7UfqQ2mYuFmbv2voXZxdoeTDb4XdsX0w9AGUlrHG','(61) 91234-1234','2000-02-24','secretaria'); -- Senha: admin123
-
 
 -- INSERTS TESTE
 

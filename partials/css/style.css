@@ -254,7 +254,42 @@ a.sidebar-link:hover {
     #sidebar.expand {
         transform: translateX(0);
     }
+
+    /* --- NOVAS REGRAS (ADICIONE) --- */
+
+    /* 1. Ajusta o conteúdo principal para ocupar toda a tela */
+    .main {
+        margin-left: 0; /* Remove a margem que dava espaço para a sidebar */
+        padding: 1rem; /* Reduz o espaçamento interno em telas menores */
+    }
+
+    /* 2. Ajusta o cabeçalho da página para empilhar verticalmente */
+    .page-header {
+        flex-direction: column; /* Coloca o título em cima do link */
+        align-items: flex-start; /* Alinha ambos à esquerda */
+        gap: 0.75rem; /* Adiciona um pequeno espaço entre o título e o link */
+    }
+
+    /* 3. Reduz o tamanho da fonte do título principal */
+    .page-header h1 {
+        font-size: 1.6rem;
+    }
+
+    /* 4. Reduz o padding do container do formulário */
+    .form-container {
+        padding: 1.5rem 1rem; /* Menos espaçamento lateral */
+    }
+
+    /* 5. Centraliza o botão de ação e o faz ocupar a largura toda */
+    .form-actions {
+        text-align: center; /* Centraliza o conteúdo (o botão) */
+    }
+    .submit-btn {
+        width: 100%; /* Botão ocupa toda a largura disponível */
+        padding: 0.85rem;
+    }
 }
+
 
 /* =================================================================== */
 /* == CORREÇÃO ROBUSTA PARA DROPDOWN COM FLEXBOX E SUB-MENUS == */
@@ -277,4 +312,125 @@ a.sidebar-link:hover {
 #sidebar:not(.expand) .sidebar-dropdown .sidebar-item .sidebar-dropdown {
     top: 0;
     left: 50%; /* Posiciona 100% à direita do item pai */
+}
+
+/* =================================================================== */
+/* == ESTILOS PERSONALIZADOS PARA O FORMULÁRIO DE SOLICITAÇÃO      == */
+/* =================================================================== */
+
+/* Container geral da página para centralizar o conteúdo */
+.page-container {
+    max-width: 800px;
+    margin: 0 auto; /* Centraliza o container */
+}
+
+/* Cabeçalho da página (título e link) */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    margin-top: 1.5rem;
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 1rem;
+}
+
+.page-header h1 {
+    font-size: 1.8rem;
+    color: var(--cor-primaria);
+    margin: 0;
+}
+
+.header-link {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--cor-secundaria);
+    border-radius: 5px;
+    color: var(--cor-secundaria);
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+}
+
+.header-link:hover {
+    background-color: var(--cor-secundaria);
+    color: #fff;
+}
+
+/* Caixa para exibir mensagens de erro */
+.error-box {
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+    padding: 1rem;
+    border-radius: 5px;
+    margin-bottom: 1.5rem;
+}
+
+.error-box ul {
+    margin: 0;
+    padding-left: 1.2rem;
+}
+
+/* Estilo do container principal do formulário (substitui o .card) */
+.form-container {
+    background-color: #ffffff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Espaçamento entre os campos do formulário (substitui o .mb-3) */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+/* Estilo das etiquetas (labels) */
+.form-group label {
+    display: block;
+    font-weight: 600;
+    color: var(--cor-texto);
+    margin-bottom: 0.5rem;
+}
+
+/* Estilo para os campos de input, select e textarea (substitui .form-control/.form-select) */
+.form-input {
+    width: 90%;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    font-family: 'Poppins', sans-serif;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    resize: none;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--cor-primaria);
+    box-shadow: 0 0 0 3px rgba(14, 34, 62, 0.2); /* Sombra com a cor primária e transparência */
+}
+
+/* Alinhamento dos botões (substitui .text-end) */
+.form-actions {
+    text-align: right;
+    margin-top: 1.5rem;
+}
+
+/* Estilo do botão de envio (substitui .btn .btn-primary) */
+.submit-btn {
+    background-color: var(--cor-primaria);
+    color: #ffffff;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+    font-weight: 500;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.submit-btn:hover {
+    background-color: #0c1c2f; /* Um tom mais escuro da cor primária */
 }

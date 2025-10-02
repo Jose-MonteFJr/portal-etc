@@ -5,13 +5,13 @@ $userName = $_SESSION['nome_completo'] ?? null;
 $userRole = $_SESSION['tipo'] ?? null;
 ?>
 <!DOCTYPE html>
-<html lang="pt-br" data-bs-theme="dark">
+<html lang="pt-br" data-bs-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://cdn.lineicons.com/4.0/lineicons.css" rel="stylesheet">
   <link href="/portal-etc/partials/css/style.css" rel="stylesheet">
-  <!-- <link href="/portal-etc/partials/css/bootstrap.min.css" rel="stylesheet"> -->
+  <link href="/portal-etc/partials/css/bootstrap.min.css" rel="stylesheet">
   <link rel="icon" href="/portal-etc/partials/img/portal-etc-logo.png" type="image/png">
   <title>Portal ETC</title>
 </head>
