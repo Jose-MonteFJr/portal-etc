@@ -5,7 +5,7 @@ $userName = $_SESSION['nome_completo'] ?? null;
 $userRole = $_SESSION['tipo'] ?? null;
 ?>
 <!DOCTYPE html>
-<html lang="pt-br" data-bs-theme="dark">
+<html lang="pt-br" data-bs-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">

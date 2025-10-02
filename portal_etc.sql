@@ -245,6 +245,46 @@ INSERT INTO turma (id_curso, nome, ano, semestre, turno, status) VALUES
 INSERT INTO turma (id_curso, nome, ano, semestre, turno, status) VALUES
 (2, 'ENF-2025.1-VES', 2025, '1', 'vespertino', 'aberta');
 
+-- ===================================================================
+-- == INSERTS DE TESTE ADICIONAIS
+-- ===================================================================
+
+-- 5. USUÁRIOS
+-- Criando usuários de diferentes tipos (professores e alunos).
+-- A senha para todos os usuários de teste é 'senha123'
+INSERT INTO usuario (nome_completo, cpf, email, password_hash, telefone, data_nascimento, tipo) 
+VALUES
+-- Professores (IDs: 2, 3)
+('Carlos Nogueira','111.222.333-44','carlos.prof@email.com','$2y$10$GJ9AMaahNTSm.q1Dd.5fluMADwsH32C8J5BJ9i9DiWXIuuMtZTeAu','(61) 98877-6655','1985-05-20','professor'),
+('Ana Souza','444.555.666-77','ana.prof@email.com','$2y$10$GJ9AMaahNTSm.q1Dd.5fluMADwsH32C8J5BJ9i9DiWXIuuMtZTeAu','(61) 91122-3344','1990-11-10','professor'),
+-- Alunos (IDs: 4, 5, 6)
+('Mariana Costa','777.888.999-00','mariana.aluna@email.com','$2y$10$GJ9AMaahNTSm.q1Dd.5fluMADwsH32C8J5BJ9i9DiWXIuuMtZTeAu','(61) 91234-5678','2005-02-15','aluno'),
+('Pedro Almeida','123.456.789-10','pedro.aluno@email.com','$2y$10$GJ9AMaahNTSm.q1Dd.5fluMADwsH32C8J5BJ9i9DiWXIuuMtZTeAu','(61) 98765-4321','2006-08-30','aluno'),
+('Juliana Lima','987.654.321-00','juliana.aluna@email.com','$2y$10$GJ9AMaahNTSm.q1Dd.5fluMADwsH32C8J5BJ9i9DiWXIuuMtZTeAu','(61) 99999-8888','2004-12-01','aluno');
+
+-- 6. ENDEREÇOS
+-- Adicionando endereços para os usuários criados acima.
+-- O id_usuario deve corresponder ao ID do usuário na tabela `usuario`.
+INSERT INTO endereco (id_usuario, logradouro, numero, bairro, cidade, estado, cep)
+VALUES
+(1, 'Rua da Administração, Quadra 10', '1A', 'Centro', 'Brasília', 'DF', '70000-100'), -- Endereço para Jose Admin
+(2, 'Avenida dos Professores, Lote 5', '42', 'Asa Norte', 'Brasília', 'DF', '70770-100'), -- Endereço para Carlos Nogueira
+(3, 'Rua das Flores, Apto 201', '300', 'Águas Claras', 'Brasília', 'DF', '71900-100'), -- Endereço para Ana Souza
+(4, 'Quadra 301, Conjunto B', '22', 'Samambaia Sul', 'Samambaia', 'DF', '72300-100'), -- Endereço para Mariana Costa
+(5, 'Rua 10, Chácara 123', 'S/N', 'Vicente Pires', 'Brasília', 'DF', '72005-100'), -- Endereço para Pedro Almeida
+(6, 'Avenida Principal, Bloco C, Apto 904', '1020', 'Taguatinga Centro', 'Taguatinga', 'DF', '72010-010'); -- Endereço para Juliana Lima
+
+
+-- 7. ALUNOS
+-- Criando o perfil de aluno para os usuários correspondentes.
+-- O campo 'matricula' NÃO é inserido, pois o TRIGGER o gera automaticamente.
+-- Assumindo que as turmas criadas são: id_turma=1 (INF-NOT), id_turma=2 (INF-MAT), id_turma=3 (ENF-VES)
+INSERT INTO aluno (id_usuario, id_turma, data_ingresso, status_academico)
+VALUES
+(4, 1, '2025-02-10', 'cursando'), -- Mariana Costa na Turma de Informática Noturno
+(5, 1, '2025-02-10', 'cursando'), -- Pedro Almeida na Turma de Informática Noturno
+(6, 3, '2025-02-10', 'cursando'); -- Juliana Lima na Turma de Enfermagem Vespertino
+
 
 -- CREATE TABLE `users` (
 --   `id` int(11) NOT NULL,
