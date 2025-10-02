@@ -7,7 +7,7 @@ require __DIR__ . '/helpers.php';
 if ($_SESSION['tipo'] !== 'aluno') {
     flash_set('danger', 'Acesso negado. Apenas alunos podem criar solicitações.');
     // Redireciona para a página inicial do perfil do usuário logado (ex: admin.php ou user.php)
-    header('Location: ' . ($_SESSION['tipo'] === 'secretaria' ? '../admin.php' : '../user.php'));
+    header('Location: ' . ($_SESSION['tipo'] === 'secretaria' ? 'admin.php' : 'portal_home.php'));
     exit;
 }
 
@@ -50,9 +50,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->execute([$id_aluno, $tipo, $observacao]);
 
             flash_set('success', 'Sua solicitação foi enviada com sucesso!');
-            header('Location: solicitacoes_view_aluno.php'); // Redireciona para a lista de solicitações
+            header('Location: solicitacoes_view_aluno.php');
             exit;
-
+            
         } catch (Exception $e) {
             $errors[] = 'Erro ao salvar a solicitação: ' . $e->getMessage();
         }
@@ -62,8 +62,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 include __DIR__ . '/partials/portal_header.php';
 ?>
 
-        <!-- Conteúdo principal -->
-        <div class="main">
+<!-- Conteúdo principal -->
+<div class="main">
     <div class="content">
 
         <div class="page-container">
@@ -79,11 +79,11 @@ include __DIR__ . '/partials/portal_header.php';
                     </ul>
                 </div>
             <?php endif; ?>
-            
+
             <div class="form-container">
-                <form method="post" action="">
+                <form method="post">
                     <?php csrf_input(); ?>
-                    
+
                     <div class="form-group">
                         <label for="tipo">Tipo de Solicitação</label>
                         <select name="tipo" id="tipo" class="form-input" required>
@@ -94,12 +94,12 @@ include __DIR__ . '/partials/portal_header.php';
                             <option value="trancamento de matrícula" <?php echo ($tipo === 'trancamento de matrícula' ? 'selected' : ''); ?>>Trancamento de matrícula</option>
                         </select>
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="observacao">Observações (Opcional)</label>
                         <textarea name="observacao" id="observacao" class="form-input" rows="5" placeholder="Se necessário, adicione aqui qualquer informação relevante..."><?php echo htmlspecialchars($observacao); ?></textarea>
                     </div>
-                    
+
                     <div class="form-actions">
                         <button type="submit" class="submit-btn">Enviar Solicitação</button>
                     </div>

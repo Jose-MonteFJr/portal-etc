@@ -16,6 +16,7 @@ $userRole = $_SESSION['tipo'] ?? null;
   <title>Portal ETC</title>
 </head>
 <body>
+    <?php flash_show(); // Adicione a chamada da função bem aqui ?>
   <!-- =================== NAVBAR FIXA =================== -->
    <!-- Navbar fixa no topo -->
     <nav class="top-navbar">
