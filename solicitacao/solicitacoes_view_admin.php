@@ -17,8 +17,9 @@ $params  = [];
 
 if ($q !== '') {
     // Busca no nome completo do usuário (aluno)
-    $clauses[] = "(u.nome_completo LIKE ?)";
+    $clauses[] = "(u.nome_completo LIKE ? OR a.matricula LIKE ?)";
     $like = "%$q%";
+    $params[] = $like;
     $params[] = $like;
 }
 
@@ -52,6 +53,7 @@ $sql = "SELECT
             s.id_solicitacao,
             s.tipo,
             s.status,
+            a.matricula,
             DATE_FORMAT(s.created_at, '%d/%m/%Y') AS created_at,
             DATE_FORMAT(s.updated_at, '%d/%m/%Y') AS updated_at,
             u.nome_completo AS nome_aluno
@@ -99,10 +101,10 @@ include '../partials/header.php';
     <?php flash_show(); ?>
 
     <form method="get" class="card card-body shadow-sm mb-3">
-        <div class="row g-3">
+        <div class="row g-3 align-items-end">
             <div class="col-md-5">
                 <label for="q" class="form-label">Buscar por Aluno</label>
-                <input type="text" name="q" id="q" class="form-control" value="<?php echo htmlspecialchars($q); ?>" placeholder="Nome do aluno...">
+                <input type="text" name="q" id="q" class="form-control" value="<?php echo htmlspecialchars($q); ?>" placeholder="Nome do aluno ou matrícula">
             </div>
             <div class="col-md-3">
                 <label for="status" class="form-label">Status</label>
@@ -125,14 +127,14 @@ include '../partials/header.php';
                     <option value="trancamento de matrícula" <?php echo ($tipo === 'trancamento de matrícula' ? 'selected' : ''); ?>>Trancamento</option>
                 </select>
             </div>
-            <div class="col-md-2 d-flex align-items-end">
-                <div class="d-flex w-100 gap-2">
-                    <button type="submit" class="btn btn-primary w-100">Filtrar</button>
-                    <a href="solicitacoes_view_admin.php" class="btn btn-outline-secondary">Limpar</a>
-                </div>
+            <div class="col-md-2 text-end">
+                <a href="solicitacoes_view_admin.php" class="btn btn-outline-secondary">Limpar</a>
+                <button type="submit" class="btn btn-primary">Filtrar</button>
             </div>
         </div>
     </form>
+
+<!-- TABELA VIEW -->
 
     <div class="card shadow-sm">
         <div class="card-header">Solicitações encontradas (<?php echo $total; ?>)</div>
@@ -142,6 +144,7 @@ include '../partials/header.php';
                     <thead>
                         <tr>
                             <th>ID</th>
+                            <th>Matrícula</th>
                             <th>Aluno</th>
                             <th>Tipo</th>
                             <th>Data solicitação</th>
@@ -159,6 +162,7 @@ include '../partials/header.php';
                             <?php foreach ($solicitacoes as $s): ?>
                                 <tr>
                                     <td>#<?php echo (int)$s['id_solicitacao']; ?></td>
+                                    <td><?php echo htmlspecialchars($s['matricula']); ?></td>
                                     <td><?php echo htmlspecialchars($s['nome_aluno']); ?></td>
                                     <td><?php echo htmlspecialchars(ucwords($s['tipo'])); ?></td>
                                     <td><?php echo htmlspecialchars($s['created_at']); ?></td>

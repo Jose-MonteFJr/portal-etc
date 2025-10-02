@@ -6,35 +6,42 @@ $userRole = $_SESSION['tipo'] ?? null;
 ?>
 <!DOCTYPE html>
 <html lang="pt-br" data-bs-theme="light">
+
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="https://cdn.lineicons.com/4.0/lineicons.css" rel="stylesheet">
-  <link href="/portal-etc/partials/css/style.css" rel="stylesheet">
-  <link href="/portal-etc/partials/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="icon" href="/portal-etc/partials/img/portal-etc-logo.png" type="image/png">
-  <title>Portal ETC</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.lineicons.com/4.0/lineicons.css" rel="stylesheet">
+    <link href="/portal-etc/partials/css/style.css" rel="stylesheet">
+    <link href="/portal-etc/partials/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="icon" href="/portal-etc/partials/img/portal-etc-logo.png" type="image/png">
+    <title>Portal ETC</title>
 </head>
+
 <body>
-    <?php flash_show(); // Adicione a chamada da função bem aqui ?>
-  <!-- =================== NAVBAR FIXA =================== -->
-   <!-- Navbar fixa no topo -->
+    <?php flash_show(); // Adicione a chamada da função bem aqui 
+    ?>
+    <!-- =================== NAVBAR FIXA =================== -->
+    <!-- Navbar fixa no topo -->
     <nav class="top-navbar">
         <button id="toggle-btn">
             <i class="lni lni-grid-alt"></i>
         </button>
-        <a class="logo" href="portal_home.php">
+        <a class="logo" href="/portal-etc/portal_home.php">
             <img src="/portal-etc/partials/img/portal-etc-logo.png" alt="Logo portal etc" width="70px">
         </a>
+
+        <div class="ms-3 d-flex">
+            <button id="themeToggle" class="btn btn-sm btn-outline-primary" type="button" title="Alternar tema">Tema</button>
+        </div>
     </nav>
-    
+
     <div class="wrapper">
         <!-- Sidebar -->
         <aside id="sidebar">
             <div class="sidebar-logo">
                 <a href="#">ETC</a>
             </div>
-            
+
             <ul id="sidebar-nav">
                 <li class="sidebar-item">
                     <a href="/portal-etc/portal_home.php" class="sidebar-link">
