@@ -87,12 +87,13 @@ include 'partials/portal_header.php';
 
                                 <div class="text-center mb-3">
                                     <img src="<?php echo htmlspecialchars($foto_path); ?>" alt="Foto de Perfil"
+                                        id="foto_perfil_preview"
                                         class="img-thumbnail rounded-circle" style="width: 150px; height: 150px; object-fit: cover;">
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="foto_perfil" class="form-label">Alterar foto de perfil</label>
-                                    <input class="form-control" type="file" id="foto_perfil" name="foto_perfil"
+                                    <label for="foto_perfil_input" class="form-label">Alterar foto de perfil</label>
+                                    <input class="form-control" type="file" id="foto_perfil_input" name="foto_perfil"
                                         accept="image/jpeg, image/png">
                                     <div class="form-text">Envie uma imagem JPG ou PNG de até 2MB.</div>
                                 </div>
@@ -101,6 +102,7 @@ include 'partials/portal_header.php';
                                     <button type="submit" class="btn btn-primary">Salvar Foto</button>
                                 </div>
                             </form>
+
                         </div>
                     </div>
                 </div>
@@ -108,5 +110,35 @@ include 'partials/portal_header.php';
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // 1. Seleciona os elementos do formulário
+    const inputFoto = document.getElementById('foto_perfil_input');
+    const imgPreview = document.getElementById('foto_perfil_preview');
+
+    // 2. Adiciona um "ouvinte" para o evento 'change' no campo de arquivo
+    inputFoto.addEventListener('change', function(event) {
+        
+        // Pega o primeiro arquivo que o usuário selecionou
+        const file = event.target.files[0];
+
+        // 3. Verifica se um arquivo foi realmente selecionado
+        if (file) {
+            // Cria um objeto FileReader para ler o arquivo
+            const reader = new FileReader();
+
+            // 4. Define o que acontece QUANDO o arquivo for lido
+            reader.onload = function(e) {
+                // Atualiza o atributo 'src' da imagem com o resultado da leitura
+                imgPreview.src = e.target.result;
+            }
+
+            // 5. Manda o FileReader LER o arquivo como uma URL de dados
+            reader.readAsDataURL(file);
+        }
+    });
+});
+</script>
 
 <?php include __DIR__ . '/partials/footer.php'; ?>
