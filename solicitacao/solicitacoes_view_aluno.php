@@ -80,6 +80,7 @@ include '../partials/portal_header.php';
                                             <th>Data da Solicitação</th>
                                             <th class="text-center">Status</th>
                                             <th>Observação da Secretaria</th>
+                                            <th class="text-center">Anexo</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -98,7 +99,19 @@ include '../partials/portal_header.php';
                                                             <?php echo htmlspecialchars(ucwords($s['status'])); ?>
                                                         </span>
                                                     </td>
-                                                    <td data-label="Observação"><?php echo htmlspecialchars($s['observacao'] ?? 'Nenhuma observação.'); ?></td>
+                                                    <td data-label="Observação">
+                                                        <?php echo htmlspecialchars($s['observacao'] ?? 'Nenhuma observação.'); ?>
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <?php if (!empty($s['caminho_arquivo'])): ?>
+                                                            <a href="../uploads/<?php echo htmlspecialchars($s['caminho_arquivo']); ?>"
+                                                                class="btn btn-sm btn-outline-success" download>
+                                                                Baixar PDF
+                                                            </a>
+                                                        <?php else: ?>
+                                                            <span class="text-muted small">Nenhum</span>
+                                                        <?php endif; ?>
+                                                    </td>
                                                 </tr>
                                             <?php endforeach; ?>
                                         <?php endif; ?>

@@ -14,6 +14,11 @@ TCC da escola técnica de ceilândia
 
 ### Usuários de teste
 - Admin: **jose@admin.com** / **admin123**
+- Aluno1 **mariana.aluna@email.com** / **senha123**
+- Aluno2 **pedro.aluno@email.com** / **senha123**
+- Prof1 **carlos.prof@email.com** / **senha123**
+- Prof2 **ana.prof@email.com** / **senha123**
+
 > As senhas já estão com `password_hash()` no SQL de seed.
 
 ## Estrutura

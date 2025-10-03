@@ -148,7 +148,7 @@ include '../partials/header.php';
                             <th>Aluno</th>
                             <th>Tipo</th>
                             <th>Data solicitação</th>
-                            <th class="text-center">Atualizado em</th>
+                            <th>Atualizado em</th>
                             <th class="text-center">Status</th>
                             <th class="text-end">Ações</th>
                         </tr>
