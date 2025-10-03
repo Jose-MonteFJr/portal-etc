@@ -38,6 +38,7 @@ CREATE TABLE usuario (
   data_nascimento DATE NOT NULL,
   tipo ENUM('aluno', 'professor', 'coordenador', 'secretaria') NOT NULL DEFAULT 'aluno',
   status ENUM('ativo', 'inativo') NOT NULL DEFAULT 'ativo',
+  foto_perfil VARCHAR(255) NULL DEFAULT NULL,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

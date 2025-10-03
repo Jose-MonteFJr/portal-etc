@@ -3,6 +3,10 @@
 if (session_status() === PHP_SESSION_NONE) session_start();
 $userName = $_SESSION['nome_completo'] ?? null;
 $userRole = $_SESSION['tipo'] ?? null;
+
+$foto_usuario_logado = !empty($_SESSION['foto_perfil'])
+    ? '/portal-etc/uploads/perfil/' . $_SESSION['foto_perfil']
+    : '/portal-etc/partials/img/avatar_padrao.png';
 ?>
 <!DOCTYPE html>
 <html lang="pt-br" data-bs-theme="light">
@@ -14,6 +18,7 @@ $userRole = $_SESSION['tipo'] ?? null;
     <link href="/portal-etc/partials/css/style.css" rel="stylesheet">
     <link href="/portal-etc/partials/css/bootstrap.min.css" rel="stylesheet">
     <link rel="icon" href="/portal-etc/partials/img/portal-etc-logo.png" type="image/png">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <title>Portal ETC</title>
 </head>
 
@@ -29,11 +34,38 @@ $userRole = $_SESSION['tipo'] ?? null;
         <a class="logo" href="/portal-etc/portal_home.php">
             <img src="/portal-etc/partials/img/portal-etc-logo.png" alt="Logo portal etc" width="70px">
         </a>
+        <div class="ms-auto d-flex align-items-center">
 
-        <div class="ms-3 d-flex">
-            <button id="themeToggle" class="btn btn-sm btn-outline-primary" type="button" title="Alternar tema">Tema</button>
+            <button id="themeToggle" class="btn btn-sm btn-outline-primary me-3" type="button" title="Alternar tema">
+                <i class="bi bi-brightness-high-fill"></i>
+            </button>
+
+            <div class="dropdown">
+                <a href="#" class="nav-link dropdown-toggle d-flex align-items-center" data-bs-toggle="dropdown" aria-expanded="false">
+                    <span class="me-2 d-none d-md-inline"><?php echo htmlspecialchars($_SESSION['nome_completo']); ?></span>
+                    <img src="<?php echo htmlspecialchars($foto_usuario_logado); ?>" alt="Foto do Usuário"
+                        class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li>
+                        <a class="dropdown-item" href="/portal-etc/profile_aluno.php">
+                            <i class="bi bi-person-fill me-2"></i> Meu Perfil
+                        </a>
+                    </li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="/portal-etc/logout.php">
+                            <i class="bi bi-box-arrow-right me-2"></i> Sair
+                        </a>
+                    </li>
+                </ul>
+            </div>
         </div>
     </nav>
+
+
 
     <div class="wrapper">
         <!-- Sidebar -->
@@ -90,18 +122,18 @@ $userRole = $_SESSION['tipo'] ?? null;
                         </li>
                     </ul>
                 </li>
-                <li class="sidebar-item">
+                <div class="sidebar-footer">
                     <a href="#" class="sidebar-link">
                         <i class="lni lni-popup"></i>
                         <span>Feed</span>
                     </a>
-                </li>
+                </div>
                 <!-- Rodapé da sidebar -->
-                <div class="sidebar-footer">
+<!--                 <div class="sidebar-footer">
                     <a href="/portal-etc/logout.php" class="sidebar-link">
                         <i class="lni lni-exit"></i>
                         <span>Sair</span>
                     </a>
-                </div>
+                </div> -->
             </ul>
         </aside>
