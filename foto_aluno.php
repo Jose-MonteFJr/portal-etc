@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         flash_set('danger', 'Nenhum arquivo foi enviado ou ocorreu um erro no upload.');
     }
 
-    header('Location: profile_aluno.php');
+    header('Location: foto_aluno.php');
     exit;
 }
 
@@ -68,7 +68,7 @@ $foto_path = !empty($usuario_atual['foto_perfil'])
     ? 'uploads/perfil/' . $usuario_atual['foto_perfil']
     : 'partials/img/avatar_padrao.png'; // Caminho para uma imagem padrão
 
-include 'partials/portal_header.php';
+include __DIR__ . '/partials/portal_header.php';
 ?>
 <div class="main">
     <div class="content">
@@ -76,13 +76,14 @@ include 'partials/portal_header.php';
             <div class="row justify-content-center">
                 <div class="col-md-6">
                     <div class="card shadow-sm">
-                        <div class="card-header">
-                            <h4>Meu Perfil</h4>
+                        <div class="card-header d-flex flex-column flex-sm-row justify-content-sm-between align-items-sm-center">
+                            <h4 class="mb-2 mb-sm-0">Minha Foto de Perfil</h4>
+                            <a class="btn btn-outline-secondary btn-sm" href="perfil_aluno.php">Voltar</a>
                         </div>
                         <div class="card-body">
                             <?php flash_show(); ?>
 
-                            <form method="post" action="profile_aluno.php" enctype="multipart/form-data">
+                            <form method="post" action="foto_aluno.php" enctype="multipart/form-data">
                                 <?php csrf_input(); ?>
 
                                 <div class="text-center mb-3">
@@ -103,6 +104,14 @@ include 'partials/portal_header.php';
                                 </div>
                             </form>
 
+                            <hr>
+                            <form method="post" action="remover_foto.php" onsubmit="return confirm('Tem certeza que deseja remover sua foto de perfil?');">
+                                <?php csrf_input(); ?>
+                                <div class="d-flex flex-column flex-sm-row justify-content-sm-between align-items-sm-center gap-2">
+                                    <span class="text-muted small text-center text-sm-start">Deseja voltar a usar o avatar padrão?</span>
+                                    <button type="submit" class="btn btn-sm btn-outline-danger w-sm-auto">Remover Foto</button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -112,33 +121,33 @@ include 'partials/portal_header.php';
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // 1. Seleciona os elementos do formulário
-    const inputFoto = document.getElementById('foto_perfil_input');
-    const imgPreview = document.getElementById('foto_perfil_preview');
+    document.addEventListener('DOMContentLoaded', function() {
+        // 1. Seleciona os elementos do formulário
+        const inputFoto = document.getElementById('foto_perfil_input');
+        const imgPreview = document.getElementById('foto_perfil_preview');
 
-    // 2. Adiciona um "ouvinte" para o evento 'change' no campo de arquivo
-    inputFoto.addEventListener('change', function(event) {
-        
-        // Pega o primeiro arquivo que o usuário selecionou
-        const file = event.target.files[0];
+        // 2. Adiciona um "ouvinte" para o evento 'change' no campo de arquivo
+        inputFoto.addEventListener('change', function(event) {
 
-        // 3. Verifica se um arquivo foi realmente selecionado
-        if (file) {
-            // Cria um objeto FileReader para ler o arquivo
-            const reader = new FileReader();
+            // Pega o primeiro arquivo que o usuário selecionou
+            const file = event.target.files[0];
 
-            // 4. Define o que acontece QUANDO o arquivo for lido
-            reader.onload = function(e) {
-                // Atualiza o atributo 'src' da imagem com o resultado da leitura
-                imgPreview.src = e.target.result;
+            // 3. Verifica se um arquivo foi realmente selecionado
+            if (file) {
+                // Cria um objeto FileReader para ler o arquivo
+                const reader = new FileReader();
+
+                // 4. Define o que acontece QUANDO o arquivo for lido
+                reader.onload = function(e) {
+                    // Atualiza o atributo 'src' da imagem com o resultado da leitura
+                    imgPreview.src = e.target.result;
+                }
+
+                // 5. Manda o FileReader LER o arquivo como uma URL de dados
+                reader.readAsDataURL(file);
             }
-
-            // 5. Manda o FileReader LER o arquivo como uma URL de dados
-            reader.readAsDataURL(file);
-        }
+        });
     });
-});
 </script>
 
 <?php include __DIR__ . '/partials/footer.php'; ?>

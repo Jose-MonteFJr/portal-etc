@@ -11,7 +11,7 @@ if (!$email || !$password) {
   exit;
 }
 
-$stmt = $pdo->prepare('SELECT id_usuario, nome_completo, email, password_hash, tipo FROM usuario WHERE email = ? LIMIT 1');
+$stmt = $pdo->prepare('SELECT id_usuario, nome_completo, email, password_hash, tipo, foto_perfil FROM usuario WHERE email = ? LIMIT 1');
 $stmt->execute([$email]);
 $user = $stmt->fetch();
 
@@ -21,6 +21,7 @@ if ($user && password_verify($password, $user['password_hash'])) {
   $_SESSION['nome_completo'] = $user['nome_completo'];
   $_SESSION['email'] = $user['email'];
   $_SESSION['tipo'] = $user['tipo'];
+  $_SESSION['foto_perfil'] = $user['foto_perfil'];
 
   if ($user['tipo'] === 'secretaria') {
     header('Location: admin.php');
