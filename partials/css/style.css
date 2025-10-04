@@ -11,6 +11,25 @@
     /* Texto padrão */
     --bs-body-font-family: 'Poppins', sans-serif;
     /*  Fonte padrão */
+
+    --cor-navbar-fundo: #ffffff; /* Fundo da navbar no tema claro */
+    --cor-navbar-texto: #0e223e;
+    --cor-sidebar-fundo: #0e223e; /* Fundo da sidebar no tema claro (escura por padrão) */
+    --cor-sidebar-texto: #ffffff;
+}
+
+/* Tema escuro */
+[data-bs-theme="dark"] {
+    --cor-primaria: #1a3a69; /* Um azul um pouco mais claro para contraste */
+    --cor-secundaria: #8a939b; /* Um cinza mais claro */
+    --cor-fundo: #212529; /* Fundo escuro (pode ser o mesmo do texto claro) */
+    --cor-texto: #f8f9fa; /* Texto claro */
+
+    --cor-navbar-fundo: #2b3035; /* Fundo da navbar no tema escuro */
+    --cor-navbar-texto: #f8f9fa;
+    /* A sidebar já é escura, então a cor pode ser a mesma ou um pouco diferente */
+    --cor-sidebar-fundo: #0e223e; 
+    --cor-sidebar-texto: #ffffff;
 }
 
 a {
@@ -35,7 +54,8 @@ h1 {
 
 body {
     font-family: 'Poppins', sans-serif;
-    background-color: (--cor-texto);
+    background-color: var(--cor-fundo); /* ALTERADO: Agora usa a variável */
+    color: var(--cor-texto); /* NOVO: Define a cor do texto padrão */
 }
 
 /* Navbar fixa no topo */
@@ -45,7 +65,7 @@ body {
     left: 0;
     width: 100%;
     height: 76px;
-    background-color: #fff;
+    background-color: var(--cor-navbar-fundo);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     z-index: 1001;
     display: flex;
@@ -57,7 +77,7 @@ body {
 
 .top-navbar a.logo {
     font-weight: 700;
-    color: #0e223e;
+    color: var(--cor-navbar-texto) !important;
     font-size: 1.5rem;
 }
 
@@ -85,7 +105,7 @@ body {
     height: calc(100vh - 76px);
     /* 👈 Ocupa a altura total da tela MENOS a altura da navbar */
     z-index: 1000;
-    background: #0e223e;
+    background: var(--cor-sidebar-fundo);
     transition: all 0.25s ease-in-out;
     display: flex;
     flex-direction: column;
@@ -140,7 +160,7 @@ body {
 
 a.sidebar-link {
     padding: .625rem 1.625rem;
-    color: #fff;
+    color: var(--cor-sidebar-texto);
     display: flex;
     align-items: center;
     font-size: 0.9rem;
@@ -525,4 +545,49 @@ a.sidebar-link:hover {
     background-color: #1b2a44;
     border-left: 3px solid #3b7ddd;
     color: #fff;
+}
+
+[data-bs-theme="dark"] .top-navbar a.logo {
+    color: #fff; /* Garante que o logo (se for texto) fique branco */
+}
+
+/* Seus estilos de formulário personalizado também precisam de uma versão escura */
+[data-bs-theme="dark"] .form-container {
+    background-color: #2b3035;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+[data-bs-theme="dark"] .form-input {
+    background-color: #343a40;
+    border-color: #6c757d;
+    color: #f8f9fa;
+}
+
+[data-bs-theme="dark"] .form-input:focus {
+    background-color: #343a40;
+    border-color: var(--cor-primaria);
+    color: #f8f9fa;
+}
+
+/* A sidebar já é escura, então provavelmente não precisa de muitas mudanças,
+   mas podemos garantir que o hover fique consistente. */
+[data-bs-theme="dark"] a.sidebar-link:hover {
+    background-color: #1b2a44;
+}
+
+[data-bs-theme="dark"] .top-navbar .dropdown .nav-link.dropdown-toggle:hover {
+    background-color: #3e3f40;
+}
+
+[data-bs-theme="dark"] #toggle-btn i {
+    font-size: 1.5rem;
+    color: #87878a;
+}
+
+[data-bs-theme="dark"] .top-navbar {
+    border-bottom: 5px solid #263550;
+}
+
+[data-bs-theme="dark"] h1 {
+    color: var(--cor-sidebar-texto);
 }
