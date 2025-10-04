@@ -9,6 +9,12 @@
     /* Fundo claro */
     --cor-texto: #212529;
     /* Texto padrão */
+    --bs-body-font-family: 'Poppins', sans-serif;
+    /*  Fonte padrão */
+}
+
+a {
+    text-decoration: none !important;
 }
 
 ::after,
@@ -16,10 +22,6 @@
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-}
-
-a {
-    text-decoration: none;
 }
 
 li {

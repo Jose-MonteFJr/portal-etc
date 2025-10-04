@@ -15,10 +15,10 @@ $foto_usuario_logado = !empty($_SESSION['foto_perfil'])
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.lineicons.com/4.0/lineicons.css" rel="stylesheet">
-    <link href="/portal-etc/partials/css/style.css" rel="stylesheet">
     <link href="/portal-etc/partials/css/bootstrap.min.css" rel="stylesheet">
     <link rel="icon" href="/portal-etc/partials/img/portal-etc-logo.png" type="image/png">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="/portal-etc/partials/css/style.css" rel="stylesheet">
     <title>Portal ETC</title>
 </head>
 
