@@ -61,13 +61,13 @@ include '../partials/portal_header.php';
             <div class="row justify-content-center">
                 <div class="col-lg-10">
 
-                    <div class="d-flex align-items-center justify-content-between mb-3">
-                        <h2 class="h4 mb-0">Minhas Solicitações</h2>
-                        <a class="btn btn-primary" href="solicitacoes_create.php">+ Nova Solicitação</a>
+                    <!-- CABEÇALHO RESPONSIVO CORRIGIDO -->
+                    <div class="d-flex flex-column flex-sm-row justify-content-sm-between align-items-sm-center mb-3 gap-2">
+                        <h2 class="h4 mb-0 text-center text-sm-start">Minhas Solicitações</h2>
+                        <a class="btn btn-primary w-sm-auto" href="solicitacoes_create.php">+ Nova Solicitação</a>
                     </div>
 
-                    <?php flash_show(); // Exibe mensagens de sucesso/erro 
-                    ?>
+                    <?php flash_show(); ?>
 
                     <div class="card shadow-sm">
                         <div class="card-body p-0">
@@ -86,7 +86,7 @@ include '../partials/portal_header.php';
                                     <tbody>
                                         <?php if (empty($solicitacoes)): ?>
                                             <tr>
-                                                <td colspan="5" class="text-center text-muted py-4">Você ainda não fez nenhuma solicitação.</td>
+                                                <td colspan="6" class="text-center text-muted py-4">Você ainda não fez nenhuma solicitação.</td>
                                             </tr>
                                         <?php else: ?>
                                             <?php foreach ($solicitacoes as $s): ?>
@@ -94,15 +94,15 @@ include '../partials/portal_header.php';
                                                     <td data-label="ID">#<?php echo (int)$s['id_solicitacao']; ?></td>
                                                     <td data-label="Tipo"><?php echo htmlspecialchars(ucwords($s['tipo'])); ?></td>
                                                     <td data-label="Data"><?php echo date('d/m/Y', strtotime($s['created_at'])); ?></td>
-                                                    <td class="text-center" data-label="Status">
+                                                    <td data-label="Status" class="text-center">
                                                         <span class="badge <?php echo get_status_badge_class($s['status']); ?>">
                                                             <?php echo htmlspecialchars(ucwords($s['status'])); ?>
                                                         </span>
                                                     </td>
-                                                    <td data-label="Observação">
-                                                        <?php echo htmlspecialchars($s['observacao'] ?? 'Nenhuma observação.'); ?>
-                                                    </td>
-                                                    <td class="text-center">
+                                                    <td data-label="Observação"><?php echo htmlspecialchars($s['observacao'] ?? 'Nenhuma observação.'); ?></td>
+
+                                                    <!-- CÉLULA DO ANEXO CORRIGIDA -->
+                                                    <td data-label="Anexo" class="text-center">
                                                         <?php if (!empty($s['caminho_arquivo'])): ?>
                                                             <a href="../uploads/<?php echo htmlspecialchars($s['caminho_arquivo']); ?>"
                                                                 class="btn btn-sm btn-outline-success" download>

@@ -324,51 +324,58 @@ a.sidebar-link:hover {
         padding: 0.85rem;
     }
 
-    /* 1. Esconde o cabeçalho da tabela */
+    /* 1. Esconde o cabeçalho da tabela, como antes */
     .table-responsive thead {
         display: none;
     }
 
-    /* 2. Remove as bordas e faz com que a linha se comporte como um bloco */
+    /* 2. Transforma a linha em um card com altura máxima e scroll */
     .table-responsive tr {
         display: block;
-        margin-bottom: 1rem;
+        margin-bottom: 0.5rem;
         border: 1px solid #ddd;
-        border-radius: 5px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        border-radius: .375rem;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+
+        /* A MÁGICA ACONTECE AQUI */
+        max-height: 300px;     /* Define uma altura máxima para o card */
+        overflow-y: auto;      /* Adiciona scroll vertical SE o conteúdo for maior */
+        padding: 0.5rem;       /* Adiciona um espaçamento interno */
     }
 
-    /* 3. Faz com que cada célula (coluna) ocupe a largura toda e adicione espaçamento */
+    /* 3. Simplifica o layout da célula */
     .table-responsive td {
-        display: block;
-        text-align: right;
-        /* Alinha o valor à direita */
-        padding-left: 50%;
-        /* Cria espaço à esquerda para o "rótulo" */
-        position: relative;
-        border: none;
+        display: block;        /* Cada célula ocupa uma linha */
+        width: 100%;           /* Ocupa a largura toda */
+        text-align: left;      /* Alinha o texto à esquerda, melhor para leitura */
+        padding: 0.5rem 0.5rem;/* Espaçamento vertical e horizontal */
+        border: none;          /* Remove bordas internas */
+        position: static;      /* Reseta o posicionamento */
     }
-
-    /* 4. O "truque": Adiciona o texto do cabeçalho como um rótulo antes de cada célula */
+    
+    /* 4. Transforma o "rótulo" em um pequeno título acima do valor */
     .table-responsive td::before {
         content: attr(data-label);
-        /* Pega o texto do atributo 'data-label' */
-        position: absolute;
-        left: 10px;
-        width: 45%;
-        padding-right: 10px;
-        font-weight: 600;
-        text-align: left;
-        /* Alinha o rótulo à esquerda */
+        display: block;        /* Faz o rótulo ocupar sua própria linha */
+        font-weight: 600;      /* Negrito */
+        color: #6c757d;        /* Cor secundária (cinza) */
+        font-size: 0.8rem;     /* Tamanho de fonte menor */
+        text-transform: uppercase; /* Deixa em maiúsculas */
+        margin-bottom: 0.25rem;/* Pequeno espaço abaixo do rótulo */
+        
+        /* Reseta as regras antigas */
+        position: static;
+        width: auto;
+        padding-right: 0;
     }
-
-    /* 5. Ajustes finos */
+    
+    /* Remove a borda inferior do último item para um visual mais limpo */
     .table-responsive td:last-child {
         border-bottom: 0;
     }
 
     .table-responsive .text-center {
-        text-align: right !important;
+        text-align: left !important;
         /* Força o alinhamento para o conteúdo do status */
     }
 }
