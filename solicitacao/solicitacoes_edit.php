@@ -93,7 +93,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 include '../partials/header.php';
 ?>
 
-<div class="container mt-4">
     <div class="row justify-content-center">
         <div class="col-lg-9">
 

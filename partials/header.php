@@ -36,7 +36,7 @@ $foto_usuario_logado = !empty($_SESSION['foto_perfil'])
     <!-- Item Central: Menu Dropdown Simplificado -->
     <div class="dropdown">
         <button class="btn btn-outline-primary dropdown-toggle" type="button" id="menuPrincipal" data-bs-toggle="dropdown" aria-expanded="false">
-            Menu
+            Acadêmicos
         </button>
         <ul class="dropdown-menu" aria-labelledby="menuPrincipal">
             <li><a class="dropdown-item" href="/portal-etc/solicitacao/solicitacoes_view_admin.php">Ver solicitações</a></li>

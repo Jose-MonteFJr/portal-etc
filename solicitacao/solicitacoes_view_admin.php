@@ -95,9 +95,6 @@ include '../partials/header.php';
     <span class="badge text-bg-primary">Perfil: Secretaria</span>
     <a class="btn btn-outline-secondary" href="../admin.php">Voltar</a>
 </div>
-
-<div class="container mt-4">
-
     <?php flash_show(); ?>
 
     <form method="get" class="card card-body shadow-sm mb-3">

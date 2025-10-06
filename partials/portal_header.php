@@ -65,8 +65,6 @@ $foto_usuario_logado = !empty($_SESSION['foto_perfil'])
         </div>
     </nav>
 
-
-
     <div class="wrapper">
         <!-- Sidebar -->
         <aside id="sidebar">

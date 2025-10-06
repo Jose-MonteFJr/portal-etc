@@ -161,8 +161,6 @@ include __DIR__ . '/partials/header.php';
       </div>
     </div>
 
-
-
 <?php if ($pages > 1): ?>
   <nav class="mt-3">
     <ul class="pagination justify-content-center">
