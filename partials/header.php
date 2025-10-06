@@ -3,40 +3,62 @@
 if (session_status() === PHP_SESSION_NONE) session_start();
 $userName = $_SESSION['nome_completo'] ?? null;
 $userRole = $_SESSION['tipo'] ?? null;
+
+$foto_usuario_logado = !empty($_SESSION['foto_perfil'])
+    ? '/portal-etc/uploads/perfil/' . $_SESSION['foto_perfil']
+    : '/portal-etc/partials/img/avatar_padrao.png';
 ?>
 <!DOCTYPE html>
 <html lang="pt-br" data-bs-theme="light">
+
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="/portal-etc/partials/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="icon" href="/portal-etc/partials/img/portal-etc-logo.png" type="image/png">
-  <title>Sistema de Login</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.lineicons.com/4.0/lineicons.css" rel="stylesheet">
+    <link href="/portal-etc/partials/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="icon" href="/portal-etc/partials/img/portal-etc-logo.png" type="image/png">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="/portal-etc/partials/css/style.css" rel="stylesheet">
+    <title>Portal ETC</title>
 </head>
+
 <body>
-<nav class="navbar navbar-expand-lg bg-body-tertiary border-bottom mb-4">
-  <div class="container">
-    <a class="navbar-brand fw-bold" href="/portal-etc/admin.php">Portal ETC</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div id="nav" class="collapse navbar-collapse">
-      <ul class="navbar-nav me-auto">
-        <?php if ($userRole === 'secretaria'): ?>
-          <li class="nav-item"><a class="nav-link" href="/portal-etc/admin.php">Dashboard</a></li>
-        <?php endif; ?>
-      </ul>
-      <ul class="navbar-nav ms-auto">
-        <?php if ($userName): ?>
-          <li class="nav-item me-3 align-self-center text-secondary">Olá, <strong><?php echo htmlspecialchars($userName); ?></strong></li>
-          <li class="nav-item me-2"><a class="btn btn-outline-secondary btn-sm" href="profile.php">Meu Perfil</a></li>
-          <li class="nav-item"><a class="btn btn-outline-danger btn-sm" href="/portal-etc/logout.php">Sair</a></li>
-        <?php endif; ?>
-      </ul>
-      <div class="ms-3 d-flex">
-        <button id="themeToggle" class="btn btn-sm btn-outline-primary" type="button" title="Alternar tema">Tema</button>
-      </div>
-    </div>
-  </div>
-</nav>
+    <?php flash_show(); // Adicione a chamada da função bem aqui 
+    ?>
+    <!-- =================== NAVBAR FIXA =================== -->
+    <!-- Navbar fixa no topo -->
+    <nav class="top-navbar">
+        <a class="logo" href="/portal-etc/portal_home.php">
+            <img src="/portal-etc/partials/img/portal-etc-logo.png" alt="Logo portal etc" width="70px">
+        </a>
+        <div class="ms-auto d-flex align-items-center">
+
+            <button id="themeToggle" class="btn btn-sm btn-outline-primary me-3" type="button" title="Alternar tema">
+                <i class="bi bi-brightness-high-fill"></i>
+            </button>
+
+            <div class="dropdown">
+                <a href="#" class="nav-link dropdown-toggle d-flex align-items-center" data-bs-toggle="dropdown" aria-expanded="false">
+                    <span class="me-2 d-none d-md-inline"><?php echo htmlspecialchars($_SESSION['nome_completo']); ?></span>
+                    <img src="<?php echo htmlspecialchars($foto_usuario_logado); ?>" alt="Foto do Usuário"
+                        class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li>
+                        <a class="dropdown-item" href="/portal-etc/profile.php">
+                            <i class="bi bi-person-fill me-2"></i> Meu Perfil
+                        </a>
+                    </li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="/portal-etc/logout.php">
+                            <i class="bi bi-box-arrow-right me-2"></i> Sair
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
 <div class="container">

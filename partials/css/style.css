@@ -598,3 +598,12 @@ a.sidebar-link:hover {
 [data-bs-theme="dark"] h1 {
     color: var(--cor-sidebar-texto);
 }
+
+/* =================================================================== */
+/* == ESTILOS PERSONALIZADOS PARA O SISTEMA DA SECRETARIA  == */
+/* =================================================================== */
+
+.container {
+    padding-top: 5rem;
+    margin-top: 2rem;
+}

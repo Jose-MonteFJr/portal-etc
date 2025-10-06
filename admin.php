@@ -49,123 +49,126 @@ $users = $stmt->fetchAll();
 
 include __DIR__ . '/partials/header.php';
 ?>
-<div class="d-flex align-items-center justify-content-between mb-3">
-  <h2 class="h4 mb-0">Dashboard de administração: usuários</h2>
-  <span class="badge text-bg-primary">Perfil: Secretaria</span>
-</div>
 
-<?php flash_show(); ?>
-
-<form method="get" class="card card-body shadow-sm mb-3">
-  <div class="row g-2 align-items-end">
-    <div class="col-md-6">
-      <label class="form-label">Buscar</label>
-      <input type="text" name="q" class="form-control" value="<?php echo htmlspecialchars($q); ?>" placeholder="Nome, e-mail, turma ou matrícula">
-    </div>
-    <div class="col-md-3">
-      <label class="form-label">Perfil</label>
-      <select name="tipo" class="form-select">
-        <option value="">Todos</option>
-        <option value="aluno" <?php echo $roleFilter === 'aluno'  ? 'selected' : ''; ?>>Aluno</option>
-        <option value="secretaria" <?php echo $roleFilter === 'secretaria' ? 'selected' : ''; ?>>Secretaria</option>
-        <option value="professor" <?php echo $roleFilter === 'professor' ? 'selected' : ''; ?>>Professor</option>
-        <option value="coordenador" <?php echo $roleFilter === 'coordenador' ? 'selected' : ''; ?>>Coordenador</option>
-      </select>
+    <div class="d-flex align-items-center justify-content-between mb-3">
+      <h2 class="h4 mb-0">Dashboard de administração: usuários</h2>
+      <span class="badge text-bg-primary">Perfil: Secretaria</span>
     </div>
 
-    <div class="col-md-3 text-end">
-      <a class="btn btn-outline-secondary" href="admin.php">Limpar</a>
-      <button class="btn btn-primary">Filtrar</button>
+    <?php flash_show(); ?>
+
+    <form method="get" class="card card-body shadow-sm mb-3">
+      <div class="row g-2 align-items-end">
+        <div class="col-md-6">
+          <label class="form-label">Buscar</label>
+          <input type="text" name="q" class="form-control" value="<?php echo htmlspecialchars($q); ?>" placeholder="Nome, e-mail, turma ou matrícula">
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Perfil</label>
+          <select name="tipo" class="form-select">
+            <option value="">Todos</option>
+            <option value="aluno" <?php echo $roleFilter === 'aluno'  ? 'selected' : ''; ?>>Aluno</option>
+            <option value="secretaria" <?php echo $roleFilter === 'secretaria' ? 'selected' : ''; ?>>Secretaria</option>
+            <option value="professor" <?php echo $roleFilter === 'professor' ? 'selected' : ''; ?>>Professor</option>
+            <option value="coordenador" <?php echo $roleFilter === 'coordenador' ? 'selected' : ''; ?>>Coordenador</option>
+          </select>
+        </div>
+
+        <div class="col-md-3 text-end">
+          <a class="btn btn-outline-secondary" href="admin.php">Limpar</a>
+          <button class="btn btn-primary">Filtrar</button>
+        </div>
+      </div>
+    </form>
+
+    <div class="card card-body shadow-sm mb-3">
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-4">
+        <a class="btn btn-outline-secondary" href="curso/cursos_view.php">Ver Cursos</a>
+        <a class="btn btn-outline-secondary" href="solicitacao/solicitacoes_view_admin.php">Ver Solicitações</a>
+        <a class="btn btn-outline-success" href="users_create.php">+ Novo Usuário</a>
+      </div>
     </div>
-  </div>
-</form>
 
-<div class="card card-body shadow-sm mb-3">
-  <div class="d-flex justify-content-between align-items-center flex-wrap gap-4">
-    <a class="btn btn-outline-secondary" href="curso/cursos_view.php">Ver Cursos</a>
-    <a class="btn btn-outline-secondary" href="solicitacao/solicitacoes_view_admin.php">Ver Solicitações</a>
-    <a class="btn btn-outline-success" href="users_create.php">+ Novo Usuário</a>
-  </div>
-</div>
+    <!-- TABELA VIEW -->
 
-<!-- TABELA VIEW -->
+    <div class="card shadow-sm">
+      <div class="card-header">Usuários cadastrados (<?php echo $total; ?>)</div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-striped table-hover mb-0 align-middle">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Nome</th>
+                <th>E-mail</th>
+                <th>Perfil</th>
+                <th>Status</th>
+                <th>Matrícula</th>
+                <th>Turma</th>
+                <th>Situação acadêmica</th>
+                <th class="text-end">Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              <?php foreach ($users as $u): ?>
+                <tr>
+                  <td><?php echo (int)$u['id_usuario']; ?></td>
+                  <td><?php echo htmlspecialchars($u['nome_completo']); ?></td>
+                  <td><?php echo htmlspecialchars($u['email']); ?></td>
+                  <!-- Tipo destacado -->
+                  <td>
+                    <span class="badge text-bg-<?php echo $u['tipo'] === 'secretaria' ? 'primary' : 'secondary'; ?>">
+                      <?php echo htmlspecialchars($u['tipo']); ?>
+                    </span>
+                  </td>
+                  <!-- Status destacado -->
+                  <td>
+                    <span class="badge text-bg-<?php echo $u['status'] === 'ativo' ? 'success' : 'warning'; ?>">
+                      <?php echo htmlspecialchars($u['status']); ?>
+                    </span>
+                  </td>
+                  <td><?php echo htmlspecialchars($u['matricula']); ?></td>
+                  <td><?php echo htmlspecialchars($u['nome']); ?></td>
+                  <td><?php echo htmlspecialchars($u['status_academico']); ?></td>
+                  <td class="text-end">
+                    <div class="btn-group" role="group" aria-label="Ações dos usuários">
+                      <!-- Button trigger modal -->
+                      <button type="button" class="btn btn-sm btn-outline-info btn-detalhes-usuario" data-bs-toggle="modal" data-id="<?php echo $u['id_usuario']; ?>" data-bs-target="#modalDetalhesUsuario">
+                        Detalhes
+                      </button>
+                      <a class="btn btn-sm btn-outline-secondary" href="users_edit.php?id_usuario=<?php echo (int)$u['id_usuario']; ?>">Editar</a>
 
-<div class="card shadow-sm">
-  <div class="card-header">Usuários cadastrados (<?php echo $total; ?>)</div>
-  <div class="card-body p-0">
-    <div class="table-responsive">
-      <table class="table table-striped table-hover mb-0 align-middle">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Nome</th>
-            <th>E-mail</th>
-            <th>Perfil</th>
-            <th>Status</th>
-            <th>Matrícula</th>
-            <th>Turma</th>
-            <th>Situação acadêmica</th>
-            <th class="text-end">Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          <?php foreach ($users as $u): ?>
-            <tr>
-              <td><?php echo (int)$u['id_usuario']; ?></td>
-              <td><?php echo htmlspecialchars($u['nome_completo']); ?></td>
-              <td><?php echo htmlspecialchars($u['email']); ?></td>
-              <!-- Tipo destacado -->
-              <td>
-                <span class="badge text-bg-<?php echo $u['tipo'] === 'secretaria' ? 'primary' : 'secondary'; ?>">
-                  <?php echo htmlspecialchars($u['tipo']); ?>
-                </span>
-              </td>
-              <!-- Status destacado -->
-              <td>
-                <span class="badge text-bg-<?php echo $u['status'] === 'ativo' ? 'success' : 'warning'; ?>">
-                  <?php echo htmlspecialchars($u['status']); ?>
-                </span>
-              </td>
-              <td><?php echo htmlspecialchars($u['matricula']); ?></td>
-              <td><?php echo htmlspecialchars($u['nome']); ?></td>
-              <td><?php echo htmlspecialchars($u['status_academico']); ?></td>
-              <td class="text-end">
-                <div class="btn-group" role="group" aria-label="Ações dos usuários">
-                  <!-- Button trigger modal -->
-                  <button type="button" class="btn btn-sm btn-outline-info btn-detalhes-usuario" data-bs-toggle="modal" data-id="<?php echo $u['id_usuario']; ?>" data-bs-target="#modalDetalhesUsuario">
-                    Detalhes
-                  </button>
-                  <a class="btn btn-sm btn-outline-secondary" href="users_edit.php?id_usuario=<?php echo (int)$u['id_usuario']; ?>">Editar</a>
+                      <!-- Inativar usuario -->
+                      <form action="users_inativar.php" method="post" class="d-inline" onsubmit="return confirm('Tem certeza que deseja inativar esse usuário?');">
+                        <?php require_once __DIR__ . '/helpers.php';
+                        csrf_input(); ?>
+                        <input type="hidden" name="id_usuario" value="<?php echo (int)$u['id_usuario']; ?>">
+                        <button type="submit" class="btn btn-sm btn-outline-warning">Inativar</button>
+                      </form>
 
-                  <!-- Inativar usuario -->
-                  <form action="users_inativar.php" method="post" class="d-inline" onsubmit="return confirm('Tem certeza que deseja inativar esse usuário?');">
-                    <?php require_once __DIR__ . '/helpers.php';
-                    csrf_input(); ?>
-                    <input type="hidden" name="id_usuario" value="<?php echo (int)$u['id_usuario']; ?>">
-                    <button type="submit" class="btn btn-sm btn-outline-warning">Inativar</button>
-                  </form>
-
-                  <!-- Excluir usuario -->
-                  <form action="users_delete.php" method="post" class="d-inline" onsubmit="return confirm('Tem certeza que deseja excluir?');">
-                    <?php require_once __DIR__ . '/helpers.php';
-                    csrf_input(); ?>
-                    <input type="hidden" name="id_usuario" value="<?php echo (int)$u['id_usuario']; ?>">
-                    <button type="submit" class="btn btn-sm btn-outline-danger">Excluir</button>
-                  </form>
-                </div>
-              </td>
-            </tr>
-          <?php endforeach; ?>
-          <?php if (!$users): ?>
-            <tr>
-              <td colspan="9" class="text-center text-muted py-4">Nenhum usuário encontrado.</td>
-            </tr>
-          <?php endif; ?>
-        </tbody>
-      </table>
+                      <!-- Excluir usuario -->
+                      <form action="users_delete.php" method="post" class="d-inline" onsubmit="return confirm('Tem certeza que deseja excluir?');">
+                        <?php require_once __DIR__ . '/helpers.php';
+                        csrf_input(); ?>
+                        <input type="hidden" name="id_usuario" value="<?php echo (int)$u['id_usuario']; ?>">
+                        <button type="submit" class="btn btn-sm btn-outline-danger">Excluir</button>
+                      </form>
+                    </div>
+                  </td>
+                </tr>
+              <?php endforeach; ?>
+              <?php if (!$users): ?>
+                <tr>
+                  <td colspan="9" class="text-center text-muted py-4">Nenhum usuário encontrado.</td>
+                </tr>
+              <?php endif; ?>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
+
+
 
 <?php if ($pages > 1): ?>
   <nav class="mt-3">
