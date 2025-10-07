@@ -14,7 +14,7 @@ $foto_usuario_logado = !empty($_SESSION['foto_perfil'])
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://cdn.lineicons.com/4.0/lineicons.css" rel="stylesheet">
+    <!-- <link href="https://cdn.lineicons.com/5.0/lineicons.css" rel="stylesheet">  -->
     <link href="/portal-etc/partials/css/bootstrap.min.css" rel="stylesheet">
     <link rel="icon" href="/portal-etc/partials/img/portal-etc-logo.png" type="image/png">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -29,12 +29,16 @@ $foto_usuario_logado = !empty($_SESSION['foto_perfil'])
     <!-- Navbar fixa no topo -->
     <nav class="top-navbar">
         <button id="toggle-btn">
-            <i class="lni lni-grid-alt"></i>
+            <i class="bi bi-grid"></i>
         </button>
         <a class="logo" href="/portal-etc/portal_home.php">
             <img src="/portal-etc/partials/img/portal-etc-logo.png" alt="Logo portal etc" width="70px">
         </a>
         <div class="ms-auto d-flex align-items-center">
+
+            <a href="#" class="nav-link me-3" title="Notificações">
+                <i class="bi bi-bell fs-5 "></i>
+            </a>
 
             <button id="themeToggle" class="btn btn-sm btn-outline-primary me-3" type="button" title="Alternar tema">
                 <i class="bi bi-brightness-high-fill"></i>
@@ -66,68 +70,63 @@ $foto_usuario_logado = !empty($_SESSION['foto_perfil'])
     </nav>
 
     <div class="wrapper">
+
         <!-- Sidebar -->
         <aside id="sidebar">
-            <div class="sidebar-logo">
-                <a href="#">ETC</a>
-            </div>
+            <div class="sidebar-logo"></div>
 
             <ul id="sidebar-nav">
                 <li class="sidebar-item">
                     <a href="/portal-etc/portal_home.php" class="sidebar-link">
-                        <i class="lni lni-home"></i>
+                        <i class="bi bi-house-door fs-3"></i>
                         <span>Home</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
                     <a href="#" class="sidebar-link">
-                        <i class="lni lni-agenda"></i>
+                        <i class="bi bi-alarm fs-4"></i>
                         <span>Carga horária</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="#" class="sidebar-link">
+                        <i class="bi bi-calendar-event fs-4"></i>
+                        <span>Agenda</span>
                     </a>
                 </li>
                 <!-- Dropdown: Solicitações -->
                 <li class="sidebar-item">
-                    <a href="#" class="sidebar-link has-dropdown collapsed" data-toggle="collapse" data-target="#solicitacoes">
-                        <i class="lni lni-lock"></i>
+                    <a href="/portal-etc/solicitacao/solicitacoes_view_aluno.php" class="sidebar-link">
+                        <i class="bi bi-file-earmark-text fs-4"></i>
                         <span>Solicitações</span>
                     </a>
-                    <ul id="solicitacoes" class="sidebar-dropdown collapse">
-                        <li class="sidebar-item">
-                            <a href="/portal-etc/solicitacao/solicitacoes_view_aluno.php" class="sidebar-link">Declarações</a>
-                        </li>
-                        <li class="sidebar-item">
-                            <a href="#" class="sidebar-link">Certificados</a>
-                        </li>
-                    </ul>
                 </li>
                 <!-- Dropdown multi-nível -->
                 <li class="sidebar-item">
                     <a href="#" class="sidebar-link has-dropdown collapsed" data-toggle="collapse" data-target="#auto-atendimento">
-                        <i class="lni lni-layers"></i>
+                        <i class="bi bi-layers fs-4"></i>
                         <span>Auto Atendimento</span>
                     </a>
                     <ul id="auto-atendimento" class="sidebar-dropdown collapse">
                         <li class="sidebar-item">
-                            <a href="#" class="sidebar-link has-dropdown collapsed" data-toggle="collapse" data-target="#matriculas">Matrículas</a>
-                            <ul id="matriculas" class="sidebar-dropdown collapse">
-                                <li class="sidebar-item">
-                                    <a href="#" class="sidebar-link">Rematrículas</a>
-                                </li>
-                                <li class="sidebar-item">
-                                    <a href="#" class="sidebar-link">Trancar curso</a>
-                                </li>
-                            </ul>
+                            <a href="#" class="sidebar-link">Matrículas</a>
                         </li>
                     </ul>
                 </li>
-                <div class="sidebar-footer">
+                <div class="sidebar-item">
                     <a href="#" class="sidebar-link">
-                        <i class="lni lni-popup"></i>
+                        <i class="bi bi-briefcase fs-4"></i>
                         <span>Feed</span>
                     </a>
                 </div>
+                <div class="sidebar-item">
+                    <a href="#" class="sidebar-link">
+                        <i class="bi bi-chat-dots fs-4"></i>
+                        <span>Chat</span>
+                    </a>
+                </div>
                 <!-- Rodapé da sidebar -->
-<!--                 <div class="sidebar-footer">
+                <!--                 <div class="sidebar-footer">
                     <a href="/portal-etc/logout.php" class="sidebar-link">
                         <i class="lni lni-exit"></i>
                         <span>Sair</span>

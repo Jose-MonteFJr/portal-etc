@@ -112,8 +112,8 @@ body {
 }
 
 #sidebar.expand {
-    width: 460px;
-    min-width: 260px;
+    width: 100px;   /* 460px*/
+    min-width: 260px; /* 260px*/
 }
 
 #toggle-btn {
@@ -607,3 +607,4 @@ a.sidebar-link:hover {
     padding-top: 5rem;
     margin-top: 2rem;
 }
+

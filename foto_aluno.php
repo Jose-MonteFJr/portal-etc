@@ -20,8 +20,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             flash_set('danger', 'O arquivo enviado não é uma imagem válida.');
         } elseif (!in_array($file_extension, $allowed_types)) {
             flash_set('danger', 'Apenas imagens JPG, JPEG e PNG são permitidas.');
-        } elseif ($_FILES["foto_perfil"]["size"] > 2000000) { // Limite de 2MB
-            flash_set('danger', 'A imagem é muito grande (limite de 2MB).');
+        } elseif ($_FILES["foto_perfil"]["size"] > 1000000) { // Limite de 1MB
+            flash_set('danger', 'A imagem é muito grande (limite de 1MB).');
         } else {
             // 2. BUSCA A FOTO ANTIGA PARA EXCLUÍ-LA DEPOIS
             $stmt = $pdo->prepare("SELECT foto_perfil FROM usuario WHERE id_usuario = ?");
@@ -95,8 +95,8 @@ include __DIR__ . '/partials/portal_header.php';
                                 <div class="mb-3">
                                     <label for="foto_perfil_input" class="form-label">Alterar foto de perfil</label>
                                     <input class="form-control" type="file" id="foto_perfil_input" name="foto_perfil"
-                                        accept="image/jpeg, image/png">
-                                    <div class="form-text">Envie uma imagem JPG ou PNG de até 2MB.</div>
+                                        accept="image/jpeg, image/png, image/jpg">
+                                    <div class="form-text">Envie uma imagem JPG, JPEG ou PNG de até 1MB.</div>
                                 </div>
 
                                 <div class="text-end">
