@@ -40,9 +40,17 @@ $foto_usuario_logado = !empty($_SESSION['foto_perfil'])
                     <i class="bi bi-bell fs-5"></i>
                     <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="notification-count" style="display: none;"></span>
                 </a>
-                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-center" aria-labelledby="notificationDropdown" id="notification-list">
+                <ul class="dropdown-menu dropdown-menu-center" aria-labelledby="notificationDropdown" id="notification-list">
                     <li><a class="dropdown-item text-center" href="#">Nenhuma notificação</a></li>
-                    
+
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li>
+                        <a class="dropdown-item text-center text-muted small" href="#" id="clear-notifications-btn">
+                            <i class="bi bi-check2-all"></i> Limpar notificações lidas
+                        </a>
+                    </li>
                 </ul>
             </div>
 

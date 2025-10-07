@@ -282,7 +282,7 @@ a.sidebar-link:hover {
         right: auto !important;
         left: 50% !important;
         transform: translateX(-50%) !important;
-        margin-top: 2rem !important;
+        margin-top: 2.5rem !important;
     }
 }
 
@@ -588,7 +588,7 @@ a.sidebar-link:hover {
 .dropdown-item:hover {
     background-color: #1b2a44;
     border-left: 3px solid #3b7ddd;
-    color: #fff;
+    color: #ffffff !important;
 }
 
 [data-bs-theme="dark"] .top-navbar a.logo {

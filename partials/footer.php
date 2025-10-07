@@ -131,7 +131,7 @@ function fetchNotifications() {
             const countBadge = document.getElementById('notification-count');
             const notificationList = document.getElementById('notification-list');
 
-            // Atualiza o contador
+            // Atualiza o contador (lógica existente)
             if (data.unread_count > 0) {
                 countBadge.textContent = data.unread_count;
                 countBadge.style.display = 'block';
@@ -139,20 +139,37 @@ function fetchNotifications() {
                 countBadge.style.display = 'none';
             }
 
-            // Atualiza a lista de notificações
-            notificationList.innerHTML = ''; // Limpa a lista antiga
-            if (data.notifications.length > 0) {
+            // Limpa a lista
+            notificationList.innerHTML = ''; 
+
+            // NOVO: Verifica se existe alguma notificação na lista
+            const hasNotifications = data.notifications && data.notifications.length > 0;
+
+            if (hasNotifications) {
                 data.notifications.forEach(notif => {
                     const listItem = document.createElement('li');
-                    listItem.innerHTML = `<a class="dropdown-item" href="${notif.link}">
+                    listItem.innerHTML = `<a class="dropdown-item" href="${notif.link || '#'}">
                                             <p class="mb-0 small">${notif.mensagem}</p>
                                             <small class="text-muted">${new Date(notif.created_at).toLocaleString('pt-BR')}</small>
                                           </a>`;
                     notificationList.appendChild(listItem);
                 });
             } else {
-                notificationList.innerHTML = '<li><span class="dropdown-item text-muted">Nenhuma notificação.</span></li>';
+                notificationList.innerHTML = '<li><span class="dropdown-item text-muted text-center">Nenhuma notificação.</span></li>';
             }
+
+            // ALTERADO: O rodapé agora é construído com base na verificação
+            const footerHTML = `
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                    <a class="dropdown-item text-center text-muted small ${!hasNotifications ? 'disabled' : ''}" 
+                       href="#" 
+                       id="clear-notifications-btn">
+                        <i class="bi bi-check2-all"></i> Limpar notificações lidas
+                    </a>
+                </li>
+            `;
+            notificationList.insertAdjacentHTML('beforeend', footerHTML);
         })
         .catch(error => console.error('Erro ao buscar notificações:', error));
 }
@@ -181,6 +198,37 @@ if (dropdownElement) {
         }
     });
 }
+
+
+// Lógica para o botão de limpar notificações (versão com delegação de eventos)
+document.addEventListener('click', function(event) {
+    
+    // Verifica se o elemento clicado (ou um pai próximo) é o nosso botão de limpar
+    const clearBtn = event.target.closest('#clear-notifications-btn');
+
+    if (clearBtn) {
+        event.preventDefault(); // Impede que o link '#' recarregue a página
+
+        if (confirm('Tem certeza que deseja limpar todas as notificações já lidas?')) {
+            fetch('/portal-etc/limpar_notificacoes_ajax.php', {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showToast('Notificações lidas foram limpas.', 'success');
+                    fetchNotifications(); // Atualiza a lista
+                } else {
+                    showToast('Ocorreu um erro ao limpar as notificações.', 'danger');
+                }
+            })
+            .catch(error => {
+                console.error('Erro na requisição de limpeza:', error);
+                showToast('Erro de conexão.', 'danger');
+            });
+        }
+    }
+});
 
 </script>
   </body>
