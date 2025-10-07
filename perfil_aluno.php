@@ -123,6 +123,7 @@ include __DIR__ . '/partials/portal_header.php';
                         </div>
                         <div class="card-footer text-end">
                             <a href="editar_perfil_aluno.php" class="btn btn-sm btn-secondary">Editar Dados Pessoais</a>
+                            <a href="alterar_senha.php" class="btn btn-sm btn-outline-danger">Alterar Senha</a>
                         </div>
                     </div>
                 </div>
