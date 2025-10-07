@@ -12,23 +12,30 @@
     --bs-body-font-family: 'Poppins', sans-serif;
     /*  Fonte padrão */
 
-    --cor-navbar-fundo: #ffffff; /* Fundo da navbar no tema claro */
+    --cor-navbar-fundo: #ffffff;
+    /* Fundo da navbar no tema claro */
     --cor-navbar-texto: #0e223e;
-    --cor-sidebar-fundo: #0e223e; /* Fundo da sidebar no tema claro (escura por padrão) */
+    --cor-sidebar-fundo: #0e223e;
+    /* Fundo da sidebar no tema claro (escura por padrão) */
     --cor-sidebar-texto: #ffffff;
 }
 
 /* Tema escuro */
 [data-bs-theme="dark"] {
-    --cor-primaria: #1a3a69; /* Um azul um pouco mais claro para contraste */
-    --cor-secundaria: #8a939b; /* Um cinza mais claro */
-    --cor-fundo: #212529; /* Fundo escuro (pode ser o mesmo do texto claro) */
-    --cor-texto: #f8f9fa; /* Texto claro */
+    --cor-primaria: #1a3a69;
+    /* Um azul um pouco mais claro para contraste */
+    --cor-secundaria: #8a939b;
+    /* Um cinza mais claro */
+    --cor-fundo: #212529;
+    /* Fundo escuro (pode ser o mesmo do texto claro) */
+    --cor-texto: #f8f9fa;
+    /* Texto claro */
 
-    --cor-navbar-fundo: #2b3035; /* Fundo da navbar no tema escuro */
+    --cor-navbar-fundo: #2b3035;
+    /* Fundo da navbar no tema escuro */
     --cor-navbar-texto: #f8f9fa;
     /* A sidebar já é escura, então a cor pode ser a mesma ou um pouco diferente */
-    --cor-sidebar-fundo: #0e223e; 
+    --cor-sidebar-fundo: #0e223e;
     --cor-sidebar-texto: #ffffff;
 }
 
@@ -54,8 +61,10 @@ h1 {
 
 body {
     font-family: 'Poppins', sans-serif;
-    background-color: var(--cor-fundo); /* ALTERADO: Agora usa a variável */
-    color: var(--cor-texto); /* NOVO: Define a cor do texto padrão */
+    background-color: var(--cor-fundo);
+    /* ALTERADO: Agora usa a variável */
+    color: var(--cor-texto);
+    /* NOVO: Define a cor do texto padrão */
 }
 
 /* Navbar fixa no topo */
@@ -112,8 +121,10 @@ body {
 }
 
 #sidebar.expand {
-    width: 100px;   /* 460px*/
-    min-width: 260px; /* 260px*/
+    width: 100px;
+    /* 460px*/
+    min-width: 260px;
+    /* 260px*/
 }
 
 #toggle-btn {
@@ -262,6 +273,17 @@ a.sidebar-link:hover {
     #sidebar:not(.expand)+.main {
         margin-left: 95px;
     }
+
+    /* ============================================================= */
+    /* == CENTRALIZA O DROPDOWN DE NOTIFICAÇÕES                   == */
+    /* ============================================================= */
+
+    .dropdown-menu-center {
+        right: auto !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        margin-top: 2rem !important;
+    }
 }
 
 @media (max-width: 768px) {
@@ -335,40 +357,55 @@ a.sidebar-link:hover {
         margin-bottom: 0.5rem;
         border: 1px solid #ddd;
         border-radius: .375rem;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 
         /* A MÁGICA ACONTECE AQUI */
-        max-height: 300px;     /* Define uma altura máxima para o card */
-        overflow-y: auto;      /* Adiciona scroll vertical SE o conteúdo for maior */
-        padding: 0.5rem;       /* Adiciona um espaçamento interno */
+        max-height: 300px;
+        /* Define uma altura máxima para o card */
+        overflow-y: auto;
+        /* Adiciona scroll vertical SE o conteúdo for maior */
+        padding: 0.5rem;
+        /* Adiciona um espaçamento interno */
     }
 
     /* 3. Simplifica o layout da célula */
     .table-responsive td {
-        display: block;        /* Cada célula ocupa uma linha */
-        width: 100%;           /* Ocupa a largura toda */
-        text-align: left;      /* Alinha o texto à esquerda, melhor para leitura */
-        padding: 0.5rem 0.5rem;/* Espaçamento vertical e horizontal */
-        border: none;          /* Remove bordas internas */
-        position: static;      /* Reseta o posicionamento */
+        display: block;
+        /* Cada célula ocupa uma linha */
+        width: 100%;
+        /* Ocupa a largura toda */
+        text-align: left;
+        /* Alinha o texto à esquerda, melhor para leitura */
+        padding: 0.5rem 0.5rem;
+        /* Espaçamento vertical e horizontal */
+        border: none;
+        /* Remove bordas internas */
+        position: static;
+        /* Reseta o posicionamento */
     }
-    
+
     /* 4. Transforma o "rótulo" em um pequeno título acima do valor */
     .table-responsive td::before {
         content: attr(data-label);
-        display: block;        /* Faz o rótulo ocupar sua própria linha */
-        font-weight: 600;      /* Negrito */
-        color: #6c757d;        /* Cor secundária (cinza) */
-        font-size: 0.8rem;     /* Tamanho de fonte menor */
-        text-transform: uppercase; /* Deixa em maiúsculas */
-        margin-bottom: 0.25rem;/* Pequeno espaço abaixo do rótulo */
-        
+        display: block;
+        /* Faz o rótulo ocupar sua própria linha */
+        font-weight: 600;
+        /* Negrito */
+        color: #6c757d;
+        /* Cor secundária (cinza) */
+        font-size: 0.8rem;
+        /* Tamanho de fonte menor */
+        text-transform: uppercase;
+        /* Deixa em maiúsculas */
+        margin-bottom: 0.25rem;
+        /* Pequeno espaço abaixo do rótulo */
+
         /* Reseta as regras antigas */
         position: static;
         width: auto;
         padding-right: 0;
     }
-    
+
     /* Remove a borda inferior do último item para um visual mais limpo */
     .table-responsive td:last-child {
         border-bottom: 0;
@@ -555,7 +592,8 @@ a.sidebar-link:hover {
 }
 
 [data-bs-theme="dark"] .top-navbar a.logo {
-    color: #fff; /* Garante que o logo (se for texto) fique branco */
+    color: #fff;
+    /* Garante que o logo (se for texto) fique branco */
 }
 
 /* Seus estilos de formulário personalizado também precisam de uma versão escura */
@@ -614,13 +652,17 @@ a.sidebar-link:hover {
 
 /* 1. Por padrão, o ícone fica invisível e preparado para a transição */
 .sidebar-link .dropdown-icon {
-    opacity: 0; /* Começa invisível */
-    visibility: hidden; /* Garante que não possa ser clicado */
-    transition: opacity 0.2s ease-in-out; /* Efeito suave de fade */
+    opacity: 0;
+    /* Começa invisível */
+    visibility: hidden;
+    /* Garante que não possa ser clicado */
+    transition: opacity 0.2s ease-in-out;
+    /* Efeito suave de fade */
 }
 
 /* 2. Mostra o ícone APENAS quando a sidebar tem a classe .expand */
 #sidebar.expand .sidebar-link .dropdown-icon {
-    opacity: 1; /* Torna-se visível */
+    opacity: 1;
+    /* Torna-se visível */
     visibility: visible;
 }

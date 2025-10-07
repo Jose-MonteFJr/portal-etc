@@ -11,7 +11,7 @@ if ($id_solicitacao === 0) {
     exit;
 }
 
-$sql = "SELECT s.*, u.nome_completo AS nome_aluno 
+$sql = "SELECT s.*, u.nome_completo AS nome_aluno, u.id_usuario  
               FROM solicitacao s
               JOIN aluno a ON s.id_aluno = a.id_aluno
               JOIN usuario u ON a.id_usuario = u.id_usuario
@@ -50,8 +50,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Validação do arquivo
         if ($file_extension !== 'pdf') {
             $errors[] = "Apenas arquivos PDF são permitidos.";
-        } elseif ($_FILES["arquivo_pdf"]["size"] > 10000000) { // Limite de 10MB
-            $errors[] = "O arquivo é muito grande (limite de 10MB).";
+        } elseif ($_FILES["arquivo_pdf"]["size"] > 5000000) { // Limite de 5MB
+            $errors[] = "O arquivo é muito grande (limite de 5MB).";
         } else {
             // SEGURANÇA: Cria um nome de arquivo único para evitar substituições e caracteres inválidos
             $nome_arquivo_final = 'solicitacao_' . $id_solicitacao . '_' . time() . '.pdf';
@@ -63,7 +63,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
     }
-
 
     // Validação
     $status_validos = ['pendente', 'em análise', 'aprovada', 'rejeitada', 'concluída'];
@@ -81,6 +80,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             );
             $stmt->execute([$novo_status, $nova_observacao, $nome_arquivo_final, $id_solicitacao]);
 
+            // --- NOVO: Cria a notificação para o aluno ---
+            $id_aluno_da_solicitacao = $solicitacao['id_aluno'];
+            // Precisamos ir de id_aluno para id_usuario
+            $stmt_user = $pdo->prepare("SELECT id_usuario FROM aluno WHERE id_aluno = ?");
+            $stmt_user->execute([$id_aluno_da_solicitacao]);
+            $id_usuario_destino = $stmt_user->fetchColumn();
+
+            if ($id_usuario_destino) {
+                $mensagem = "Sua solicitação teve o status atualizado para: " . ucfirst($novo_status);
+                $link = "/portal-etc/solicitacao/solicitacoes_view_aluno.php";
+                criar_notificacao($pdo, $id_usuario_destino, $mensagem, $link);
+            }
+
             flash_set('success', 'Solicitação enviada com sucesso!');
             header('Location: solicitacoes_view_admin.php');
             exit;
@@ -93,89 +105,89 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 include '../partials/header.php';
 ?>
 
-    <div class="row justify-content-center">
-        <div class="col-lg-9">
+<div class="row justify-content-center">
+    <div class="col-lg-9">
 
-            <div class="d-flex align-items-center justify-content-between mb-3">
-                <h2 class="h4 mb-0">Analisar Solicitação #<?php echo (int)$solicitacao['id_solicitacao']; ?></h2>
-                <a class="btn btn-outline-secondary btn-sm" href="solicitacoes_view_admin.php">Voltar para a Lista</a>
-            </div>
-
-            <?php if ($errors): ?>
-                <div class="alert alert-danger">
-                    <ul class="mb-0">
-                        <?php foreach ($errors as $e) echo '<li>' . htmlspecialchars($e) . '</li>'; ?>
-                    </ul>
-                </div>
-            <?php endif; ?>
-
-            <div class="card shadow-sm mb-4">
-                <div class="card-header">Detalhes do Pedido</div>
-                <div class="card-body">
-                    <dl class="row">
-                        <dt class="col-sm-3">Aluno:</dt>
-                        <dd class="col-sm-9"><?php echo htmlspecialchars($solicitacao['nome_aluno']); ?></dd>
-
-                        <dt class="col-sm-3">Tipo:</dt>
-                        <dd class="col-sm-9"><?php echo htmlspecialchars(ucwords($solicitacao['tipo'])); ?></dd>
-
-                        <dt class="col-sm-3">Data do Pedido:</dt>
-                        <dd class="col-sm-9"><?php echo date('d/m/Y à\s H:i', strtotime($solicitacao['created_at'])); ?></dd>
-
-                        <dt class="col-sm-3">Observação do Aluno:</dt>
-                        <dd class="col-sm-9">
-                            <p class="mb-0 fst-italic">"<?php echo nl2br(htmlspecialchars($solicitacao['observacao'] ?? 'Nenhuma observação fornecida.')); ?>"</p>
-                        </dd>
-                    </dl>
-                </div>
-            </div>
-
-            <div class="card shadow-sm">
-                <div class="card-header fw-bold">Ação da Secretaria</div>
-                <div class="card-body">
-                    <form method="post" enctype="multipart/form-data">
-                        <?php csrf_input(); ?>
-
-                        <div class="mb-3">
-                            <label for="status" class="form-label">Alterar Status</label>
-                            <select name="status" id="status" class="form-select" required>
-                                <option value="pendente" <?php echo ($status_atual === 'pendente' ? 'selected' : ''); ?>>Pendente</option>
-                                <option value="em análise" <?php echo ($status_atual === 'em análise' ? 'selected' : ''); ?>>Em Análise</option>
-                                <option value="aprovada" <?php echo ($status_atual === 'aprovada' ? 'selected' : ''); ?>>Aprovada</option>
-                                <option value="rejeitada" <?php echo ($status_atual === 'rejeitada' ? 'selected' : ''); ?>>Rejeitada</option>
-                                <option value="concluída" <?php echo ($status_atual === 'concluída' ? 'selected' : ''); ?>>Concluída</option>
-                            </select>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="arquivo_pdf" class="form-label">Anexar Documento (PDF)</label>
-                            <input class="form-control" type="file" id="arquivo_pdf" name="arquivo_pdf" accept=".pdf">
-
-                            <?php if (!empty($solicitacao['caminho_arquivo'])): ?>
-                                <div class="form-text mt-2">
-                                    Arquivo atual:
-                                    <a href="../uploads/<?php echo htmlspecialchars($solicitacao['caminho_arquivo']); ?>" target="_blank">
-                                        <?php echo htmlspecialchars($solicitacao['caminho_arquivo']); ?>
-                                    </a>
-                                </div>
-                            <?php endif; ?>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="observacao" class="form-label">Observação / Justificativa (Opcional)</label>
-                            <textarea name="observacao" id="observacao" class="form-control" rows="4"
-                                placeholder="Se necessário, adicione uma observação para o aluno. Ex: Documentação aprovada."><?php echo htmlspecialchars($observacao_atual); ?></textarea>
-                        </div>
-
-                        <div class="text-end">
-                            <button type="submit" class="btn btn-primary">Atualizar Solicitação</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-
+        <div class="d-flex align-items-center justify-content-between mb-3">
+            <h2 class="h4 mb-0">Analisar Solicitação #<?php echo (int)$solicitacao['id_solicitacao']; ?></h2>
+            <a class="btn btn-outline-secondary btn-sm" href="solicitacoes_view_admin.php">Voltar para a Lista</a>
         </div>
+
+        <?php if ($errors): ?>
+            <div class="alert alert-danger">
+                <ul class="mb-0">
+                    <?php foreach ($errors as $e) echo '<li>' . htmlspecialchars($e) . '</li>'; ?>
+                </ul>
+            </div>
+        <?php endif; ?>
+
+        <div class="card shadow-sm mb-4">
+            <div class="card-header">Detalhes do Pedido</div>
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-sm-3">Aluno:</dt>
+                    <dd class="col-sm-9"><?php echo htmlspecialchars($solicitacao['nome_aluno']); ?></dd>
+
+                    <dt class="col-sm-3">Tipo:</dt>
+                    <dd class="col-sm-9"><?php echo htmlspecialchars(ucwords($solicitacao['tipo'])); ?></dd>
+
+                    <dt class="col-sm-3">Data do Pedido:</dt>
+                    <dd class="col-sm-9"><?php echo date('d/m/Y à\s H:i', strtotime($solicitacao['created_at'])); ?></dd>
+
+                    <dt class="col-sm-3">Observação do Aluno:</dt>
+                    <dd class="col-sm-9">
+                        <p class="mb-0 fst-italic">"<?php echo nl2br(htmlspecialchars($solicitacao['observacao'] ?? 'Nenhuma observação fornecida.')); ?>"</p>
+                    </dd>
+                </dl>
+            </div>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-header fw-bold">Ação da Secretaria</div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    <?php csrf_input(); ?>
+
+                    <div class="mb-3">
+                        <label for="status" class="form-label">Alterar Status</label>
+                        <select name="status" id="status" class="form-select" required>
+                            <option value="pendente" <?php echo ($status_atual === 'pendente' ? 'selected' : ''); ?>>Pendente</option>
+                            <option value="em análise" <?php echo ($status_atual === 'em análise' ? 'selected' : ''); ?>>Em Análise</option>
+                            <option value="aprovada" <?php echo ($status_atual === 'aprovada' ? 'selected' : ''); ?>>Aprovada</option>
+                            <option value="rejeitada" <?php echo ($status_atual === 'rejeitada' ? 'selected' : ''); ?>>Rejeitada</option>
+                            <option value="concluída" <?php echo ($status_atual === 'concluída' ? 'selected' : ''); ?>>Concluída</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="arquivo_pdf" class="form-label">Anexar Documento (PDF)</label>
+                        <input class="form-control" type="file" id="arquivo_pdf" name="arquivo_pdf" accept=".pdf">
+
+                        <?php if (!empty($solicitacao['caminho_arquivo'])): ?>
+                            <div class="form-text mt-2">
+                                Arquivo atual:
+                                <a href="../uploads/<?php echo htmlspecialchars($solicitacao['caminho_arquivo']); ?>" target="_blank">
+                                    <?php echo htmlspecialchars($solicitacao['caminho_arquivo']); ?>
+                                </a>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="observacao" class="form-label">Observação / Justificativa (Opcional)</label>
+                        <textarea name="observacao" id="observacao" class="form-control" rows="4"
+                            placeholder="Se necessário, adicione uma observação para o aluno. Ex: Documentação aprovada."><?php echo htmlspecialchars($observacao_atual); ?></textarea>
+                    </div>
+
+                    <div class="text-end">
+                        <button type="submit" class="btn btn-primary">Atualizar Solicitação</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
     </div>
+</div>
 </div>
 
 <?php include '../partials/footer.php'; ?>

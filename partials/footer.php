@@ -120,6 +120,68 @@
         });
     });
 });
+
+
+// Script sistema de notificação
+
+function fetchNotifications() {
+    fetch('/portal-etc/notificacoes_ajax.php')
+        .then(response => response.json())
+        .then(data => {
+            const countBadge = document.getElementById('notification-count');
+            const notificationList = document.getElementById('notification-list');
+
+            // Atualiza o contador
+            if (data.unread_count > 0) {
+                countBadge.textContent = data.unread_count;
+                countBadge.style.display = 'block';
+            } else {
+                countBadge.style.display = 'none';
+            }
+
+            // Atualiza a lista de notificações
+            notificationList.innerHTML = ''; // Limpa a lista antiga
+            if (data.notifications.length > 0) {
+                data.notifications.forEach(notif => {
+                    const listItem = document.createElement('li');
+                    listItem.innerHTML = `<a class="dropdown-item" href="${notif.link}">
+                                            <p class="mb-0 small">${notif.mensagem}</p>
+                                            <small class="text-muted">${new Date(notif.created_at).toLocaleString('pt-BR')}</small>
+                                          </a>`;
+                    notificationList.appendChild(listItem);
+                });
+            } else {
+                notificationList.innerHTML = '<li><span class="dropdown-item text-muted">Nenhuma notificação.</span></li>';
+            }
+        })
+        .catch(error => console.error('Erro ao buscar notificações:', error));
+}
+
+// Chama a função quando a página carrega
+document.addEventListener('DOMContentLoaded', fetchNotifications);
+
+// E chama a função a cada 30 segundos
+setInterval(fetchNotifications, 30000);
+
+// Contagem da notificação
+
+const dropdownElement = document.getElementById('notificationDropdown');
+if (dropdownElement) {
+    dropdownElement.addEventListener('click', function() {
+        // Pega o contador
+        const countBadge = document.getElementById('notification-count');
+        
+        // Se houver notificações não lidas, faz a chamada AJAX para marcá-las como lidas
+        if (countBadge.style.display !== 'none' && parseInt(countBadge.textContent, 10) > 0) {
+            fetch('/portal-etc/marcar_como_lido_ajax.php')
+                .then(() => {
+                    // Esconde o contador visualmente na hora
+                    countBadge.style.display = 'none';
+                });
+        }
+    });
+}
+
 </script>
   </body>
 

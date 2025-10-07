@@ -35,9 +35,16 @@ $foto_usuario_logado = !empty($_SESSION['foto_perfil'])
         </a>
         <div class="ms-auto d-flex align-items-center">
 
-            <a href="#" class="nav-link me-3" title="Notificações">
-                <i class="bi bi-bell fs-5 "></i>
-            </a>
+            <div class="dropdown me-3">
+                <a href="#" class="nav-link" id="notificationDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" title="Notificações">
+                    <i class="bi bi-bell fs-5"></i>
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="notification-count" style="display: none;"></span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-center" aria-labelledby="notificationDropdown" id="notification-list">
+                    <li><a class="dropdown-item text-center" href="#">Nenhuma notificação</a></li>
+                    
+                </ul>
+            </div>
 
             <button id="themeToggle" class="btn btn-sm btn-outline-primary me-3" type="button" title="Alternar tema">
                 <i class="bi bi-brightness-high-fill"></i>
@@ -102,25 +109,25 @@ $foto_usuario_logado = !empty($_SESSION['foto_perfil'])
                 </li>
                 <!-- Dropdown multi-nível -->
                 <li class="sidebar-item">
-    <a href="#" class="sidebar-link has-dropdown collapsed" 
-       data-bs-toggle="collapse" data-bs-target="#auto-atendimento" 
-       aria-expanded="false" aria-controls="auto-atendimento">
-        
-        <i class="bi bi-layers fs-4"></i>
-        <span>Auto Atendimento</span>
-        
-        <i class="bi bi-plus-lg ms-auto dropdown-icon fs-6"></i>
-    </a>
+                    <a href="#" class="sidebar-link has-dropdown collapsed"
+                        data-bs-toggle="collapse" data-bs-target="#auto-atendimento"
+                        aria-expanded="false" aria-controls="auto-atendimento">
 
-    <ul id="auto-atendimento" class="sidebar-dropdown collapse">
-        <li class="sidebar-item">
-            <a href="#" class="sidebar-link">Matrículas</a>
-        </li>
-    </ul>
-</li>
+                        <i class="bi bi-layers fs-4"></i>
+                        <span>Auto Atendimento</span>
+
+                        <i class="bi bi-plus-lg ms-auto dropdown-icon fs-6"></i>
+                    </a>
+
+                    <ul id="auto-atendimento" class="sidebar-dropdown collapse">
+                        <li class="sidebar-item">
+                            <a href="#" class="sidebar-link">Matrículas</a>
+                        </li>
+                    </ul>
+                </li>
                 <div class="sidebar-item">
                     <a href="#" class="sidebar-link">
-                        <i class="bi bi-briefcase fs-4"></i>
+                        <i class="bi bi-megaphone fs-4"></i>
                         <span>Feed</span>
                     </a>
                 </div>

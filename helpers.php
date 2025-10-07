@@ -88,3 +88,40 @@ if (!function_exists('redirect')) {
         exit;
     }
 }
+
+// Função da notificação
+function criar_notificacao(PDO $pdo, int $id_usuario_destino, string $mensagem, ?string $link = null)
+{
+    $stmt = $pdo->prepare(
+        "INSERT INTO notificacao (id_usuario_destino, mensagem, link) VALUES (?, ?, ?)"
+    );
+    $stmt->execute([$id_usuario_destino, $mensagem, $link]);
+}
+
+/**
+ * Cria uma notificação para todos os usuários de um grupo/perfil específico.
+ *
+ * @param PDO $pdo A conexão com o banco de dados.
+ * @param string $grupo O tipo de usuário que receberá a notificação (ex: 'aluno', 'professor').
+ * @param string $mensagem O texto da notificação.
+ * @param string|null $link O link opcional para a notificação.
+ * @return void
+ */
+function criar_notificacao_para_grupo(PDO $pdo, string $grupo, string $mensagem, ?string $link = null)
+{
+    // Esta consulta SQL é a forma mais otimizada de fazer a inserção em massa.
+    // Ela insere uma nova linha na tabela 'notificacao' para cada usuário
+    // encontrado no SELECT que corresponda ao grupo desejado.
+    $sql = "INSERT INTO notificacao (id_usuario_destino, mensagem, link)
+            SELECT id_usuario, ?, ?
+            FROM usuario
+            WHERE tipo = ?";
+
+    try {
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$mensagem, $link, $grupo]);
+    } catch (PDOException $e) {
+        // Lida com o erro, talvez logando em um arquivo
+        error_log("Erro ao criar notificação em grupo: " . $e->getMessage());
+    }
+}
