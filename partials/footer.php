@@ -80,6 +80,46 @@
         } catch (e) {}
       }
     });
+
+
+    // MUDANÇA DE ÍCONE DO DROPDOWN DO PORTAL HEADER
+
+    document.addEventListener('DOMContentLoaded', function () {
+    // 1. Seleciona todos os menus que podem ser abertos/fechados
+    const collapsibleMenus = document.querySelectorAll('.sidebar-dropdown.collapse');
+
+    collapsibleMenus.forEach(menu => {
+        // 2. Ouve o evento "show.bs.collapse", que acontece QUANDO O MENU COMEÇA A ABRIR
+        menu.addEventListener('show.bs.collapse', function () {
+            // Encontra o link <a> que controla este menu
+            const toggleLink = document.querySelector(`[data-bs-target="#${menu.id}"]`);
+            if (toggleLink) {
+                // Encontra o ícone dentro do link
+                const icon = toggleLink.querySelector('.dropdown-icon');
+                if (icon) {
+                    // Troca a classe de 'mais' para 'menos'
+                    icon.classList.remove('bi-plus-lg');
+                    icon.classList.add('bi-dash-lg');
+                }
+            }
+        });
+
+        // 3. Ouve o evento "hide.bs.collapse", que acontece QUANDO O MENU COMEÇA A FECHAR
+        menu.addEventListener('hide.bs.collapse', function () {
+            // Encontra o link <a> que controla este menu
+            const toggleLink = document.querySelector(`[data-bs-target="#${menu.id}"]`);
+            if (toggleLink) {
+                // Encontra o ícone dentro do link
+                const icon = toggleLink.querySelector('.dropdown-icon');
+                if (icon) {
+                    // Troca a classe de 'menos' de volta para 'mais'
+                    icon.classList.remove('bi-dash-lg');
+                    icon.classList.add('bi-plus-lg');
+                }
+            }
+        });
+    });
+});
 </script>
   </body>
 

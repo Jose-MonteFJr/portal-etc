@@ -14,7 +14,6 @@ $foto_usuario_logado = !empty($_SESSION['foto_perfil'])
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- <link href="https://cdn.lineicons.com/5.0/lineicons.css" rel="stylesheet">  -->
     <link href="/portal-etc/partials/css/bootstrap.min.css" rel="stylesheet">
     <link rel="icon" href="/portal-etc/partials/img/portal-etc-logo.png" type="image/png">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -103,16 +102,22 @@ $foto_usuario_logado = !empty($_SESSION['foto_perfil'])
                 </li>
                 <!-- Dropdown multi-nível -->
                 <li class="sidebar-item">
-                    <a href="#" class="sidebar-link has-dropdown collapsed" data-toggle="collapse" data-target="#auto-atendimento">
-                        <i class="bi bi-layers fs-4"></i>
-                        <span>Auto Atendimento</span>
-                    </a>
-                    <ul id="auto-atendimento" class="sidebar-dropdown collapse">
-                        <li class="sidebar-item">
-                            <a href="#" class="sidebar-link">Matrículas</a>
-                        </li>
-                    </ul>
-                </li>
+    <a href="#" class="sidebar-link has-dropdown collapsed" 
+       data-bs-toggle="collapse" data-bs-target="#auto-atendimento" 
+       aria-expanded="false" aria-controls="auto-atendimento">
+        
+        <i class="bi bi-layers fs-4"></i>
+        <span>Auto Atendimento</span>
+        
+        <i class="bi bi-plus-lg ms-auto dropdown-icon fs-6"></i>
+    </a>
+
+    <ul id="auto-atendimento" class="sidebar-dropdown collapse">
+        <li class="sidebar-item">
+            <a href="#" class="sidebar-link">Matrículas</a>
+        </li>
+    </ul>
+</li>
                 <div class="sidebar-item">
                     <a href="#" class="sidebar-link">
                         <i class="bi bi-briefcase fs-4"></i>
