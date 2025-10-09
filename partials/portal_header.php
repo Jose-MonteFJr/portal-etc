@@ -145,7 +145,7 @@ $foto_usuario_logado = !empty($_SESSION['foto_perfil'])
                 <div class="sidebar-item">
                     <a href="#" class="sidebar-link">
                         <i class="bi bi-megaphone fs-4"></i>
-                        <span>Feed</span>
+                        <span>Avisos</span>
                     </a>
                 </div>
                 <div class="sidebar-footer">

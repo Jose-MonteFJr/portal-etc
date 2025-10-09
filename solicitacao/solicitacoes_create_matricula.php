@@ -87,8 +87,8 @@ include '../partials/portal_header.php';
                         <label for="tipo">Tipo de Requerimento</label>
                         <select name="tipo" id="tipo" class="form-input" required>
                             <option value="" disabled <?php echo empty($tipo) ? 'selected' : ''; ?>>Selecione o que você deseja solicitar...</option>
-                            <option value="trancamento de matrícula" <?php echo ($tipo === 'trancamento de matrícula' ? 'selected' : ''); ?>>Trancamento de matrícula</option>
                             <option value="renovação de matrícula" <?php echo ($tipo === 'renovação de matrícula' ? 'selected' : ''); ?>>Renovação de Matrícula</option>
+                            <option value="trancamento de matrícula" <?php echo ($tipo === 'trancamento de matrícula' ? 'selected' : ''); ?>>Trancamento de matrícula</option>
                         </select>
                     </div>
 
