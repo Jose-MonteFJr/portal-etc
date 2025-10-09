@@ -181,7 +181,8 @@ CREATE TABLE solicitacao (
     id_aluno INT UNSIGNED NOT NULL,
     tipo ENUM('renovação de matrícula', 'emissão de diploma', 'emissão de certificado', 'trancamento de matrícula') NOT NULL,
     status ENUM('pendente', 'em análise', 'aprovada', 'rejeitada', 'concluída') NOT NULL DEFAULT 'pendente',
-    observacao TEXT NULL, -- Campo para o aluno adicionar informações ou para a secretaria justificar uma decisão.
+    observacao_aluno TEXT NULL, -- Campo para o aluno adicionar informações
+    observacao_secretaria TEXT NULL, -- Campo para a secretaria adicionar informações
     caminho_arquivo VARCHAR(255) NULL DEFAULT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

@@ -29,7 +29,8 @@ if (!$solicitacao) {
 // Inicializa variáveis para o formulário com os dados do banco
 $errors = [];
 $status_atual = $solicitacao['status'];
-$observacao_atual = $solicitacao['observacao'];
+$observacao_atual_secretaria = $solicitacao['observacao_secretaria'];
+$observacao_atual_aluno = $solicitacao['observacao_aluno'];
 
 // 2. Lógica para processar a ATUALIZAÇÃO (quando o formulário é enviado)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -37,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Captura os novos dados do formulário
     $novo_status    = trim($_POST['status'] ?? '');
-    $nova_observacao = trim($_POST['observacao'] ?? '');
+    $nova_observacao = trim($_POST['observacao_secretaria'] ?? '');
     $nome_arquivo_final = $solicitacao['caminho_arquivo']; // Mantém o arquivo antigo por padrão
 
     // --- LÓGICA DE UPLOAD DO ARQUIVO ---
@@ -75,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Prepara e executa a consulta UPDATE
             $stmt = $pdo->prepare(
                 "UPDATE solicitacao 
-                 SET status = ?, observacao = ?, caminho_arquivo = ? 
+                 SET status = ?, observacao_secretaria = ?, caminho_arquivo = ? 
                  WHERE id_solicitacao = ?"
             );
             $stmt->execute([$novo_status, $nova_observacao, $nome_arquivo_final, $id_solicitacao]);
@@ -158,7 +159,7 @@ include '../partials/header.php';
 
                     <dt class="col-sm-3">Observação do Aluno:</dt>
                     <dd class="col-sm-9">
-                        <p class="mb-0 fst-italic">"<?php echo nl2br(htmlspecialchars($solicitacao['observacao'] ?? 'Nenhuma observação fornecida.')); ?>"</p>
+                        <p class="mb-0 fst-italic">"<?php echo nl2br(htmlspecialchars($observacao_atual_aluno ?? 'Nenhuma observação fornecida.')); ?>"</p>
                     </dd>
                 </dl>
             </div>
@@ -196,9 +197,9 @@ include '../partials/header.php';
                     </div>
 
                     <div class="mb-3">
-                        <label for="observacao" class="form-label">Observação / Justificativa (Opcional)</label>
-                        <textarea name="observacao" id="observacao" class="form-control" rows="4"
-                            placeholder="Se necessário, adicione uma observação para o aluno. Ex: Documentação aprovada."><?php echo htmlspecialchars($observacao_atual); ?></textarea>
+                        <label for="observacao_secretaria" class="form-label">Observação / Justificativa (Opcional)</label>
+                        <textarea name="observacao_secretaria" id="observacao_secretaria" class="form-control" rows="4"
+                            placeholder="Se necessário, adicione uma observação para o aluno. Ex: Documentação aprovada."><?php echo htmlspecialchars($observacao_atual_secretaria); ?></textarea>
                     </div>
 
                     <div class="text-end">

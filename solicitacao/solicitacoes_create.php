@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // 1. Captura os dados do formulário
     $tipo       = trim($_POST['tipo'] ?? '');
-    $observacao = trim($_POST['observacao'] ?? '');
+    $observacao = trim($_POST['observacao_aluno'] ?? '');
 
     // 2. Validação dos dados
     $tipos_validos = ['emissão de diploma', 'emissão de certificado'];
@@ -44,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             // 4. Insere a solicitação no banco de dados
             $stmt = $pdo->prepare(
-                "INSERT INTO solicitacao (id_aluno, tipo, observacao) VALUES (?, ?, ?)"
+                "INSERT INTO solicitacao (id_aluno, tipo, observacao_aluno) VALUES (?, ?, ?)"
             );
 
             $stmt->execute([$id_aluno, $tipo, $observacao]);
@@ -94,8 +94,8 @@ include '../partials/portal_header.php';
                     </div>
 
                     <div class="form-group">
-                        <label for="observacao">Observações (Opcional)</label>
-                        <textarea name="observacao" id="observacao" class="form-input" rows="5" placeholder="Se necessário, adicione aqui qualquer informação relevante..."><?php echo htmlspecialchars($observacao); ?></textarea>
+                        <label for="observacao_aluno">Observações (Opcional)</label>
+                        <textarea name="observacao_aluno" id="observacao_aluno" class="form-input" rows="5" placeholder="Se necessário, adicione aqui qualquer informação relevante..."><?php echo htmlspecialchars($observacao); ?></textarea>
                     </div>
 
                     <div class="form-actions">

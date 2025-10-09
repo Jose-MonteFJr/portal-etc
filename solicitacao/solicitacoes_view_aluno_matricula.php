@@ -107,7 +107,7 @@ include '../partials/portal_header.php';
                                                             <?php echo htmlspecialchars(ucwords($s['status'])); ?>
                                                         </span>
                                                     </td>
-                                                    <td data-label="Observação"><?php echo htmlspecialchars($s['observacao'] ?? 'Nenhuma observação.'); ?></td>
+                                                    <td data-label="Observação"><?php echo htmlspecialchars($s['observacao_secretaria'] ?? 'Nenhuma observação.'); ?></td>
 
                                                     <td data-label="Anexo" class="text-center">
                                                         <?php if (!empty($s['caminho_arquivo'])): ?>
