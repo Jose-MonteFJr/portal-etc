@@ -109,27 +109,36 @@ $foto_usuario_logado = !empty($_SESSION['foto_perfil'])
                     </a>
                 </li>
                 <!-- Dropdown: Solicitações -->
-                <li class="sidebar-item">
+                <!-- <li class="sidebar-item">
                     <a href="/portal-etc/solicitacao/solicitacoes_view_aluno.php" class="sidebar-link">
                         <i class="bi bi-file-earmark-text fs-4"></i>
                         <span>Solicitações</span>
                     </a>
-                </li>
+                </li> -->
                 <!-- Dropdown multi-nível -->
                 <li class="sidebar-item">
                     <a href="#" class="sidebar-link has-dropdown collapsed"
                         data-bs-toggle="collapse" data-bs-target="#auto-atendimento"
                         aria-expanded="false" aria-controls="auto-atendimento">
 
-                        <i class="bi bi-layers fs-4"></i>
+                        <i class="bi bi-person-gear fs-4"></i>
                         <span>Auto Atendimento</span>
 
                         <i class="bi bi-plus-lg ms-auto dropdown-icon fs-6"></i>
                     </a>
+                    <ul id="auto-atendimento" class="sidebar-dropdown collapse">
+                        <li class="sidebar-item">
+                            <a href="/portal-etc/solicitacao/solicitacoes_view_aluno_matricula.php" class="sidebar-link">
+                                <i class="bi bi-person-vcard fs-5"></i> Matrículas
+                            </a>
+                        </li>
+                    </ul>
 
                     <ul id="auto-atendimento" class="sidebar-dropdown collapse">
                         <li class="sidebar-item">
-                            <a href="#" class="sidebar-link">Matrículas</a>
+                            <a href="/portal-etc/solicitacao/solicitacoes_view_aluno.php" class="sidebar-link">
+                                <i class="bi bi-file-earmark-text fs-5"></i> Solicitações
+                            </a>
                         </li>
                     </ul>
                 </li>
@@ -139,7 +148,7 @@ $foto_usuario_logado = !empty($_SESSION['foto_perfil'])
                         <span>Feed</span>
                     </a>
                 </div>
-                <div class="sidebar-item">
+                <div class="sidebar-footer">
                     <a href="#" class="sidebar-link">
                         <i class="bi bi-chat-dots fs-4"></i>
                         <span>Chat</span>

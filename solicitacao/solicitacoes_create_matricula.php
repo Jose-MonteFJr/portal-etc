@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $observacao = trim($_POST['observacao'] ?? '');
 
     // 2. Validação dos dados
-    $tipos_validos = ['emissão de diploma', 'emissão de certificado'];
+    $tipos_validos = ['renovação de matrícula', 'trancamento de matrícula'];
     if (empty($tipo)) {
         $errors[] = 'O tipo da solicitação é obrigatório.';
     } elseif (!in_array($tipo, $tipos_validos)) {
@@ -50,9 +50,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->execute([$id_aluno, $tipo, $observacao]);
 
             flash_set('success', 'Sua solicitação foi enviada com sucesso!');
-            header('Location: solicitacoes_view_aluno.php');
+            header('Location: solicitacoes_view_aluno_matricula.php');
             exit;
-            
         } catch (Exception $e) {
             $errors[] = 'Erro ao salvar a solicitação: ' . $e->getMessage();
         }
@@ -68,8 +67,8 @@ include '../partials/portal_header.php';
 
         <div class="page-container">
             <div class="page-header">
-                <h1>Nova Solicitação</h1>
-                <a class="header-link" href="solicitacoes_view_aluno.php">Minhas Solicitações</a>
+                <h1>Novo Requerimento</h1>
+                <a class="header-link" href="solicitacoes_view_aluno_matricula.php">Meus Requerimentos</a>
             </div>
 
             <?php if (!empty($errors)): ?>
@@ -85,11 +84,11 @@ include '../partials/portal_header.php';
                     <?php csrf_input(); ?>
 
                     <div class="form-group">
-                        <label for="tipo">Tipo de Solicitação</label>
+                        <label for="tipo">Tipo de Requerimento</label>
                         <select name="tipo" id="tipo" class="form-input" required>
                             <option value="" disabled <?php echo empty($tipo) ? 'selected' : ''; ?>>Selecione o que você deseja solicitar...</option>
-                            <option value="emissão de diploma" <?php echo ($tipo === 'emissão de diploma' ? 'selected' : ''); ?>>Emissão de Diploma</option>
-                            <option value="emissão de certificado" <?php echo ($tipo === 'emissão de certificado' ? 'selected' : ''); ?>>Emissão de Certificado</option>
+                            <option value="trancamento de matrícula" <?php echo ($tipo === 'trancamento de matrícula' ? 'selected' : ''); ?>>Trancamento de matrícula</option>
+                            <option value="renovação de matrícula" <?php echo ($tipo === 'renovação de matrícula' ? 'selected' : ''); ?>>Renovação de Matrícula</option>
                         </select>
                     </div>
 

@@ -29,18 +29,17 @@ if ($resultado_aluno) {
 }
 
 // Definir os tipos que pertencem a esta categoria
-$tipos_documento = ['emissão de certificado', 'emissão de diploma']; 
+$tipos_matricula = ['renovação de matrícula', 'trancamento de matrícula']; 
 
 // Adaptar a consulta SQL para filtrar por tipo
 // Criamos placeholders (?) dinamicamente para a cláusula IN
-$placeholders = implode(',', array_fill(0, count($tipos_documento), '?'));
+$placeholders = implode(',', array_fill(0, count($tipos_matricula), '?'));
 
 $sql = "SELECT * FROM solicitacao WHERE id_aluno = ? AND tipo IN ($placeholders) ORDER BY created_at DESC";
 $stmt = $pdo->prepare($sql);
-$params = array_merge([$id_aluno], $tipos_documento);
+$params = array_merge([$id_aluno], $tipos_matricula);
 $stmt->execute($params);
 $solicitacoes = $stmt->fetchAll();
-
 
 // 3. (Opcional, mas útil) Função para mapear status para cores do Bootstrap
 function get_status_badge_class($status)
@@ -72,8 +71,8 @@ include '../partials/portal_header.php';
 
                     <!-- CABEÇALHO RESPONSIVO CORRIGIDO -->
                     <div class="d-flex flex-column flex-sm-row justify-content-sm-between align-items-sm-center mb-3 gap-2">
-                        <h2 class="h4 mb-0 text-center text-sm-start">Minhas Solicitações</h2>
-                        <a class="btn btn-primary w-sm-auto" href="solicitacoes_create.php">+ Nova Solicitação</a>
+                        <h2 class="h4 mb-0 text-center text-sm-start">Assuntos da Matrícula</h2>
+                        <a class="btn btn-primary w-sm-auto" href="solicitacoes_create_matricula.php">+ Novo Requerimento</a>
                     </div>
 
                     <?php flash_show(); ?>
@@ -95,7 +94,7 @@ include '../partials/portal_header.php';
                                     <tbody>
                                         <?php if (empty($solicitacoes)): ?>
                                             <tr>
-                                                <td colspan="6" class="text-center text-muted py-4">Você ainda não fez nenhuma solicitação.</td>
+                                                <td colspan="6" class="text-center text-muted py-4">Você ainda não fez nenhum requerimento.</td>
                                             </tr>
                                         <?php else: ?>
                                             <?php foreach ($solicitacoes as $s): ?>

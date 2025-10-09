@@ -80,20 +80,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             );
             $stmt->execute([$novo_status, $nova_observacao, $nome_arquivo_final, $id_solicitacao]);
 
-            // --- NOVO: Cria a notificação para o aluno ---
-            $id_aluno_da_solicitacao = $solicitacao['id_aluno'];
-            // Precisamos ir de id_aluno para id_usuario
+            // --- <<< INÍCIO DO NOVO BLOCO DE NOTIFICAÇÃO INTELIGENTE >>> ---
+
+            // 1. Obter o id_usuario do aluno para quem enviaremos a notificação
             $stmt_user = $pdo->prepare("SELECT id_usuario FROM aluno WHERE id_aluno = ?");
-            $stmt_user->execute([$id_aluno_da_solicitacao]);
+            $stmt_user->execute([$solicitacao['id_aluno']]);
             $id_usuario_destino = $stmt_user->fetchColumn();
 
             if ($id_usuario_destino) {
-                $mensagem = "Sua solicitação teve o status atualizado para: " . ucfirst($novo_status);
-                $link = "/portal-etc/solicitacao/solicitacoes_view_aluno.php";
-                criar_notificacao($pdo, $id_usuario_destino, $mensagem, $link);
+                // 2. Definir as categorias de solicitação (mesma lógica da listagem)
+                $tipos_documento = ['emissão de certificado', 'emissão de diploma'];
+                $tipos_matricula = ['renovação de matrícula', 'trancamento de matrícula'];
+
+                // 3. Determinar o link e a mensagem com base no TIPO da solicitação
+                $tipo_solicitacao = $solicitacao['tipo'];
+                $link_destino = '/portal-etc/solicitacao/solicitacoes_view_aluno.php'; // Link padrão de fallback
+
+                if (in_array($tipo_solicitacao, $tipos_documento)) {
+                    $link_destino = '/portal-etc/solicitacao/solicitacoes_view_aluno.php';
+                } elseif (in_array($tipo_solicitacao, $tipos_matricula)) {
+                    $link_destino = '/portal-etc/solicitacao/solicitacoes_view_aluno_matricula.php';
+                }
+
+                // 4. (Bônus) Criar uma mensagem mais descritiva
+                $mensagem = sprintf(
+                    "Sua solicitação de %s foi atualizada para %s.",
+                    ($tipo_solicitacao), // Ex: "Certificado"
+                    ($novo_status)       // Ex: "Aprovada"
+                );
+
+                // 5. Chamar a função para criar a notificação com os dados dinâmicos
+                criar_notificacao($pdo, $id_usuario_destino, $mensagem, $link_destino);
             }
 
-            flash_set('success', 'Solicitação enviada com sucesso!');
+            // --- <<< FIM DO NOVO BLOCO DE NOTIFICAÇÃO >>> ---
+
+            flash_set('success', 'Solicitação atualizada e aluno notificado com sucesso!');
             header('Location: solicitacoes_view_admin.php');
             exit;
         } catch (PDOException $e) {
