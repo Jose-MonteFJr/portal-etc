@@ -195,7 +195,7 @@ CREATE TABLE notificacao (
     id_usuario_destino INT UNSIGNED NOT NULL,
     mensagem VARCHAR(255) NOT NULL,
     link VARCHAR(255) NULL,
-    status ENUM('nao lida', 'lida') NOT NULL DEFAULT 'nao lida',
+    status ENUM('nao lida', 'lida', 'arquivada') NOT NULL DEFAULT 'nao lida',
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT fk_notificacao_usuario FOREIGN KEY (id_usuario_destino) REFERENCES usuario(id_usuario) ON DELETE CASCADE

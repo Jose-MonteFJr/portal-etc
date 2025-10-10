@@ -15,7 +15,7 @@ $stmt_count->execute([$id_usuario]);
 $unread_count = $stmt_count->fetchColumn();
 
 // Busca as 5 mais recentes
-$stmt_list = $pdo->prepare("SELECT mensagem, link, created_at FROM notificacao WHERE id_usuario_destino = ? ORDER BY created_at DESC LIMIT 5");
+$stmt_list = $pdo->prepare("SELECT * FROM notificacao WHERE id_usuario_destino = ? AND status != 'arquivada' ORDER BY created_at DESC LIMIT 5");
 $stmt_list->execute([$id_usuario]);
 $notifications = $stmt_list->fetchAll(PDO::FETCH_ASSOC);
 
