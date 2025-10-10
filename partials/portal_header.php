@@ -115,7 +115,7 @@ $foto_usuario_logado = !empty($_SESSION['foto_perfil'])
                         <span>Solicitações</span>
                     </a>
                 </li> -->
-                <!-- Dropdown multi-nível -->
+                <!-- Dropdown auto atendimento -->
                 <li class="sidebar-item">
                     <a href="#" class="sidebar-link has-dropdown collapsed"
                         data-bs-toggle="collapse" data-bs-target="#auto-atendimento"
@@ -126,21 +126,20 @@ $foto_usuario_logado = !empty($_SESSION['foto_perfil'])
 
                         <i class="bi bi-plus-lg ms-auto dropdown-icon fs-6"></i>
                     </a>
+
                     <ul id="auto-atendimento" class="sidebar-dropdown collapse">
                         <li class="sidebar-item">
                             <a href="/portal-etc/solicitacao/solicitacoes_view_aluno_matricula.php" class="sidebar-link">
                                 <i class="bi bi-person-vcard fs-5"></i> Matrículas
                             </a>
                         </li>
-                    </ul>
-
-                    <ul id="auto-atendimento" class="sidebar-dropdown collapse">
                         <li class="sidebar-item">
                             <a href="/portal-etc/solicitacao/solicitacoes_view_aluno.php" class="sidebar-link">
                                 <i class="bi bi-file-earmark-text fs-5"></i> Solicitações
                             </a>
                         </li>
                     </ul>
+
                 </li>
                 <div class="sidebar-item">
                     <a href="#" class="sidebar-link">
