@@ -123,7 +123,7 @@
 
 
       // Sistema de notificações
-
+      // Função para notificações
       function fetchNotifications() {
           fetch('/portal-etc/notificacao/notificacoes_ajax.php')
               .then(response => response.json())
@@ -148,10 +148,27 @@
                   if (hasNotifications) {
                       data.notifications.forEach(notif => {
                           const listItem = document.createElement('li');
-                          listItem.innerHTML = `<a class="dropdown-item" href="${notif.link || '#'}">
-                                            <p class="mb-0 small">${notif.mensagem}</p>
-                                            <small class="text-muted">${new Date(notif.created_at).toLocaleString('pt-BR')}</small>
-                                          </a>`;
+
+                          // Adiciona uma classe se a notificação não foi lida
+                          const isUnreadClass = notif.status === 'nao lida' ? 'unread-notification' : '';
+
+                          // Constrói o HTML do item da lista
+                          let itemHTML = `
+                        <div class="dropdown-item-wrapper ${isUnreadClass}">
+                            <a class="dropdown-item" href="${notif.link || '#'}">
+                                <p class="mb-0 small">${notif.mensagem}</p>
+                                <small class="text-muted">${new Date(notif.created_at).toLocaleString('pt-BR')}</small>
+                            </a>`;
+
+                          // NOVO: Adiciona o botão "marcar como lida" APENAS se não estiver lida
+                          if (notif.status === 'nao lida') {
+                              itemHTML += `<button class="btn btn-sm btn-light mark-as-read-btn" data-id="${notif.id_notificacao}" title="Marcar como lida">
+                                        <i class="bi bi-check-circle"></i>
+                                     </button>`;
+                          }
+
+                          itemHTML += `</div>`;
+                          listItem.innerHTML = itemHTML;
                           notificationList.appendChild(listItem);
                       });
                   } else {
@@ -160,15 +177,24 @@
 
                   // ALTERADO: O rodapé agora é construído com base na verificação
                   const footerHTML = `
-                <li><hr class="dropdown-divider"></li>
-                <li>
-                    <a class="dropdown-item text-center text-muted small ${!hasNotifications ? 'disabled' : ''}" 
-                       href="#" 
-                       id="clear-notifications-btn">
-                        <i class="bi bi-check2-all"></i> Limpar notificações lidas
-                    </a>
-                </li>
-            `;
+    <li><hr class="dropdown-divider"></li>
+    
+    <li>
+        <a class="dropdown-item text-center text-muted small ${!hasNotifications ? 'disabled' : ''}" 
+           href="#" 
+           id="clear-notifications-btn">
+            <i class="bi bi-check2-all"></i> Limpar notificações lidas
+        </a>
+    </li>
+    
+    <li><hr class="dropdown-divider"></li>
+    
+    <li>
+        <a class="dropdown-item text-center" href="/portal-etc/notificacao/historico_notificacoes.php">
+            Ver todas as notificações
+        </a>
+    </li>
+`;
                   notificationList.insertAdjacentHTML('beforeend', footerHTML);
               })
               .catch(error => console.error('Erro ao buscar notificações:', error));
@@ -227,6 +253,23 @@
                           showToast('Erro de conexão.', 'danger');
                       });
               }
+          }
+      });
+
+      document.addEventListener('click', function(event) {
+          const markBtn = event.target.closest('.mark-as-read-btn');
+          if (markBtn) {
+              event.stopPropagation();
+              const notificationId = markBtn.dataset.id;
+
+              const formData = new FormData();
+              formData.append('id_notificacao', notificationId);
+
+              fetch('/portal-etc/notificacao/marcar_uma_lida_ajax.php', {
+                      method: 'POST',
+                      body: formData
+                  })
+                  .then(() => fetchNotifications()); // Apenas atualiza a lista
           }
       });
   </script>

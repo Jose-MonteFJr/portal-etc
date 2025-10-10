@@ -59,7 +59,7 @@ $foto_usuario_logado = !empty($_SESSION['foto_perfil'])
             </button>
 
             <div class="dropdown">
-                <a href="#" class="nav-link dropdown-toggle d-flex align-items-center" data-bs-toggle="dropdown" aria-expanded="false">
+                <a href="#" class="nav-link dropdown-toggle d-flex align-items-center" data-bs-toggle="dropdown" aria-expanded="false" title="Perfil">
                     <span class="me-2 d-none d-md-inline"><?php echo htmlspecialchars($_SESSION['nome_completo']); ?></span>
                     <img src="<?php echo htmlspecialchars($foto_usuario_logado); ?>" alt="Foto do Usuário"
                         class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
@@ -91,35 +91,28 @@ $foto_usuario_logado = !empty($_SESSION['foto_perfil'])
 
             <ul id="sidebar-nav">
                 <li class="sidebar-item">
-                    <a href="/portal-etc/portal_home.php" class="sidebar-link">
+                    <a href="/portal-etc/portal_home.php" class="sidebar-link" title="Home">
                         <i class="bi bi-house-door fs-3"></i>
                         <span>Home</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="#" class="sidebar-link">
+                    <a href="#" class="sidebar-link" title="Carga horária">
                         <i class="bi bi-alarm fs-4"></i>
                         <span>Carga horária</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="#" class="sidebar-link">
+                    <a href="#" class="sidebar-link" title="Agenda">
                         <i class="bi bi-calendar-event fs-4"></i>
                         <span>Agenda</span>
                     </a>
                 </li>
-                <!-- Dropdown: Solicitações -->
-                <!-- <li class="sidebar-item">
-                    <a href="/portal-etc/solicitacao/solicitacoes_view_aluno.php" class="sidebar-link">
-                        <i class="bi bi-file-earmark-text fs-4"></i>
-                        <span>Solicitações</span>
-                    </a>
-                </li> -->
                 <!-- Dropdown auto atendimento -->
                 <li class="sidebar-item">
                     <a href="#" class="sidebar-link has-dropdown collapsed"
                         data-bs-toggle="collapse" data-bs-target="#auto-atendimento"
-                        aria-expanded="false" aria-controls="auto-atendimento">
+                        aria-expanded="false" aria-controls="auto-atendimento" title="Auto atendimento">
 
                         <i class="bi bi-person-gear fs-4"></i>
                         <span>Auto Atendimento</span>
@@ -129,12 +122,12 @@ $foto_usuario_logado = !empty($_SESSION['foto_perfil'])
 
                     <ul id="auto-atendimento" class="sidebar-dropdown collapse">
                         <li class="sidebar-item">
-                            <a href="/portal-etc/solicitacao/solicitacoes_view_aluno_matricula.php" class="sidebar-link">
+                            <a href="/portal-etc/solicitacao/solicitacoes_view_aluno_matricula.php" class="sidebar-link" title="Matrículas">
                                 <i class="bi bi-person-vcard fs-5"></i> Matrículas
                             </a>
                         </li>
                         <li class="sidebar-item">
-                            <a href="/portal-etc/solicitacao/solicitacoes_view_aluno.php" class="sidebar-link">
+                            <a href="/portal-etc/solicitacao/solicitacoes_view_aluno.php" class="sidebar-link" title="Soicitações">
                                 <i class="bi bi-file-earmark-text fs-5"></i> Solicitações
                             </a>
                         </li>
@@ -142,23 +135,16 @@ $foto_usuario_logado = !empty($_SESSION['foto_perfil'])
 
                 </li>
                 <div class="sidebar-item">
-                    <a href="#" class="sidebar-link">
+                    <a href="#" class="sidebar-link" title="Avisos">
                         <i class="bi bi-megaphone fs-4"></i>
                         <span>Avisos</span>
                     </a>
                 </div>
                 <div class="sidebar-footer">
-                    <a href="#" class="sidebar-link">
+                    <a href="#" class="sidebar-link" title="Chat">
                         <i class="bi bi-chat-dots fs-4"></i>
                         <span>Chat</span>
                     </a>
                 </div>
-                <!-- Rodapé da sidebar -->
-                <!--                 <div class="sidebar-footer">
-                    <a href="/portal-etc/logout.php" class="sidebar-link">
-                        <i class="lni lni-exit"></i>
-                        <span>Sair</span>
-                    </a>
-                </div> -->
             </ul>
         </aside>

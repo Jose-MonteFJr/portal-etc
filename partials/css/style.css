@@ -671,3 +671,31 @@ a.sidebar-link:hover {
     background-color: #3f77dd;
     border-left: 3px solid #1b2a44;
 }
+
+/* Marcar como lido individualmente */
+
+.dropdown-item-wrapper {
+    display: flex;
+    align-items: center;
+    padding-right: .5rem;
+}
+
+.dropdown-item-wrapper .dropdown-item {
+    flex-grow: 1;
+}
+
+.unread-notification {
+    background-color: #f0f8ff;
+}
+
+a.list-group-item:hover {
+    background-color: #3b7ddd;
+    border-left: 3px solid #1b2a44;
+    color: #fff;
+}
+
+[data-bs-theme="dark"] a.list-group-item:hover {
+    background-color: #1b2a44;
+    border-left: 3px solid #3b7ddd;
+    color: #fff;
+}
