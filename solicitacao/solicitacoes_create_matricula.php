@@ -80,7 +80,7 @@ include '../partials/portal_header.php';
             <?php endif; ?>
 
             <div class="form-container">
-                <form method="post">
+                <form method="post" onsubmit="return confirm('Tem certeza que deseja enviar o requerimento?');">
                     <?php csrf_input(); ?>
 
                     <div class="form-group">

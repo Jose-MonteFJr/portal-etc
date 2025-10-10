@@ -1,6 +1,6 @@
 <?php
 session_start();
-require __DIR__ . '/config/db.php';
+require '../config/db.php';
 
 // Apenas executa se o usuário estiver logado e a requisição for POST
 if (!isset($_SESSION['id_usuario']) || $_SERVER['REQUEST_METHOD'] !== 'POST') {

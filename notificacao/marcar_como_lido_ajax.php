@@ -1,6 +1,6 @@
 <?php
 session_start();
-require __DIR__ . '/config/db.php';
+require '../config/db.php';
 
 if (!isset($_SESSION['id_usuario'])) { exit; }
 
