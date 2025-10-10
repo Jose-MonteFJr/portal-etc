@@ -16,7 +16,7 @@ $foto_usuario_logado = !empty($_SESSION['foto_perfil'])
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="/portal-etc/partials/css/bootstrap.min.css" rel="stylesheet">
     <link rel="icon" href="/portal-etc/partials/img/portal-etc-logo.png" type="image/png">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="/portal-etc/partials/icons/css/bootstrap-icons.min.css">
     <link href="/portal-etc/partials/css/style.css" rel="stylesheet">
     <title>Portal ETC</title>
 </head>
