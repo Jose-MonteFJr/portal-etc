@@ -201,6 +201,54 @@ CREATE TABLE notificacao (
     CONSTRAINT fk_notificacao_usuario FOREIGN KEY (id_usuario_destino) REFERENCES usuario(id_usuario) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+-- Tabela principal para os avisos
+CREATE TABLE aviso (
+    id_aviso INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    id_usuario_autor INT UNSIGNED NOT NULL,
+    titulo VARCHAR(255) NOT NULL,
+    descricao TEXT NOT NULL,
+    caminho_imagem VARCHAR(255) NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_aviso_usuario FOREIGN KEY (id_usuario_autor) REFERENCES usuario(id_usuario) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- Tabela para os comentários
+CREATE TABLE comentario (
+    id_comentario INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    id_aviso INT UNSIGNED NOT NULL,
+    id_usuario INT UNSIGNED NOT NULL,
+    conteudo TEXT NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_comentario_aviso FOREIGN KEY (id_aviso) REFERENCES aviso(id_aviso) ON DELETE CASCADE,
+    CONSTRAINT fk_comentario_usuario FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- Tabela de ligação para as curtidas (relação Muitos-para-Muitos)
+CREATE TABLE curtida (
+    id_aviso INT UNSIGNED NOT NULL,
+    id_usuario INT UNSIGNED NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    PRIMARY KEY (id_aviso, id_usuario), -- Impede que um usuário curta o mesmo post duas vezes
+    CONSTRAINT fk_curtida_aviso FOREIGN KEY (id_aviso) REFERENCES aviso(id_aviso) ON DELETE CASCADE,
+    CONSTRAINT fk_curtida_usuario FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- Tabela de ligação para os avisos salvos (relação Muitos-para-Muitos)
+CREATE TABLE aviso_salvo (
+    id_aviso INT UNSIGNED NOT NULL,
+    id_usuario INT UNSIGNED NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    PRIMARY KEY (id_aviso, id_usuario), -- Impede que um usuário salve o mesmo post duas vezes
+    CONSTRAINT fk_aviso_salvo_aviso FOREIGN KEY (id_aviso) REFERENCES aviso(id_aviso) ON DELETE CASCADE,
+    CONSTRAINT fk_aviso_salvo_usuario FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 -- INSERTS PADRÃO
 
 INSERT INTO usuario (nome_completo, cpf, email, password_hash, telefone, data_nascimento, tipo) 

@@ -1,4 +1,9 @@
   </div>
+
+  <div style="display: none;">
+      <?php csrf_input(); ?>
+  </div>
+
   <div aria-live="polite" aria-atomic="true" class="position-relative">
       <div id="toastArea" class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1080;"></div>
   </div>
@@ -121,6 +126,71 @@
           });
       });
 
+      // Modal de excluir
+      document.addEventListener('DOMContentLoaded', function() {
+          const confirmDeleteModal = document.getElementById('confirmDeleteModal');
+          if (confirmDeleteModal) {
+              // Evento disparado QUANDO o modal está prestes a ser mostrado
+              confirmDeleteModal.addEventListener('show.bs.modal', event => {
+                  // O botão que acionou o modal
+                  const button = event.relatedTarget;
+
+                  // Pega os dados dos atributos data-* do botão
+                  const formAction = button.getAttribute('data-form-action');
+                  const itemId = button.getAttribute('data-item-id');
+                  const itemName = button.getAttribute('data-item-name');
+                  const idField = button.getAttribute('data-id-field');
+
+                  // Personaliza a mensagem do modal
+                  const modalBody = confirmDeleteModal.querySelector('#modalBodyMessage');
+                  modalBody.textContent = `Você tem certeza que deseja excluir o item "${itemName}"? Esta ação não pode ser desfeita.`;
+
+                  // Configura o botão de confirmação final
+                  const confirmBtn = confirmDeleteModal.querySelector('#confirmDeleteButton');
+
+                  // Armazena os dados no próprio botão de confirmação
+                  confirmBtn.dataset.formAction = formAction;
+                  confirmBtn.dataset.itemId = itemId;
+                  confirmBtn.dataset.idField = idField;
+              });
+
+              // Evento de clique para o botão de confirmação DENTRO do modal
+              const finalConfirmBtn = document.getElementById('confirmDeleteButton');
+              finalConfirmBtn.addEventListener('click', function() {
+                  // Pega os dados que armazenamos
+                  const formAction = this.dataset.formAction;
+                  const itemId = this.dataset.itemId;
+                  const idField = this.dataset.idField;
+
+                  // Pega o token CSRF de um dos formulários existentes na página
+                  const csrfTokenInput = document.querySelector('input[name="csrf_token"]');
+
+                  if (!formAction || !itemId || !idField || !csrfTokenInput) {
+                      alert('Erro de configuração. Não foi possível excluir.');
+                      return;
+                  }
+
+                  // Cria um formulário dinamicamente em memória
+                  const form = document.createElement('form');
+                  form.method = 'post';
+                  form.action = formAction;
+
+                  // Adiciona o campo de ID
+                  const idInput = document.createElement('input');
+                  idInput.type = 'hidden';
+                  idInput.name = idField;
+                  idInput.value = itemId;
+                  form.appendChild(idInput);
+
+                  // Adiciona o campo CSRF
+                  form.appendChild(csrfTokenInput.cloneNode());
+
+                  // Adiciona o formulário à página e o envia
+                  document.body.appendChild(form);
+                  form.submit();
+              });
+          }
+      });
 
       // Sistema de notificações
       // Função para notificações
@@ -270,6 +340,188 @@
                       body: formData
                   })
                   .then(() => fetchNotifications()); // Apenas atualiza a lista
+          }
+      });
+
+      // Sistema do feed/avisos
+      // Curtida
+      document.addEventListener('click', function(event) {
+          const likeBtn = event.target.closest('.like-btn');
+          if (likeBtn) {
+              event.preventDefault();
+
+              const avisoId = likeBtn.dataset.avisoId;
+              const formData = new FormData();
+              formData.append('id_aviso', avisoId);
+
+              // Faz a chamada AJAX
+              fetch('/portal-etc/like_toggle_ajax.php', {
+                      method: 'POST',
+                      body: formData
+                  })
+                  .then(response => response.json())
+                  .then(data => {
+                      if (data.success) {
+                          // Atualiza a interface do botão clicado
+                          const icon = likeBtn.querySelector('i');
+                          const text = likeBtn.querySelector('.like-text');
+                          const count = likeBtn.querySelector('.like-count');
+
+                          count.textContent = data.new_like_count;
+
+                          if (data.liked) {
+                              // Se o usuário agora curte o post
+                              likeBtn.classList.add('text-danger');
+                              likeBtn.classList.remove('text-muted');
+                              icon.className = 'bi bi-heart-fill';
+                              text.textContent = 'Curtido';
+                          } else {
+                              // Se o usuário removeu a curtida
+                              likeBtn.classList.remove('text-danger');
+                              likeBtn.classList.add('text-muted');
+                              icon.className = 'bi bi-heart';
+                              text.textContent = 'Curtir';
+                          }
+
+                          const postCard = likeBtn.closest('.card');
+                          if (postCard) {
+                              const totalCountSpan = postCard.querySelector('.total-curtidas-count');
+                              if (totalCountSpan) {
+                                  totalCountSpan.textContent = data.new_like_count;
+                              }
+                          }
+                      } else {
+                          alert(data.error || 'Ocorreu um erro.');
+                      }
+                  })
+                  .catch(error => console.error('Erro no AJAX de curtida:', error));
+          }
+      });
+
+      // Salvar
+      document.addEventListener('click', function(event) {
+          // CORRIGIDO: Seleciona o botão de SALVAR
+          const saveBtn = event.target.closest('.save-btn');
+
+          if (saveBtn) {
+              event.preventDefault();
+
+              const avisoId = saveBtn.dataset.avisoId;
+              const formData = new FormData();
+              formData.append('id_aviso', avisoId);
+
+              // Faz a chamada AJAX para o script de SALVAR
+              fetch('/portal-etc/save_toggle_ajax.php', {
+                      method: 'POST',
+                      body: formData
+                  })
+                  .then(response => response.json())
+                  .then(data => {
+                      if (data.success) {
+                          // Atualiza a interface do botão de SALVAR
+                          const icon = saveBtn.querySelector('i');
+                          const text = saveBtn.querySelector('.save-text');
+
+                          // CORRIGIDO: Verifica 'data.saved' (enviado pelo PHP)
+                          if (data.saved) {
+                              // Se o usuário agora SALVOU o post
+                              saveBtn.classList.add('text-primary');
+                              saveBtn.classList.remove('text-muted');
+                              icon.className = 'bi bi-bookmark-fill'; // Ícone de SALVO
+                              text.textContent = 'Salvo';
+                          } else {
+                              // Se o usuário removeu o post dos salvos
+                              saveBtn.classList.remove('text-primary');
+                              saveBtn.classList.add('text-muted');
+                              icon.className = 'bi bi-bookmark'; // Ícone de SALVAR
+                              text.textContent = 'Salvar';
+                          }
+                      } else {
+                          alert(data.error || 'Ocorreu um erro ao salvar o aviso.');
+                      }
+                  })
+                  .catch(error => console.error('Erro no AJAX de salvar:', error));
+          }
+      });
+
+
+      // Adicione este script no seu footer.php, junto com os outros de like e save
+      // Comentar
+      document.addEventListener('submit', function(event) {
+          const commentForm = event.target.closest('.comment-form');
+          if (commentForm) {
+              event.preventDefault();
+              const formData = new FormData(commentForm);
+
+              fetch('/portal-etc/comentar_ajax.php', {
+                      method: 'POST',
+                      body: formData
+                  })
+                  .then(response => response.json())
+                  .then(data => {
+                      if (data.success) {
+                          // Limpa o campo de texto do formulário
+                          commentForm.querySelector('input[name="conteudo"]').value = '';
+                          showToast('Comentário publicado com sucesso!', 'success');
+
+                          // NOVO: Atualiza o contador de comentários na tela
+                          // Encontra o card do post pai, subindo na hierarquia do HTML
+                          const postCard = commentForm.closest('.card');
+                          if (postCard) {
+                              // Dentro do card, encontra o span do contador de comentários
+                              const commentCountSpan = postCard.querySelector('.total-comentarios-count');
+                              if (commentCountSpan) {
+                                  // Atualiza o texto com a nova contagem
+                                  commentCountSpan.textContent = data.new_comment_count;
+                              }
+                          }
+
+                          // Futuramente, você pode adicionar a lógica para exibir o novo comentário na lista aqui.
+                      } else {
+                          alert(data.error || 'Não foi possível publicar o comentário.');
+                      }
+                  });
+          }
+      });
+
+      // SUBSTITUA O SEU BLOCO 'addEventListener' PARA '.view-comments-btn' POR ESTE
+
+      document.addEventListener('click', function(event) {
+          const viewCommentsBtn = event.target.closest('.view-comments-btn');
+          if (viewCommentsBtn) {
+              event.preventDefault();
+
+              const avisoId = viewCommentsBtn.dataset.avisoId;
+              const postCard = viewCommentsBtn.closest('.card');
+              const commentList = postCard.querySelector('.comment-list');
+
+              // Pega a contagem atual de comentários
+              const countSpan = viewCommentsBtn.querySelector('.total-comentarios-count');
+              const count = countSpan ? countSpan.textContent : '0';
+
+              // Lógica de Toggle
+              if (commentList.innerHTML !== '' && commentList.style.display !== 'none') {
+                  // Se estiver visível, esconde
+                  commentList.style.display = 'none';
+                  // E altera o texto de volta para "Ver ..."
+                  viewCommentsBtn.innerHTML = `<span class="total-comentarios-count">${count}</span> comentários`;
+                  return;
+              }
+
+              // Se estiver escondido, mostra e busca os dados
+              commentList.style.display = 'block';
+              commentList.innerHTML = '<p class="text-muted small text-center">Carregando...</p>';
+
+              fetch(`/portal-etc/ver_comentarios_ajax.php?id_aviso=${avisoId}`)
+                  .then(response => response.text())
+                  .then(html => {
+                      commentList.innerHTML = html;
+                      // Altera o texto para "Ocultar", MANTENDO a contagem
+                      viewCommentsBtn.innerHTML = `Ocultar <span class="total-comentarios-count">${count}</span> comentários`;
+                  })
+                  .catch(error => {
+                      commentList.innerHTML = '<p class="text-danger small">Erro ao carregar.</p>';
+                  });
           }
       });
   </script>
