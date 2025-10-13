@@ -73,7 +73,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $nome_arquivo_final // Será o nome do arquivo ou NULL
             ]);
 
-            flash_set('success', 'Aviso publicado com sucesso!');
+            // =============================================================
+            // == NOVO: Enviar notificação para todos os alunos           ==
+            // =============================================================
+            $mensagem_notificacao = "Novo aviso no feed: \"" . substr($titulo, 0, 50) . "...\"";
+            $link_notificacao = "/portal-etc/feed/feed.php"; // Link para a página do feed
+
+            // Chama a função para enviar para o grupo 'aluno'
+            criar_notificacao_para_grupo($pdo, 'aluno', $mensagem_notificacao, $link_notificacao);
+            // =============================================================
+
+            flash_set('success', 'Aviso publicado e alunos notificados!');
             header('Location: avisos_view.php'); // Redireciona para a lista de avisos
             exit;
         } catch (PDOException $e) {
@@ -138,24 +148,24 @@ include '../partials/header.php';
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const imagemInput = document.getElementById('imagemInput');
-    const imagemPreview = document.getElementById('imagemPreview');
+    document.addEventListener('DOMContentLoaded', function() {
+        const imagemInput = document.getElementById('imagemInput');
+        const imagemPreview = document.getElementById('imagemPreview');
 
-    imagemInput.addEventListener('change', function(event) {
-        const file = event.target.files[0];
+        imagemInput.addEventListener('change', function(event) {
+            const file = event.target.files[0];
 
-        if (file) {
-            const reader = new FileReader();
+            if (file) {
+                const reader = new FileReader();
 
-            reader.onload = function(e) {
-                imagemPreview.src = e.target.result;
-                imagemPreview.style.display = 'block'; // Mostra a imagem
+                reader.onload = function(e) {
+                    imagemPreview.src = e.target.result;
+                    imagemPreview.style.display = 'block'; // Mostra a imagem
+                }
+
+                reader.readAsDataURL(file);
             }
-
-            reader.readAsDataURL(file);
-        }
+        });
     });
-});
 </script>
 <?php include '../partials/footer.php'; ?>

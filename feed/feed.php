@@ -114,7 +114,7 @@ include '../partials/portal_header.php'; // Ajuste o caminho
                                             data-bs-toggle="collapse"
                                             data-bs-target="#comment-section-<?php echo (int)$aviso['id_aviso']; ?>">
                                             <i class="bi bi-chat-dots"></i>
-                                            Comentar (<span class="total-comentarios-count"><?php echo (int)$aviso['total_comentarios']; ?></span>)
+                                            Comentários (<span class="total-comentarios-count"><?php echo (int)$aviso['total_comentarios']; ?></span>)
                                         </button>
 
                                         <button class="btn btn-link text-decoration-none save-btn <?php echo $aviso['usuario_salvou'] ? 'text-primary' : 'text-muted'; ?>"

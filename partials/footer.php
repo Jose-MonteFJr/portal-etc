@@ -482,7 +482,7 @@
 
                           // Limpa o campo de texto
                           commentInput.value = '';
-                          showToast('Comentário publicado!', 'success');
+                        //   showToast('Comentário publicado!', 'success');
 
                           // Atualiza o contador de comentários
                           const commentCountSpan = postCard.querySelector('.total-comentarios-count');
