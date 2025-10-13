@@ -74,6 +74,14 @@ $foto_usuario_logado = !empty($_SESSION['foto_perfil'])
                         <hr class="dropdown-divider">
                     </li>
                     <li>
+                        <a class="dropdown-item" href="/portal-etc/feed/avisos_salvos.php">
+                            <i class="bi bi-bookmark-fill me-2"></i> Avisos Salvos
+                        </a>
+                    </li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li>
                         <a class="dropdown-item" href="/portal-etc/logout.php">
                             <i class="bi bi-box-arrow-right me-2"></i> Sair
                         </a>

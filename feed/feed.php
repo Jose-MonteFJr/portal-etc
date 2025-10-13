@@ -72,7 +72,7 @@ include '../partials/portal_header.php'; // Ajuste o caminho
                         </div>
                     <?php else: ?>
                         <?php foreach ($avisos as $aviso): ?>
-                            <div class="card shadow-sm mb-4">
+                            <div class="card shadow-sm mb-4" id="aviso-<?php echo (int)$aviso['id_aviso']; ?>">
                                 <div class="card-header d-flex align-items-center">
                                     <?php
                                     $foto_autor = !empty($aviso['foto_autor'])
@@ -139,7 +139,6 @@ include '../partials/portal_header.php'; // Ajuste o caminho
                             </div>
                         <?php endforeach; ?>
                     <?php endif; ?>
-
                 </div>
             </div>
         </div>

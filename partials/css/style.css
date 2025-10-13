@@ -699,3 +699,15 @@ a.list-group-item:hover {
     border-left: 3px solid #3b7ddd;
     color: #fff;
 }
+
+.card-link-wrapper {
+    text-decoration: none;
+    color: inherit;
+}
+.card-hover {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+.card-link-wrapper:hover .card-hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1) !important;
+}
