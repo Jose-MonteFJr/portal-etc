@@ -1,0 +1,68 @@
+/* Grade dos dias da semana */
+.calendar-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    font-weight: 600;
+    color: var(--cor-secundaria);
+    margin-bottom: 0.5rem;
+}
+
+/* Grade principal do calendário */
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+}
+
+/* Célula de cada dia */
+.day-cell {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 60px;
+    border: 1px solid #e9ecef;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    position: relative;
+}
+
+.day-cell:hover {
+    background-color: #f0f2f5;
+}
+
+/* Estilos para dias de outros meses */
+.day-cell.other-month {
+    color: #adb5bd;
+    background-color: #f8f9fa;
+}
+
+/* Estilo para o dia de hoje */
+.day-cell.today {
+    background-color: var(--bs-info-bg-subtle);
+    font-weight: 700;
+}
+
+/* Estilo para o dia selecionado */
+.day-cell.active {
+    background-color: var(--bs-primary);
+    color: white;
+}
+
+/* Bolinha que indica que o dia tem um evento */
+.day-cell.has-event::after {
+    content: '';
+    position: absolute;
+    bottom: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: var(--bs-danger);
+}
+
+.day-cell.active.has-event::after {
+    background-color: white;
+}

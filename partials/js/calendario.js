@@ -1,0 +1,208 @@
+document.addEventListener('DOMContentLoaded', function () {
+    // --- ELEMENTOS DO DOM ---
+    const monthYearHeader = document.getElementById('current-month-year');
+    const daysContainer = document.getElementById('calendar-days');
+    const prevMonthBtn = document.getElementById('prev-month-btn');
+    const nextMonthBtn = document.getElementById('next-month-btn');
+    const selectedDateHeader = document.getElementById('selected-date-header');
+    const eventsList = document.getElementById('events-list');
+    const addEventBtn = document.getElementById('add-event-btn');
+
+    // --- ESTADO DO CALENDÁRIO ---
+    let currentDate = new Date();
+    let eventsArr = [];
+    let selectedDate = null;
+
+    const months = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+
+    // --- FUNÇÕES ---
+
+    // Busca eventos do servidor via AJAX
+    const fetchEvents = async () => {
+        try {
+            const response = await fetch('/portal-etc/calendario/get_eventos.php'); // Ajuste o caminho se necessário
+            const data = await response.json();
+            eventsArr = data;
+            renderCalendar();
+        } catch (error) {
+            console.error("Erro ao buscar eventos:", error);
+        }
+    };
+
+    // Renderiza o calendário (dias, eventos, etc.)
+    const renderCalendar = () => {
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth();
+
+        monthYearHeader.textContent = `${months[month]} ${year}`;
+        daysContainer.innerHTML = '';
+
+        const firstDay = new Date(year, month, 1);
+        const lastDay = new Date(year, month + 1, 0);
+        const prevLastDay = new Date(year, month, 0);
+
+        const firstDayIndex = firstDay.getDay();
+        const lastDate = lastDay.getDate();
+
+        // Dias do mês anterior
+        for (let i = firstDayIndex; i > 0; i--) {
+            const dayCell = document.createElement('div');
+            dayCell.className = 'day-cell other-month';
+            dayCell.textContent = prevLastDay.getDate() - i + 1;
+            daysContainer.appendChild(dayCell);
+        }
+
+        // Dias do mês atual
+        for (let i = 1; i <= lastDate; i++) {
+            const dayCell = document.createElement('div');
+            dayCell.className = 'day-cell';
+            dayCell.textContent = i;
+
+            const today = new Date();
+            if (i === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
+                dayCell.classList.add('today');
+            }
+
+            // Verifica se o dia tem evento
+            const dateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+            if (eventsArr.some(event => event.data_evento === dateString)) {
+                dayCell.classList.add('has-event');
+            }
+
+            dayCell.addEventListener('click', () => {
+                selectedDate = new Date(year, month, i);
+                document.querySelectorAll('.day-cell.active').forEach(d => d.classList.remove('active'));
+                dayCell.classList.add('active');
+                renderEventsForDate(selectedDate);
+            });
+
+            daysContainer.appendChild(dayCell);
+        }
+    };
+
+    // Renderiza a lista de eventos para o dia selecionado
+    const renderEventsForDate = (date) => {
+        selectedDateHeader.textContent = date.toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' });
+        eventsList.innerHTML = '';
+
+        const year = date.getFullYear();
+        const month = date.getMonth() + 1;
+        const day = date.getDate();
+
+        const dateString = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const dayEvents = eventsArr.filter(event => event.data_evento === dateString);
+
+        if (dayEvents.length === 0) {
+            eventsList.innerHTML = '<div class="list-group-item text-muted small text-center">Nenhum lembrete para este dia.</div>';
+            return;
+        }
+
+        dayEvents.forEach(event => {
+            const eventItem = document.createElement('div');
+            eventItem.className = 'list-group-item';
+
+            const eventTypeClass = event.tipo === 'global' ? 'badge bg-info text-dark' : 'badge bg-light text-dark';
+
+            eventItem.innerHTML = `
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <strong class="d-block">${htmlspecialchars(event.titulo)}</strong>
+                        <small class="text-muted">${event.hora_inicio} - ${event.hora_fim}</small>
+                    </div>
+                    <span class="${eventTypeClass}">${event.tipo}</span>
+                </div>
+            `;
+            // Adiciona botão de deletar se o usuário for o criador
+            if (event.id_usuario_criador === LOGGED_IN_USER_ID) {
+                const deleteBtn = document.createElement('button');
+                deleteBtn.className = 'btn btn-sm btn-outline-danger mt-2';
+                deleteBtn.innerHTML = '<i class="bi bi-trash-fill"></i> Excluir'; // <-- LINHA CORRIGIDA
+                deleteBtn.onclick = () => deleteEvent(event.id_evento);
+                eventItem.appendChild(deleteBtn);
+            }
+
+            eventsList.appendChild(eventItem);
+        });
+    };
+
+    // Deleta um evento
+    const deleteEvent = async (eventId) => {
+        if (!confirm("Tem certeza que deseja excluir este lembrete?")) return;
+
+        const formData = new FormData();
+        formData.append('id_evento', eventId);
+
+        try {
+            await fetch('/portal-etc/calendario/delete_evento.php', { method: 'POST', body: formData });
+            fetchEvents(); // Recarrega todos os eventos
+            renderEventsForDate(selectedDate); // Renderiza a lista do dia atual
+        } catch (error) {
+            console.error("Erro ao deletar evento:", error);
+        }
+    };
+
+    // Adiciona um novo evento
+    addEventBtn.addEventListener('click', async () => {
+        if (!selectedDate) {
+            alert("Por favor, selecione um dia no calendário primeiro.");
+            return;
+        }
+
+        const title = document.getElementById('event-title').value;
+        const startTime = document.getElementById('event-start-time').value;
+        const endTime = document.getElementById('event-end-time').value;
+        const isGlobal = document.getElementById('event-global-check') ? document.getElementById('event-global-check').checked : false;
+
+        if (!title || !startTime || !endTime) {
+            alert("Preencha todos os campos do lembrete.");
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('titulo', title);
+        formData.append('hora_inicio', startTime);
+        formData.append('hora_fim', endTime);
+        const dateString = `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`;
+        formData.append('data_evento', dateString);
+        formData.append('is_global', isGlobal);
+
+        try {
+            await fetch('/portal-etc/calendario/add_evento.php', { method: 'POST', body: formData });
+            fetchEvents();
+            renderEventsForDate(selectedDate);
+            // Limpa o formulário
+            document.getElementById('event-title').value = '';
+            document.getElementById('event-start-time').value = '';
+            document.getElementById('event-end-time').value = '';
+        } catch (error) {
+            console.error("Erro ao adicionar evento:", error);
+        }
+    });
+
+    // --- EVENT LISTENERS DE NAVEGAÇÃO ---
+    prevMonthBtn.addEventListener('click', () => {
+        currentDate.setMonth(currentDate.getMonth() - 1);
+        renderCalendar();
+    });
+
+    nextMonthBtn.addEventListener('click', () => {
+        currentDate.setMonth(currentDate.getMonth() + 1);
+        renderCalendar();
+    });
+
+    // Função para evitar injeção de HTML
+    const htmlspecialchars = (str) => {
+        return str.replace(/[&<>"']/g, (match) => {
+            return {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            }[match];
+        });
+    }
+
+    // --- INICIALIZAÇÃO ---
+    fetchEvents();
+});

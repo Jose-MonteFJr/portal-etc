@@ -249,6 +249,20 @@ CREATE TABLE aviso_salvo (
     CONSTRAINT fk_aviso_salvo_usuario FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+CREATE TABLE evento_calendario (
+    id_evento INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    id_usuario_criador INT UNSIGNED NOT NULL,
+    titulo VARCHAR(100) NOT NULL,
+    hora_inicio VARCHAR(10) NOT NULL,
+    hora_fim VARCHAR(10) NOT NULL,
+    data_evento DATE NOT NULL,
+    tipo ENUM('pessoal', 'global') NOT NULL DEFAULT 'pessoal',
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_evento_usuario FOREIGN KEY (id_usuario_criador) REFERENCES usuario(id_usuario) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 -- INSERTS PADRÃO
 
 INSERT INTO usuario (nome_completo, cpf, email, password_hash, telefone, data_nascimento, tipo) 

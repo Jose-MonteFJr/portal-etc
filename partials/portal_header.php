@@ -111,7 +111,7 @@ $foto_usuario_logado = !empty($_SESSION['foto_perfil'])
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="#" class="sidebar-link" title="Agenda">
+                    <a href="/portal-etc/calendario/calendario.php" class="sidebar-link" title="Agenda">
                         <i class="bi bi-calendar-event fs-4"></i>
                         <span>Agenda</span>
                     </a>
