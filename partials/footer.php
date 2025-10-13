@@ -447,11 +447,18 @@
 
       // Adicione este script no seu footer.php, junto com os outros de like e save
       // Comentar
+      // Substitua seu 'addEventListener' para 'submit' por este
       document.addEventListener('submit', function(event) {
           const commentForm = event.target.closest('.comment-form');
           if (commentForm) {
               event.preventDefault();
+
               const formData = new FormData(commentForm);
+              const commentInput = commentForm.querySelector('input[name="conteudo"]');
+              const submitButton = commentForm.querySelector('button[type="submit"]');
+
+              commentInput.disabled = true;
+              submitButton.disabled = true;
 
               fetch('/portal-etc/comentar_ajax.php', {
                       method: 'POST',
@@ -460,69 +467,75 @@
                   .then(response => response.json())
                   .then(data => {
                       if (data.success) {
-                          // Limpa o campo de texto do formulário
-                          commentForm.querySelector('input[name="conteudo"]').value = '';
-                          showToast('Comentário publicado com sucesso!', 'success');
-
-                          // NOVO: Atualiza o contador de comentários na tela
-                          // Encontra o card do post pai, subindo na hierarquia do HTML
                           const postCard = commentForm.closest('.card');
-                          if (postCard) {
-                              // Dentro do card, encontra o span do contador de comentários
-                              const commentCountSpan = postCard.querySelector('.total-comentarios-count');
-                              if (commentCountSpan) {
-                                  // Atualiza o texto com a nova contagem
-                                  commentCountSpan.textContent = data.new_comment_count;
-                              }
+                          const commentList = postCard.querySelector('.comment-list');
+
+                          // CORREÇÃO: Lógica para exibir o novo comentário
+                          // Se a lista de comentários estava com a mensagem "Nenhum comentário",
+                          // primeiro limpa essa mensagem.
+                          if (commentList.querySelector('.text-muted')) {
+                              commentList.innerHTML = '';
                           }
 
-                          // Futuramente, você pode adicionar a lógica para exibir o novo comentário na lista aqui.
+                          // Adiciona o HTML do novo comentário (retornado pelo PHP) ao final da lista
+                          commentList.insertAdjacentHTML('beforeend', data.comment_html);
+
+                          // Limpa o campo de texto
+                          commentInput.value = '';
+                          showToast('Comentário publicado!', 'success');
+
+                          // Atualiza o contador de comentários
+                          const commentCountSpan = postCard.querySelector('.total-comentarios-count');
+                          if (commentCountSpan) {
+                              commentCountSpan.textContent = data.new_comment_count;
+                          }
+
                       } else {
-                          alert(data.error || 'Não foi possível publicar o comentário.');
+                          showToast(data.error || 'Não foi possível publicar o comentário.', 'danger');
                       }
+                  })
+                  .catch(error => console.error('Erro no AJAX de comentário:', error))
+                  .finally(() => {
+                      commentInput.disabled = false;
+                      submitButton.disabled = false;
+                      commentInput.focus(); // Coloca o cursor de volta no campo para um novo comentário
                   });
           }
       });
 
       // SUBSTITUA O SEU BLOCO 'addEventListener' PARA '.view-comments-btn' POR ESTE
 
-      document.addEventListener('click', function(event) {
-          const viewCommentsBtn = event.target.closest('.view-comments-btn');
-          if (viewCommentsBtn) {
-              event.preventDefault();
+      document.addEventListener('DOMContentLoaded', function() {
 
-              const avisoId = viewCommentsBtn.dataset.avisoId;
-              const postCard = viewCommentsBtn.closest('.card');
-              const commentList = postCard.querySelector('.comment-list');
+          // Seleciona TODAS as seções de comentário que podem ser abertas
+          const commentSections = document.querySelectorAll('.comments-section.collapse');
 
-              // Pega a contagem atual de comentários
-              const countSpan = viewCommentsBtn.querySelector('.total-comentarios-count');
-              const count = countSpan ? countSpan.textContent : '0';
+          commentSections.forEach(section => {
+              // Ouve o evento do Bootstrap que dispara QUANDO a seção começa a abrir
+              section.addEventListener('show.bs.collapse', function() {
 
-              // Lógica de Toggle
-              if (commentList.innerHTML !== '' && commentList.style.display !== 'none') {
-                  // Se estiver visível, esconde
-                  commentList.style.display = 'none';
-                  // E altera o texto de volta para "Ver ..."
-                  viewCommentsBtn.innerHTML = `<span class="total-comentarios-count">${count}</span> comentários`;
-                  return;
-              }
+                  const commentList = section.querySelector('.comment-list');
 
-              // Se estiver escondido, mostra e busca os dados
-              commentList.style.display = 'block';
-              commentList.innerHTML = '<p class="text-muted small text-center">Carregando...</p>';
+                  // Verifica se os comentários já foram carregados usando o nosso atributo
+                  if (commentList.dataset.commentsLoaded === 'false') {
+                      const avisoId = section.id.split('-')[2]; // Pega o ID do aviso a partir do ID da div
 
-              fetch(`/portal-etc/ver_comentarios_ajax.php?id_aviso=${avisoId}`)
-                  .then(response => response.text())
-                  .then(html => {
-                      commentList.innerHTML = html;
-                      // Altera o texto para "Ocultar", MANTENDO a contagem
-                      viewCommentsBtn.innerHTML = `Ocultar <span class="total-comentarios-count">${count}</span> comentários`;
-                  })
-                  .catch(error => {
-                      commentList.innerHTML = '<p class="text-danger small">Erro ao carregar.</p>';
-                  });
-          }
+                      commentList.innerHTML = '<p class="text-muted small text-center">Carregando...</p>';
+
+                      fetch(`/portal-etc/ver_comentarios_ajax.php?id_aviso=${avisoId}`)
+                          .then(response => response.text())
+                          .then(html => {
+                              commentList.innerHTML = html;
+                              // Marca que os comentários foram carregados para não buscar de novo
+                              commentList.dataset.commentsLoaded = 'true';
+                          })
+                          .catch(error => {
+                              commentList.innerHTML = '<p class="text-danger small">Erro ao carregar comentários.</p>';
+                          });
+                  }
+                  // Se os comentários já foram carregados, não faz nada, apenas deixa o Bootstrap abrir a seção.
+              });
+          });
       });
   </script>
   </body>

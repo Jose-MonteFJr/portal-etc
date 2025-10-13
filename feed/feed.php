@@ -98,27 +98,23 @@ include '../partials/portal_header.php'; // Ajuste o caminho
                                 <div class="card-footer">
                                     <div class="d-flex justify-content-between text-muted small mb-2">
                                         <span><span class="total-curtidas-count"><?php echo (int)$aviso['total_curtidas']; ?></span> curtidas</span>
-                                        <span>
-                                            <a href="#" class="text-muted text-decoration-none view-comments-btn" data-aviso-id="<?php echo (int)$aviso['id_aviso']; ?>">
-                                                <span class="total-comentarios-count"><?php echo (int)$aviso['total_comentarios']; ?></span> comentários
-                                            </a>
-                                        </span>
                                     </div>
                                     <hr class="my-1">
 
                                     <div class="d-flex justify-content-around">
-
                                         <button class="btn btn-link text-decoration-none like-btn <?php echo $aviso['usuario_curtiu'] ? 'text-danger' : 'text-muted'; ?>"
                                             data-aviso-id="<?php echo (int)$aviso['id_aviso']; ?>">
                                             <i class="bi <?php echo $aviso['usuario_curtiu'] ? 'bi-heart-fill' : 'bi-heart'; ?>"></i>
                                             <span class="like-text"><?php echo $aviso['usuario_curtiu'] ? 'Curtido' : 'Curtir'; ?></span>
+
                                             (<span class="like-count"><?php echo (int)$aviso['total_curtidas']; ?></span>)
                                         </button>
 
                                         <button class="btn btn-link text-decoration-none text-muted"
                                             data-bs-toggle="collapse"
-                                            data-bs-target="#comment-form-<?php echo (int)$aviso['id_aviso']; ?>">
-                                            <i class="bi bi-chat-dots"></i> Comentar
+                                            data-bs-target="#comment-section-<?php echo (int)$aviso['id_aviso']; ?>">
+                                            <i class="bi bi-chat-dots"></i>
+                                            Comentar (<span class="total-comentarios-count"><?php echo (int)$aviso['total_comentarios']; ?></span>)
                                         </button>
 
                                         <button class="btn btn-link text-decoration-none save-btn <?php echo $aviso['usuario_salvou'] ? 'text-primary' : 'text-muted'; ?>"
@@ -126,21 +122,18 @@ include '../partials/portal_header.php'; // Ajuste o caminho
                                             <i class="bi <?php echo $aviso['usuario_salvou'] ? 'bi-bookmark-fill' : 'bi-bookmark'; ?>"></i>
                                             <span class="save-text"><?php echo $aviso['usuario_salvou'] ? 'Salvo' : 'Salvar'; ?></span>
                                         </button>
-
                                     </div>
 
-                                    <div class="mt-3 comments-section">
-                                        <div class="comment-list mb-3"></div>
+                                    <div class="collapse comments-section mt-3" id="comment-section-<?php echo (int)$aviso['id_aviso']; ?>">
+                                        <div class="comment-list mb-3" data-comments-loaded="false"></div>
 
-                                        <div class="collapse" id="comment-form-<?php echo (int)$aviso['id_aviso']; ?>">
-                                            <form class="comment-form">
-                                                <input type="hidden" name="id_aviso" value="<?php echo (int)$aviso['id_aviso']; ?>">
-                                                <div class="input-group">
-                                                    <input type="text" name="conteudo" class="form-control form-control-sm" placeholder="Escreva um comentário..." required autocomplete="off">
-                                                    <button class="btn btn-outline-secondary btn-sm" type="submit">Publicar</button>
-                                                </div>
-                                            </form>
-                                        </div>
+                                        <form class="comment-form">
+                                            <input type="hidden" name="id_aviso" value="<?php echo (int)$aviso['id_aviso']; ?>">
+                                            <div class="input-group">
+                                                <input type="text" name="conteudo" class="form-control form-control-sm" placeholder="Escreva um comentário..." required autocomplete="off">
+                                                <button class="btn btn-outline-secondary btn-sm" type="submit">Publicar</button>
+                                            </div>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
