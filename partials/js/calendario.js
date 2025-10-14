@@ -90,44 +90,56 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     // Renderiza a lista de eventos para o dia selecionado
+    // SUBSTITUA A FUNÇÃO INTEIRA NO SEU calendario.js
     const renderEventsForDate = (date) => {
-        selectedDateHeader.textContent = date.toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' });
+        selectedDateHeader.textContent = date.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long' });
         eventsList.innerHTML = '';
 
-        const year = date.getFullYear();
-        const month = date.getMonth() + 1;
-        const day = date.getDate();
-
-        const dateString = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const dateString = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
         const dayEvents = eventsArr.filter(event => event.data_evento === dateString);
 
         if (dayEvents.length === 0) {
-            eventsList.innerHTML = '<div class="list-group-item text-muted small text-center">Nenhum lembrete para este dia.</div>';
+            eventsList.innerHTML = `
+            <div class="list-group-item text-center text-muted no-event-placeholder">
+                <i class="bi bi-calendar-x fs-1"></i>
+                <p class="mb-0 mt-2">Nenhum lembrete para este dia.</p>
+            </div>
+        `;
             return;
         }
 
         dayEvents.forEach(event => {
             const eventItem = document.createElement('div');
-            eventItem.className = 'list-group-item';
+            const isGlobal = event.tipo === 'global';
 
-            const eventTypeClass = event.tipo === 'global' ? 'badge bg-info text-dark' : 'badge text-dark';
+            // Define o ícone e a cor com base no tipo de evento
+            const iconClass = isGlobal ? 'bi-megaphone-fill' : 'bi-person-circle';
+            const borderColorClass = isGlobal ? 'event-global' : 'event-pessoal';
+
+            eventItem.className = `list-group-item event-item ${borderColorClass}`;
 
             eventItem.innerHTML = `
-                <div class="d-flex justify-content-between align-items-start">
-                    <div>
-                        <strong class="d-block">${htmlspecialchars(event.titulo)}</strong>
-                        <small class="text-muted">${event.hora_inicio} - ${event.hora_fim}</small>
-                    </div>
-                    <span class="${eventTypeClass}">${event.tipo}</span>
+            <div class="d-flex align-items-start gap-3">
+                <div class="event-item-icon">
+                    <i class="bi ${iconClass}"></i>
                 </div>
-            `;
-            // Adiciona botão de deletar se o usuário for o criador
+                <div class="event-item-details">
+                    <strong class="d-block event-title">${htmlspecialchars(event.titulo)}</strong>
+                    <small class="text-muted">${event.hora_inicio} - ${event.hora_fim}</small>
+                </div>
+            </div>
+        `;
+
+            // Adiciona o botão de deletar se o usuário for o criador
             if (event.id_usuario_criador === LOGGED_IN_USER_ID) {
                 const deleteBtn = document.createElement('button');
-                deleteBtn.className = 'btn btn-sm btn-outline-danger mt-2';
-                deleteBtn.innerHTML = '<i class="bi bi-trash-fill"></i> Excluir'; // <-- LINHA CORRIGIDA
+                deleteBtn.className = 'btn btn-sm btn-outline-danger event-delete-btn';
+                deleteBtn.innerHTML = '<i class="bi bi-trash"></i>';
+                deleteBtn.title = 'Excluir Lembrete';
                 deleteBtn.onclick = () => deleteEvent(event.id_evento);
-                eventItem.appendChild(deleteBtn);
+
+                // Adiciona o botão ao final do eventItem
+                eventItem.querySelector('.d-flex').appendChild(deleteBtn);
             }
 
             eventsList.appendChild(eventItem);

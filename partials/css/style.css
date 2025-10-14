@@ -704,10 +704,239 @@ a.list-group-item:hover {
     text-decoration: none;
     color: inherit;
 }
+
 .card-hover {
     transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
+
 .card-link-wrapper:hover .card-hover {
     transform: translateY(-5px);
-    box-shadow: 0 8px 16px rgba(0,0,0,0.1) !important;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* ============================================================= */
+/* == ESTILIZAÇÃO PARA O NOVO CALENDÁRIO 'DO ZERO'            == */
+/* ============================================================= */
+/* ================================================================= */
+/* == NOVO TEMA PARA O CALENDÁRIO (CLARO, ESCURO E RESPONSIVO)    == */
+/* ================================================================= */
+
+/* --- 1. VARIÁVEIS DE COR (TEMA PADRÃO / CLARO) --- */
+:root {
+    --cal-bg: #ffffff;          /* Fundo do card no tema claro */
+    --cal-bg-light: #f8f9fa;     /* Fundo mais claro para itens */
+    --cal-accent: #3282fa;       /* Azul padrão do Bootstrap */
+    --cal-accent-glow: rgba(13, 110, 253, 0.25); /* Sombra do azul */
+    --cal-text-primary: #212529; /* Texto principal (escuro) */
+    --cal-text-secondary: #6c757d; /* Texto secundário (cinza) */
+    --cal-border: #dee2e6;      /* Cor da borda */
+}
+
+/* --- 2. SOBRESCREVE AS VARIÁVEIS PARA O TEMA ESCURO --- */
+[data-bs-theme="dark"] {
+    --cal-bg: #2b3035;
+    --cal-bg-light: #343a40;
+    --cal-accent: #214a88;       /* Azul mais vibrante para o escuro */
+    --cal-accent-glow: rgba(59, 125, 221, 0.4);
+    --cal-text-primary: #f8f9fa;
+    --cal-text-secondary: #adb5bd;
+    --cal-border: #495057;
+}
+
+/* --- 3. ESTILOS GERAIS DOS COMPONENTES (Usam as variáveis) --- */
+
+/* Ajustes Gerais */
+.card {
+    background-color: var(--cal-bg) !important;
+    border: 1px solid var(--cal-border) !important;
+    color: var(--cal-text-primary);
+}
+.card-header, .card-footer {
+    background-color: transparent !important;
+    border-color: var(--cal-border) !important;
+}
+#current-month-year {
+    font-weight: 600;
+}
+
+/* Grade do Calendário */
+.calendar-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    font-weight: 600;
+    color: var(--cal-text-secondary);
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--cal-border);
+    margin-bottom: 0.5rem;
+}
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+}
+
+/* Célula de cada Dia */
+.day-cell {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    border: 2px solid transparent;
+    font-weight: 500;
+}
+.day-cell.other-month {
+    opacity: 0.3;
+    cursor: default;
+}
+.day-cell:not(.other-month):hover {
+    border-color: var(--cal-accent);
+}
+.day-cell.today {
+    color: var(--cal-accent);
+    font-weight: 700;
+    border-color: var(--cal-accent);
+    box-shadow: 0 0 10px var(--cal-accent-glow);
+}
+.day-cell.active {
+    background-color: var(--cal-accent);
+    color: white !important;
+    font-weight: 700;
+    border-color: var(--cal-accent);
+    box-shadow: 0 0 15px var(--cal-accent-glow);
+}
+.day-cell.has-event::after {
+    content: '';
+    position: absolute;
+    bottom: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: var(--bs-danger);
+}
+.day-cell.active.has-event::after {
+    background-color: white;
+}
+
+/* Lista de Lembretes */
+#events-list {
+    max-height: 450px;
+    overflow-y: auto;
+    padding: 0.5rem;
+}
+.list-group-item {
+    background-color: var(--cal-bg-light) !important;
+    color: var(--cal-text-primary) !important;
+    border: 1px solid var(--cal-border) !important;
+    margin-bottom: 0.5rem;
+    border-radius: .375rem !important;
+}
+.list-group-item.event-global {
+    border-left: 4px solid var(--bs-info) !important;
+}
+.list-group-item .event-title {
+    font-weight: 600;
+}
+
+/* Formulário de Adicionar Lembrete */
+#add-event-form {
+    border-bottom: 1px solid var(--cal-border);
+    background-color: var(--cal-bg-light);
+}
+
+.current-month {
+    color: var(--cal-accent);
+}    
+
+.prev {
+    background-color: var(--cal-accent);
+    color: #dde2e6 !important;
+    font-weight: 700;
+    border-color: var(--cal-accent);
+    box-shadow: 0 0 15px var(--cal-accent-glow);
+}
+
+/* --- 4. AJUSTES DE RESPONSIVIDADE (MOBILE) --- */
+@media (max-width: 991px) { /* Breakpoint LG, quando as colunas empilham */
+    .day-cell {
+        height: auto; /* Altura automática */
+        font-size: 0.9rem; /* Fonte um pouco menor */
+    }
+    #events-list {
+        max-height: 300px; /* Reduz a altura máxima da lista de eventos */
+    }
+}
+
+@media (max-width: 480px) { /* Para celulares bem pequenos */
+    .day-cell {
+        font-size: 0.75rem;
+    }
+    #current-month-year,
+    #selected-date-header {
+        font-size: 1rem;
+    }
+    .calendar-weekdays {
+        font-size: 0.8rem;
+    }
+}
+
+/* ============================================================= */
+/* == NOVOS ESTILOS PARA A LISTA DE LEMBRETES                 == */
+/* ============================================================= */
+
+.list-group-item.event-item {
+    border: none !important; /* Remove a borda padrão */
+    border-left: 4px solid; /* Cria a base para a borda colorida */
+    transition: background-color 0.2s ease;
+}
+
+.list-group-item.event-item:hover {
+    background-color: var(--cal-bg-light) !important;
+}
+
+/* Cor da borda para eventos pessoais */
+.event-item.event-pessoal {
+    border-left-color: var(--cal-accent);
+}
+
+/* Cor da borda para eventos globais */
+.event-item.event-global {
+    border-left-color: var(--bs-info);
+}
+
+.event-item-icon {
+    font-size: 1.5rem;
+    color: var(--cal-accent);
+}
+
+.event-item.event-global .event-item-icon {
+    color: var(--bs-info);
+}
+
+.event-item-details {
+    flex-grow: 1; /* Faz os detalhes ocuparem o espaço restante */
+}
+
+/* Estilo do botão de deletar, que aparece no hover */
+.event-delete-btn {
+    opacity: 0; /* Começa invisível */
+    transition: opacity 0.2s ease;
+    margin-left: auto; /* Empurra o botão para a direita */
+}
+
+.event-item:hover .event-delete-btn {
+    opacity: 1; /* Fica visível ao passar o mouse no item */
+}
+
+/* Placeholder para quando não há eventos */
+.no-event-placeholder {
+    border: 2px dashed var(--cal-border);
+    background-color: transparent !important;
+    color: var(--cal-text-secondary) !important;
 }

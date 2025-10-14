@@ -5,9 +5,6 @@ require  '../helpers.php';
 include '../partials/portal_header.php'; // Inclui seu layout principal
 ?>
 
-<head>
-    <link rel="stylesheet" href="../partials/css/calendario.css">
-</head>
 <div class="main">
     <div class="content">
         <div class="container mt-4">
@@ -15,9 +12,9 @@ include '../partials/portal_header.php'; // Inclui seu layout principal
                 <div class="col-lg-8">
                     <div class="card shadow-sm">
                         <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                            <button id="prev-month-btn" class="btn btn-primary"><i class="bi bi-chevron-left"></i></button>
-                            <h5 class="mb-0" id="current-month-year"></h5>
-                            <button id="next-month-btn" class="btn btn-primary"><i class="bi bi-chevron-right"></i></button>
+                            <button id="prev-month-btn" class="btn btn-primary prev"><i class="bi bi-chevron-left"></i></button>
+                            <h5 class="mb-0 current-month" id="current-month-year"></h5>
+                            <button id="next-month-btn" class="btn btn-primary prev"><i class="bi bi-chevron-right"></i></button>
                         </div>
                         <div class="card-body">
                             <div class="calendar-weekdays">
@@ -33,10 +30,10 @@ include '../partials/portal_header.php'; // Inclui seu layout principal
                             </div>
                         </div>
                         <div class="card-footer d-flex justify-content-between align-items-center">
-                            <button class="btn btn-outline-primary" id="today-btn">Hoje</button>
+                            <button class="btn btn-outline-primary prev" id="today-btn">Hoje</button>
                             <div class="d-flex gap-2">
                                 <input type="text" class="form-control form-control-sm" id="date-input" placeholder="MM/AAAA" maxlength="7">
-                                <button class="btn btn-primary btn-sm" id="goto-btn">Ir</button>
+                                <button class="btn btn-primary btn-sm prev" id="goto-btn">Ir</button>
                             </div>
                         </div>
                     </div>
@@ -45,7 +42,10 @@ include '../partials/portal_header.php'; // Inclui seu layout principal
                 <div class="col-lg-4 mt-4 mt-lg-0">
                     <div class="card shadow-sm">
                         <div class="card-header d-flex justify-content-between align-items-center">
-                            <h6 class="mb-0" id="selected-date-header">Selecione um dia</h6>
+                            <h6 class="mb-0 d-flex align-items-center">
+                                <i class="bi bi-calendar-event me-2"></i>
+                                <span id="selected-date-header">Selecione um dia</span>
+                            </h6>
                             <button class="btn btn-success btn-sm" data-bs-toggle="collapse" data-bs-target="#add-event-form">
                                 <i class="bi bi-plus-lg"></i> Novo
                             </button>
@@ -74,7 +74,7 @@ include '../partials/portal_header.php'; // Inclui seu layout principal
                                     </label>
                                 </div>
                             <?php endif; ?>
-                            <button id="add-event-btn" class="btn btn-primary btn-sm w-100">Adicionar Lembrete</button>
+                            <button id="add-event-btn" class="btn btn-primary btn-sm w-100 prev">Adicionar Lembrete</button>
                         </div>
 
                         <div class="list-group list-group-flush" id="events-list">
