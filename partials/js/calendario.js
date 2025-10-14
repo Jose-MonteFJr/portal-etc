@@ -8,6 +8,11 @@ document.addEventListener('DOMContentLoaded', function () {
     const eventsList = document.getElementById('events-list');
     const addEventBtn = document.getElementById('add-event-btn');
 
+    // NOVO: Seleciona os novos botões
+    const todayBtn = document.getElementById('today-btn');
+    const gotoBtn = document.getElementById('goto-btn');
+    const dateInput = document.getElementById('date-input');
+
     // --- ESTADO DO CALENDÁRIO ---
     let currentDate = new Date();
     let eventsArr = [];
@@ -63,6 +68,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 dayCell.classList.add('today');
             }
 
+            if (selectedDate && i === selectedDate.getDate() && month === selectedDate.getMonth() && year === selectedDate.getFullYear()) {
+                dayCell.classList.add('active');
+            }
+
             // Verifica se o dia tem evento
             const dateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
             if (eventsArr.some(event => event.data_evento === dateString)) {
@@ -101,7 +110,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const eventItem = document.createElement('div');
             eventItem.className = 'list-group-item';
 
-            const eventTypeClass = event.tipo === 'global' ? 'badge bg-info text-dark' : 'badge bg-light text-dark';
+            const eventTypeClass = event.tipo === 'global' ? 'badge bg-info text-dark' : 'badge text-dark';
 
             eventItem.innerHTML = `
                 <div class="d-flex justify-content-between align-items-start">
@@ -134,7 +143,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         try {
             await fetch('/portal-etc/calendario/delete_evento.php', { method: 'POST', body: formData });
-            fetchEvents(); // Recarrega todos os eventos
+            await fetchEvents(); // Recarrega todos os eventos
             renderEventsForDate(selectedDate); // Renderiza a lista do dia atual
         } catch (error) {
             console.error("Erro ao deletar evento:", error);
@@ -168,7 +177,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         try {
             await fetch('/portal-etc/calendario/add_evento.php', { method: 'POST', body: formData });
-            fetchEvents();
+            await fetchEvents();
             renderEventsForDate(selectedDate);
             // Limpa o formulário
             document.getElementById('event-title').value = '';
@@ -176,6 +185,40 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('event-end-time').value = '';
         } catch (error) {
             console.error("Erro ao adicionar evento:", error);
+        }
+    });
+
+    // --- NOVO: LÓGICA PARA OS NOVOS BOTÕES ---
+    todayBtn.addEventListener('click', () => {
+        currentDate = new Date(); // Navega a visão do calendário para o mês/ano atual
+        selectedDate = new Date(); // Define o dia selecionado como hoje
+
+        renderCalendar(); // Redesenha o calendário (que agora vai destacar o dia de hoje)
+        renderEventsForDate(selectedDate); // Atualiza a lista de lembretes para mostrar os de hoje
+    });
+
+    gotoBtn.addEventListener('click', () => {
+        const dateArr = dateInput.value.split("/");
+        if (dateArr.length === 2) {
+            const month = parseInt(dateArr[0], 10);
+            const year = parseInt(dateArr[1], 10);
+            if (month >= 1 && month <= 12 && String(year).length === 4) {
+                currentDate = new Date(year, month - 1, 1);
+                selectedDate = new Date(year, month - 1, 1);
+                fetchEvents();
+                return;
+            }
+        }
+        alert("Data inválida. Use o formato MM/AAAA.");
+    });
+
+    dateInput.addEventListener("input", (e) => {
+        dateInput.value = dateInput.value.replace(/[^0-9/]/g, "");
+        if (dateInput.value.length === 2 && e.inputType !== 'deleteContentBackward') {
+            dateInput.value += "/";
+        }
+        if (dateInput.value.length > 7) {
+            dateInput.value = dateInput.value.slice(0, 7);
         }
     });
 

@@ -54,7 +54,7 @@ try {
     $comment_html = '
         <div class="d-flex gap-2 mb-2">
             <img src="' . $foto_autor . '" class="rounded-circle" style="width: 32px; height: 32px; object-fit: cover;">
-            <div class="bg-light rounded p-2 flex-grow-1">
+            <div class="rounded p-2 flex-grow-1">
                 <strong>' . htmlspecialchars($comentario['nome_completo']) . '</strong>
                 <p class="mb-0 small">' . nl2br(htmlspecialchars($comentario['conteudo'])) . '</p>
             </div>

@@ -32,6 +32,13 @@ include '../partials/portal_header.php'; // Inclui seu layout principal
                             <div class="calendar-grid" id="calendar-days">
                             </div>
                         </div>
+                        <div class="card-footer d-flex justify-content-between align-items-center">
+                            <button class="btn btn-outline-primary" id="today-btn">Hoje</button>
+                            <div class="d-flex gap-2">
+                                <input type="text" class="form-control form-control-sm" id="date-input" placeholder="MM/AAAA" maxlength="7">
+                                <button class="btn btn-primary btn-sm" id="goto-btn">Ir</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
