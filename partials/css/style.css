@@ -723,13 +723,13 @@ a.list-group-item:hover {
 
 /* --- 1. VARIÁVEIS DE COR (TEMA PADRÃO / CLARO) --- */
 :root {
-    --cal-bg: #ffffff;          /* Fundo do card no tema claro */
-    --cal-bg-light: #f8f9fa;     /* Fundo mais claro para itens */
+    --cal-bg: #f2f2f2;          /* Fundo do card no tema claro */
+    --cal-bg-light: #e6e6e6;     /* Fundo mais claro para itens */
     --cal-accent: #3282fa;       /* Azul padrão do Bootstrap */
     --cal-accent-glow: rgba(13, 110, 253, 0.25); /* Sombra do azul */
     --cal-text-primary: #212529; /* Texto principal (escuro) */
     --cal-text-secondary: #6c757d; /* Texto secundário (cinza) */
-    --cal-border: #dee2e6;      /* Cor da borda */
+    --cal-border: #5ca6f0;      /* Cor da borda */
 }
 
 /* --- 2. SOBRESCREVE AS VARIÁVEIS PARA O TEMA ESCURO --- */

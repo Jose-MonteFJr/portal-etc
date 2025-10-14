@@ -263,6 +263,36 @@ CREATE TABLE evento_calendario (
     CONSTRAINT fk_evento_usuario FOREIGN KEY (id_usuario_criador) REFERENCES usuario(id_usuario) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+CREATE TABLE conversa (
+    id_conversa INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    assunto VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE participante_conversa (
+    id_conversa INT UNSIGNED NOT NULL,
+    id_usuario INT UNSIGNED NOT NULL,
+    
+    -- Para sabermos se há mensagens não lidas para este usuário nesta conversa
+    status_leitura ENUM('lida', 'nao lida') NOT NULL DEFAULT 'nao lida',
+
+    PRIMARY KEY (id_conversa, id_usuario), -- Garante que um usuário não pode entrar na mesma conversa duas vezes
+    CONSTRAINT fk_participante_conversa FOREIGN KEY (id_conversa) REFERENCES conversa(id_conversa) ON DELETE CASCADE,
+    CONSTRAINT fk_participante_usuario FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE mensagem (
+    id_mensagem INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    id_conversa INT UNSIGNED NOT NULL,
+    id_usuario_remetente INT UNSIGNED NOT NULL,
+    conteudo TEXT NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_mensagem_conversa FOREIGN KEY (id_conversa) REFERENCES conversa(id_conversa) ON DELETE CASCADE,
+    CONSTRAINT fk_mensagem_usuario FOREIGN KEY (id_usuario_remetente) REFERENCES usuario(id_usuario) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 -- INSERTS PADRÃO
 
 INSERT INTO usuario (nome_completo, cpf, email, password_hash, telefone, data_nascimento, tipo) 
