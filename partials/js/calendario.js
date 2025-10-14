@@ -35,59 +35,81 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     // Renderiza o calendário (dias, eventos, etc.)
-    const renderCalendar = () => {
-        const year = currentDate.getFullYear();
-        const month = currentDate.getMonth();
+// SUBSTITUA A FUNÇÃO INTEIRA NO SEU calendario.js
+const renderCalendar = () => {
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth();
+    
+    monthYearHeader.textContent = `${months[month]} ${year}`;
+    daysContainer.innerHTML = '';
 
-        monthYearHeader.textContent = `${months[month]} ${year}`;
-        daysContainer.innerHTML = '';
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const prevLastDay = new Date(year, month, 0);
+    
+    const firstDayIndex = firstDay.getDay();
+    const lastDate = lastDay.getDate();
+    const prevDays = prevLastDay.getDate();
 
-        const firstDay = new Date(year, month, 1);
-        const lastDay = new Date(year, month + 1, 0);
-        const prevLastDay = new Date(year, month, 0);
+    // Dias do mês anterior
+    for (let i = firstDayIndex; i > 0; i--) {
+        const dayCell = document.createElement('div');
+        dayCell.className = 'day-cell other-month';
+        dayCell.textContent = prevDays - i + 1;
+        daysContainer.appendChild(dayCell);
+    }
 
-        const firstDayIndex = firstDay.getDay();
-        const lastDate = lastDay.getDate();
+    // Dias do mês atual
+    for (let i = 1; i <= lastDate; i++) {
+        const dayCell = document.createElement('div');
+        dayCell.className = 'day-cell';
 
-        // Dias do mês anterior
-        for (let i = firstDayIndex; i > 0; i--) {
-            const dayCell = document.createElement('div');
-            dayCell.className = 'day-cell other-month';
-            dayCell.textContent = prevLastDay.getDate() - i + 1;
-            daysContainer.appendChild(dayCell);
+        const dayNumber = document.createElement('span');
+        dayNumber.textContent = i;
+        dayCell.appendChild(dayNumber);
+        
+        const today = new Date();
+        if (i === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
+            dayCell.classList.add('today');
+        }
+        if (selectedDate && i === selectedDate.getDate() && month === selectedDate.getMonth() && year === selectedDate.getFullYear()) {
+            dayCell.classList.add('active');
         }
 
-        // Dias do mês atual
-        for (let i = 1; i <= lastDate; i++) {
-            const dayCell = document.createElement('div');
-            dayCell.className = 'day-cell';
-            dayCell.textContent = i;
+        // --- LÓGICA DE MARCAÇÃO ATUALIZADA ---
+        const dateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+        const dayEvents = eventsArr.filter(event => event.data_evento === dateString);
 
-            const today = new Date();
-            if (i === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
-                dayCell.classList.add('today');
+        if (dayEvents.length > 0) {
+            // Se QUALQUER evento do dia for 'global', a marcação será global.
+            if (dayEvents.some(event => event.tipo === 'global')) {
+                dayCell.classList.add('has-global-event');
+            } else {
+                // Senão, se houver apenas eventos pessoais, a marcação será pessoal.
+                dayCell.classList.add('has-personal-event');
             }
-
-            if (selectedDate && i === selectedDate.getDate() && month === selectedDate.getMonth() && year === selectedDate.getFullYear()) {
-                dayCell.classList.add('active');
-            }
-
-            // Verifica se o dia tem evento
-            const dateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
-            if (eventsArr.some(event => event.data_evento === dateString)) {
-                dayCell.classList.add('has-event');
-            }
-
-            dayCell.addEventListener('click', () => {
-                selectedDate = new Date(year, month, i);
-                document.querySelectorAll('.day-cell.active').forEach(d => d.classList.remove('active'));
-                dayCell.classList.add('active');
-                renderEventsForDate(selectedDate);
-            });
-
-            daysContainer.appendChild(dayCell);
         }
-    };
+        // --- FIM DA LÓGICA DE MARCAÇÃO ---
+        
+        dayCell.addEventListener('click', () => {
+            selectedDate = new Date(year, month, i);
+            document.querySelectorAll('.day-cell.active').forEach(d => d.classList.remove('active'));
+            dayCell.classList.add('active');
+            renderEventsForDate(selectedDate);
+        });
+        
+        daysContainer.appendChild(dayCell);
+    }
+
+    // Código para os dias do próximo mês...
+    const nextDaysCount = 42 - daysContainer.children.length;
+    for (let j = 1; j <= nextDaysCount; j++) {
+        const dayCell = document.createElement('div');
+        dayCell.className = 'day-cell other-month';
+        dayCell.textContent = j;
+        daysContainer.appendChild(dayCell);
+    }
+};
 
     // Renderiza a lista de eventos para o dia selecionado
     // SUBSTITUA A FUNÇÃO INTEIRA NO SEU calendario.js

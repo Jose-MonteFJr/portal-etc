@@ -788,6 +788,7 @@ a.list-group-item:hover {
     position: relative;
     border: 2px solid transparent;
     font-weight: 500;
+    overflow: hidden;
 }
 .day-cell.other-month {
     opacity: 0.3;
@@ -809,19 +810,43 @@ a.list-group-item:hover {
     border-color: var(--cal-accent);
     box-shadow: 0 0 15px var(--cal-accent-glow);
 }
-.day-cell.has-event::after {
+
+/* Define a base do arco para ambos os tipos de evento */
+.day-cell.has-personal-event::after,
+.day-cell.has-global-event::after {
     content: '';
     position: absolute;
-    bottom: 5px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 6px;
-    height: 6px;
+    z-index: 0; 
+    width: 110%;
+    height: 110%;
+    bottom: -100%;
+    left: -5%;
     border-radius: 50%;
-    background-color: var(--bs-danger);
+    transition: bottom 0.2s ease-in-out;
 }
-.day-cell.active.has-event::after {
+
+/* Cor para o arco de eventos PESSOAIS (azul) */
+.day-cell.has-personal-event::after {
+    background-color: var(--cal-accent);
+}
+
+/* Cor para o arco de eventos GLOBAIS (amarelo) */
+.day-cell.has-global-event::after {
+    background-color: var(--bs-danger); /* Cor de alerta do Bootstrap */
+}
+
+/* ----- Efeitos de Hover e Ativo ----- */
+
+/* O arco fica branco quando o dia está selecionado */
+.day-cell.active.has-personal-event::after,
+.day-cell.active.has-global-event::after {
     background-color: white;
+}
+
+/* O arco sobe um pouco no hover */
+.day-cell:not(.active).has-personal-event:hover::after,
+.day-cell:not(.active).has-global-event:hover::after {
+    bottom: -80%;
 }
 
 /* Lista de Lembretes */
@@ -939,4 +964,25 @@ a.list-group-item:hover {
     border: 2px dashed var(--cal-border);
     background-color: transparent !important;
     color: var(--cal-text-secondary) !important;
+}
+
+/* ============================================================= */
+/* == ESTILO PARA O BOTÃO FLUTUANTE (FAB)                     == */
+/* ============================================================= */
+
+.fab {
+    position: absolute; /* Posição flutuante relativa ao pai (.content) */
+    right: 2rem;
+    bottom: 2rem;
+    width: 56px;
+    height: 56px;
+    font-size: 1.5rem;
+}
+
+/* Ajuste para telas pequenas */
+@media (max-width: 768px) {
+    .fab {
+        right: 1rem;
+        bottom: 1rem;
+    }
 }

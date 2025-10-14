@@ -30,7 +30,7 @@ include '../partials/portal_header.php'; // Inclui seu layout principal
                             </div>
                         </div>
                         <div class="card-footer d-flex justify-content-between align-items-center">
-                            <button class="btn btn-outline-primary prev" id="today-btn">Hoje</button>
+                            <button class="btn btn-outline-primary btn-sm prev" id="today-btn">Hoje</button>
                             <div class="d-flex gap-2">
                                 <input type="text" class="form-control form-control-sm" id="date-input" placeholder="MM/AAAA" maxlength="7">
                                 <button class="btn btn-primary btn-sm prev" id="goto-btn">Ir</button>
@@ -83,6 +83,12 @@ include '../partials/portal_header.php'; // Inclui seu layout principal
                 </div>
             </div>
         </div>
+        <button class="btn btn-success btn-lg rounded-circle shadow fab"
+            data-bs-toggle="collapse"
+            data-bs-target="#add-event-form"
+            title="Novo Lembrete">
+            <i class="bi bi-plus-lg"></i>
+        </button>
     </div>
 </div>
 
