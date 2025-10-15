@@ -149,7 +149,7 @@ $foto_usuario_logado = !empty($_SESSION['foto_perfil'])
                     </a>
                 </div>
                 <div class="sidebar-footer">
-                    <a href="/portal-etc/mensagem/nova_mensagem.php" class="sidebar-link" title="Chat">
+                    <a href="/portal-etc/mensagem/caixa_de_entrada.php" class="sidebar-link" title="Chat">
                         <i class="bi bi-chat-dots fs-4"></i>
                         <span>Chat</span>
                     </a>

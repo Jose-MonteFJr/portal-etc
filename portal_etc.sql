@@ -273,11 +273,9 @@ CREATE TABLE conversa (
 CREATE TABLE participante_conversa (
     id_conversa INT UNSIGNED NOT NULL,
     id_usuario INT UNSIGNED NOT NULL,
-    
-    -- Para sabermos se há mensagens não lidas para este usuário nesta conversa
     status_leitura ENUM('lida', 'nao lida') NOT NULL DEFAULT 'nao lida',
 
-    PRIMARY KEY (id_conversa, id_usuario), -- Garante que um usuário não pode entrar na mesma conversa duas vezes
+    PRIMARY KEY (id_conversa, id_usuario),
     CONSTRAINT fk_participante_conversa FOREIGN KEY (id_conversa) REFERENCES conversa(id_conversa) ON DELETE CASCADE,
     CONSTRAINT fk_participante_usuario FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

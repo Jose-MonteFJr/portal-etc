@@ -819,8 +819,8 @@ a.list-group-item:hover {
     z-index: 0; 
     width: 110%;
     height: 110%;
-    bottom: -100%;
-    left: -5%;
+    bottom: -85%;
+    left: -5%;  
     border-radius: 50%;
     transition: bottom 0.2s ease-in-out;
 }
@@ -846,7 +846,7 @@ a.list-group-item:hover {
 /* O arco sobe um pouco no hover */
 .day-cell:not(.active).has-personal-event:hover::after,
 .day-cell:not(.active).has-global-event:hover::after {
-    bottom: -80%;
+    bottom: -70%;
 }
 
 /* Lista de Lembretes */
@@ -985,4 +985,39 @@ a.list-group-item:hover {
         right: 1rem;
         bottom: 1rem;
     }
+}
+
+.form-control {
+    resize: none;
+}
+
+/* ============================================================= */
+/* == ESTILOS PARA OS BALÕES DE CHAT (CHAT BUBBLES)           == */
+/* ============================================================= */
+
+.chat-bubble {
+    padding: 0.75rem 1rem;
+    max-width: 75%;
+    word-wrap: break-word; /* Garante que palavras longas quebrem a linha */
+}
+
+/* Balão de mensagem ENVIADA (direita) */
+.chat-bubble.sent {
+    background-color: var(--bs-primary);
+    color: white;
+    /* Borda inferior direita não é arredondada, criando o efeito "cauda" */
+    border-radius: 1rem 1rem 0.25rem 1rem; 
+}
+
+/* Balão de mensagem RECEBIDA (esquerda) */
+.chat-bubble.received {
+    background-color: #d7d8da; /* Um cinza claro padrão do Bootstrap */
+    color: var(--bs-body-color);
+    /* Borda inferior esquerda não é arredondada */
+    border-radius: 1rem 1rem 1rem 0.25rem;
+}
+
+/* Ajuste para o tema escuro */
+[data-bs-theme="dark"] .chat-bubble.received {
+    background-color: #3a3f44;
 }
