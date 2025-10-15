@@ -57,9 +57,6 @@ if (isset($_SESSION['id_usuario'])) {
                             <div class="input-field">
                                 <button type="submit" class="submit">Entrar</button>
                             </div>
-                            <div class="signin">
-                                <span>Esqueceu a senha? <a href="#">Recuperar</a></span>
-                            </div>
                         </form>
                     </div>
                 </div>
