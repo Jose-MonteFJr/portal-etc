@@ -46,12 +46,14 @@ include '../partials/portal_header.php'; // Inclui seu layout principal
                                 <i class="bi bi-calendar-event me-2"></i>
                                 <span id="selected-date-header">Selecione um dia</span>
                             </h6>
-                            <button class="btn btn-success btn-sm" data-bs-toggle="collapse" data-bs-target="#add-event-form">
+                            <button id="prepare-add-btn" class="btn btn-success btn-sm" data-bs-toggle="collapse" data-bs-target="#add-event-form">
                                 <i class="bi bi-plus-lg"></i> Novo
                             </button>
                         </div>
 
                         <div class="collapse p-3" id="add-event-form">
+                            <input type="hidden" id="event-id">
+
                             <div class="mb-2">
                                 <label for="event-title" class="form-label small">Título</label>
                                 <input type="text" id="event-title" class="form-control form-control-sm">

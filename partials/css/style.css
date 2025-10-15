@@ -856,7 +856,7 @@ a.list-group-item:hover {
     padding: 0.5rem;
 }
 .list-group-item {
-    background-color: var(--cal-bg-light) !important;
+    background-color: var(--cal-bg) !important;
     color: var(--cal-text-primary) !important;
     border: 1px solid var(--cal-border) !important;
     margin-bottom: 0.5rem;
@@ -872,7 +872,7 @@ a.list-group-item:hover {
 /* Formulário de Adicionar Lembrete */
 #add-event-form {
     border-bottom: 1px solid var(--cal-border);
-    background-color: var(--cal-bg-light);
+    background-color: var(--cal-bg);
 }
 
 .current-month {
@@ -922,7 +922,7 @@ a.list-group-item:hover {
 }
 
 .list-group-item.event-item:hover {
-    background-color: var(--cal-bg-light) !important;
+    background-color: var(--cal-bg-light)!important;
 }
 
 /* Cor da borda para eventos pessoais */

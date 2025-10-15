@@ -6,17 +6,19 @@ document.addEventListener('DOMContentLoaded', function () {
     const nextMonthBtn = document.getElementById('next-month-btn');
     const selectedDateHeader = document.getElementById('selected-date-header');
     const eventsList = document.getElementById('events-list');
+    const addEventForm = document.getElementById('add-event-form');
     const addEventBtn = document.getElementById('add-event-btn');
-
-    // NOVO: Seleciona os novos botões
+    const eventIdInput = document.getElementById('event-id');
+    const addEventFormTitle = addEventForm.previousElementSibling.querySelector('h6');
     const todayBtn = document.getElementById('today-btn');
     const gotoBtn = document.getElementById('goto-btn');
     const dateInput = document.getElementById('date-input');
+    const prepareAddBtn = document.getElementById('prepare-add-btn');
 
     // --- ESTADO DO CALENDÁRIO ---
     let currentDate = new Date();
     let eventsArr = [];
-    let selectedDate = null;
+    let selectedDate = new Date();
 
     const months = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
 
@@ -25,91 +27,99 @@ document.addEventListener('DOMContentLoaded', function () {
     // Busca eventos do servidor via AJAX
     const fetchEvents = async () => {
         try {
-            const response = await fetch('/portal-etc/calendario/get_eventos.php'); // Ajuste o caminho se necessário
+            const response = await fetch('/portal-etc/calendario/get_eventos.php'); // Ajuste o caminho
             const data = await response.json();
-            eventsArr = data;
+            eventsArr = data.map(event => ({
+                id: event.id_evento,
+                id_usuario_criador: event.id_usuario_criador,
+                titulo: event.titulo,
+                hora_inicio: event.hora_inicio,
+                hora_fim: event.hora_fim,
+                data_evento: event.data_evento,
+                tipo: event.tipo
+            }));
             renderCalendar();
+            renderEventsForDate(selectedDate); // Garante que a lista de eventos seja renderizada após a busca
         } catch (error) {
             console.error("Erro ao buscar eventos:", error);
         }
     };
 
     // Renderiza o calendário (dias, eventos, etc.)
-// SUBSTITUA A FUNÇÃO INTEIRA NO SEU calendario.js
-const renderCalendar = () => {
-    const year = currentDate.getFullYear();
-    const month = currentDate.getMonth();
-    
-    monthYearHeader.textContent = `${months[month]} ${year}`;
-    daysContainer.innerHTML = '';
+    const renderCalendar = () => {
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth();
 
-    const firstDay = new Date(year, month, 1);
-    const lastDay = new Date(year, month + 1, 0);
-    const prevLastDay = new Date(year, month, 0);
-    
-    const firstDayIndex = firstDay.getDay();
-    const lastDate = lastDay.getDate();
-    const prevDays = prevLastDay.getDate();
+        monthYearHeader.textContent = `${months[month]} ${year}`;
+        daysContainer.innerHTML = '';
 
-    // Dias do mês anterior
-    for (let i = firstDayIndex; i > 0; i--) {
-        const dayCell = document.createElement('div');
-        dayCell.className = 'day-cell other-month';
-        dayCell.textContent = prevDays - i + 1;
-        daysContainer.appendChild(dayCell);
-    }
+        const firstDay = new Date(year, month, 1);
+        const lastDay = new Date(year, month + 1, 0);
+        const prevLastDay = new Date(year, month, 0);
 
-    // Dias do mês atual
-    for (let i = 1; i <= lastDate; i++) {
-        const dayCell = document.createElement('div');
-        dayCell.className = 'day-cell';
+        const firstDayIndex = firstDay.getDay();
+        const lastDate = lastDay.getDate();
+        const prevDays = prevLastDay.getDate();
 
-        const dayNumber = document.createElement('span');
-        dayNumber.textContent = i;
-        dayCell.appendChild(dayNumber);
-        
-        const today = new Date();
-        if (i === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
-            dayCell.classList.add('today');
-        }
-        if (selectedDate && i === selectedDate.getDate() && month === selectedDate.getMonth() && year === selectedDate.getFullYear()) {
-            dayCell.classList.add('active');
+        // Dias do mês anterior
+        for (let i = firstDayIndex; i > 0; i--) {
+            const dayCell = document.createElement('div');
+            dayCell.className = 'day-cell other-month';
+            dayCell.textContent = prevDays - i + 1;
+            daysContainer.appendChild(dayCell);
         }
 
-        // --- LÓGICA DE MARCAÇÃO ATUALIZADA ---
-        const dateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
-        const dayEvents = eventsArr.filter(event => event.data_evento === dateString);
+        // Dias do mês atual
+        for (let i = 1; i <= lastDate; i++) {
+            const dayCell = document.createElement('div');
+            dayCell.className = 'day-cell';
 
-        if (dayEvents.length > 0) {
-            // Se QUALQUER evento do dia for 'global', a marcação será global.
-            if (dayEvents.some(event => event.tipo === 'global')) {
-                dayCell.classList.add('has-global-event');
-            } else {
-                // Senão, se houver apenas eventos pessoais, a marcação será pessoal.
-                dayCell.classList.add('has-personal-event');
+            const dayNumber = document.createElement('span');
+            dayNumber.textContent = i;
+            dayCell.appendChild(dayNumber);
+
+            const today = new Date();
+            if (i === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
+                dayCell.classList.add('today');
             }
-        }
-        // --- FIM DA LÓGICA DE MARCAÇÃO ---
-        
-        dayCell.addEventListener('click', () => {
-            selectedDate = new Date(year, month, i);
-            document.querySelectorAll('.day-cell.active').forEach(d => d.classList.remove('active'));
-            dayCell.classList.add('active');
-            renderEventsForDate(selectedDate);
-        });
-        
-        daysContainer.appendChild(dayCell);
-    }
+            if (selectedDate && i === selectedDate.getDate() && month === selectedDate.getMonth() && year === selectedDate.getFullYear()) {
+                dayCell.classList.add('active');
+            }
 
-    // Código para os dias do próximo mês...
-    const nextDaysCount = 42 - daysContainer.children.length;
-    for (let j = 1; j <= nextDaysCount; j++) {
-        const dayCell = document.createElement('div');
-        dayCell.className = 'day-cell other-month';
-        dayCell.textContent = j;
-        daysContainer.appendChild(dayCell);
-    }
-};
+            // --- LÓGICA DE MARCAÇÃO ATUALIZADA ---
+            const dateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+            const dayEvents = eventsArr.filter(event => event.data_evento === dateString);
+
+            if (dayEvents.length > 0) {
+                // Se QUALQUER evento do dia for 'global', a marcação será global.
+                if (dayEvents.some(event => event.tipo === 'global')) {
+                    dayCell.classList.add('has-global-event');
+                } else {
+                    // Senão, se houver apenas eventos pessoais, a marcação será pessoal.
+                    dayCell.classList.add('has-personal-event');
+                }
+            }
+            // --- FIM DA LÓGICA DE MARCAÇÃO ---
+
+            dayCell.addEventListener('click', () => {
+                selectedDate = new Date(year, month, i);
+                document.querySelectorAll('.day-cell.active').forEach(d => d.classList.remove('active'));
+                dayCell.classList.add('active');
+                renderEventsForDate(selectedDate);
+            });
+
+            daysContainer.appendChild(dayCell);
+        }
+
+        // Código para os dias do próximo mês...
+        const nextDaysCount = 42 - daysContainer.children.length;
+        for (let j = 1; j <= nextDaysCount; j++) {
+            const dayCell = document.createElement('div');
+            dayCell.className = 'day-cell other-month';
+            dayCell.textContent = j;
+            daysContainer.appendChild(dayCell);
+        }
+    };
 
     // Renderiza a lista de eventos para o dia selecionado
     // SUBSTITUA A FUNÇÃO INTEIRA NO SEU calendario.js
@@ -154,18 +164,85 @@ const renderCalendar = () => {
 
             // Adiciona o botão de deletar se o usuário for o criador
             if (event.id_usuario_criador === LOGGED_IN_USER_ID) {
-                const deleteBtn = document.createElement('button');
-                deleteBtn.className = 'btn btn-sm btn-outline-danger event-delete-btn';
-                deleteBtn.innerHTML = '<i class="bi bi-trash"></i>';
-                deleteBtn.title = 'Excluir Lembrete';
-                deleteBtn.onclick = () => deleteEvent(event.id_evento);
+                const actionsDiv = document.createElement('div');
+                actionsDiv.className = 'event-actions mt-2'; // Um container para os botões
 
-                // Adiciona o botão ao final do eventItem
-                eventItem.querySelector('.d-flex').appendChild(deleteBtn);
+                // --- Botão Editar ---
+                const editBtn = document.createElement('button');
+                editBtn.className = 'btn btn-sm btn-outline-secondary me-2';
+                editBtn.innerHTML = '<i class="bi bi-pencil"></i> Editar';
+                // A MÁGICA: Ao clicar, chama a função para iniciar a edição
+                editBtn.onclick = () => startEditEvent(event);
+
+                // --- Botão Excluir ---
+                const deleteBtn = document.createElement('button');
+                deleteBtn.className = 'btn btn-sm btn-outline-danger';
+                deleteBtn.innerHTML = '<i class="bi bi-trash"></i> Excluir';
+                // A MÁGICA: Ao clicar, chama a função para deletar
+                deleteBtn.onclick = () => deleteEvent(event.id);
+
+                actionsDiv.appendChild(editBtn);
+                actionsDiv.appendChild(deleteBtn);
+                eventItem.appendChild(actionsDiv); // Adiciona os botões ao item do lembrete
             }
 
             eventsList.appendChild(eventItem);
         });
+    };
+
+    const prepareFormForAdd = () => {
+        eventIdInput.value = ''; // O mais importante: limpa o ID do evento
+        addEventBtn.textContent = 'Adicionar Lembrete';
+
+        // Garante que o título do card de lembretes seja resetado
+        if (selectedDate) {
+            selectedDateHeader.textContent = selectedDate.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long' });
+        }
+
+        // Limpa os campos
+        document.getElementById('event-title').value = '';
+        document.getElementById('event-start-time').value = '';
+        document.getElementById('event-end-time').value = '';
+        const globalCheck = document.getElementById('event-global-check');
+        if (globalCheck) {
+            globalCheck.checked = false;
+        }
+    };
+
+    // NOVA FUNÇÃO para preparar o formulário para edição
+    const startEditEvent = (event) => {
+        // Pega a instância do componente Collapse do Bootstrap
+        const formCollapseInstance = bootstrap.Collapse.getOrCreateInstance(addEventForm);
+        const isFormOpen = addEventForm.classList.contains('show');
+        const isEditingSameEvent = eventIdInput.value == event.id;
+
+        // --- NOVA LÓGICA DE TOGGLE ---
+        // Se o formulário já estiver aberto E for para o mesmo evento, fecha e reseta.
+        if (isFormOpen && isEditingSameEvent) {
+            formCollapseInstance.hide();
+            prepareFormForAdd(); // Usa a função de reset que já temos
+            return; // Encerra a função aqui
+        }
+
+        // --- LÓGICA ANTIGA (se o formulário estiver fechado ou for para outro evento) ---
+        // Preenche o campo oculto com o ID do evento
+        eventIdInput.value = event.id;
+
+        // Preenche os campos visíveis do formulário com os dados do evento
+        document.getElementById('event-title').value = event.titulo;
+        document.getElementById('event-start-time').value = event.hora_inicio;
+        document.getElementById('event-end-time').value = event.hora_fim;
+
+        const globalCheck = document.getElementById('event-global-check');
+        if (globalCheck) {
+            globalCheck.checked = event.tipo === 'global';
+        }
+
+        // Muda os textos para o modo de edição
+        addEventBtn.textContent = 'Salvar Alterações';
+
+        // Abre o formulário
+        formCollapseInstance.show();
     };
 
     // Deleta um evento
@@ -201,24 +278,37 @@ const renderCalendar = () => {
             return;
         }
 
+        // --- LÓGICA DE DECISÃO ---
+        const eventId = eventIdInput.value; // Pega o ID do campo oculto
+        const isEditing = eventId && eventId > 0; // Se tiver um ID, estamos editando
+
+        // Decide para qual script PHP enviar os dados
+        const url = isEditing ? '/portal-etc/calendario/edit_evento.php' : '/portal-etc/calendario/add_evento.php';
+
         const formData = new FormData();
         formData.append('titulo', title);
         formData.append('hora_inicio', startTime);
         formData.append('hora_fim', endTime);
-        const dateString = `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`;
-        formData.append('data_evento', dateString);
-        formData.append('is_global', isGlobal);
+
+        if (isEditing) {
+            formData.append('id_evento', eventId);
+            formData.append('is_global', isGlobal);
+        } else {
+            const dateString = `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`;
+            formData.append('data_evento', dateString);
+            formData.append('is_global', isGlobal);
+        }
 
         try {
-            await fetch('/portal-etc/calendario/add_evento.php', { method: 'POST', body: formData });
+            await fetch(url, { method: 'POST', body: formData });
+
+            prepareFormForAdd(); // Reseta o formulário
+            bootstrap.Collapse.getOrCreateInstance(addEventForm).hide();
+
             await fetchEvents();
-            renderEventsForDate(selectedDate);
-            // Limpa o formulário
-            document.getElementById('event-title').value = '';
-            document.getElementById('event-start-time').value = '';
-            document.getElementById('event-end-time').value = '';
+
         } catch (error) {
-            console.error("Erro ao adicionar evento:", error);
+            console.error("Erro ao salvar evento:", error);
         }
     });
 
@@ -259,12 +349,12 @@ const renderCalendar = () => {
     // --- EVENT LISTENERS DE NAVEGAÇÃO ---
     prevMonthBtn.addEventListener('click', () => {
         currentDate.setMonth(currentDate.getMonth() - 1);
-        renderCalendar();
+        fetchEvents();
     });
 
     nextMonthBtn.addEventListener('click', () => {
         currentDate.setMonth(currentDate.getMonth() + 1);
-        renderCalendar();
+        fetchEvents();
     });
 
     // Função para evitar injeção de HTML
@@ -278,6 +368,10 @@ const renderCalendar = () => {
                 "'": '&#039;'
             }[match];
         });
+    }
+
+    if (prepareAddBtn) {
+        prepareAddBtn.addEventListener('click', prepareFormForAdd);
     }
 
     // --- INICIALIZAÇÃO ---
