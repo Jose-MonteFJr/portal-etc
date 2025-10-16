@@ -90,21 +90,28 @@ include '../partials/portal_header.php'; // Ajuste o caminho
                                             $preview_msg = $remetente . htmlspecialchars(substr($conversa['ultimo_conteudo'], 0, 70)) . '...';
                                         }
                                         ?>
-                                        <a href="ver_conversa.php?id_conversa=<?php echo (int)$conversa['id_conversa']; ?>" 
-                                           class="list-group-item list-group-item-action <?php echo $unread_class; ?>">
-                                            <div class="d-flex align-items-center">
-                                                <img src="<?php echo htmlspecialchars($foto_participante); ?>" class="rounded-circle me-3" style="width: 50px; height: 50px; object-fit: cover;">
-                                                <div class="flex-grow-1">
-                                                    <div class="d-flex w-100 justify-content-between">
-                                                        <h6 class="mb-1"><?php echo htmlspecialchars($conversa['nome_outro_participante']); ?></h6>
-                                                        <small class="text-muted"><?php echo date('d/m/y', strtotime($conversa['data_ultima_mensagem'])); ?></small>
-                                                    </div>
-                                                    <p class="mb-1 small text-muted text-truncate">
-                                                        <?php echo $preview_msg; ?>
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </a>
+                                                    <a href="ver_conversa.php?id_conversa=<?php echo (int)$conversa['id_conversa']; ?>" 
+                                                    class="list-group-item list-group-item-action">
+                                                        <div class="d-flex align-items-center">
+                                                            <?php if ($conversa['status_leitura'] === 'nao lida'): ?>
+                                                                <span class="unread-dot me-3"></span>
+                                                            <?php else: ?>
+                                                                <span class="placeholder-dot me-3"></span> <?php endif; ?>
+
+                                                            <img src="<?php echo htmlspecialchars($foto_participante); ?>" class="rounded-circle me-3" style="width: 50px; height: 50px; object-fit: cover;">
+                                                            <div class="flex-grow-1">
+                                                                <div class="d-flex w-100 justify-content-between">
+                                                                    <h6 class="mb-1 <?php echo $conversa['status_leitura'] === 'nao lida' ? 'fw-bold' : ''; ?>">
+                                                                        <?php echo htmlspecialchars($conversa['nome_outro_participante']); ?>
+                                                                    </h6>
+                                                                    <small class="text-muted"><?php echo date('d/m/y', strtotime($conversa['data_ultima_mensagem'])); ?></small>
+                                                                </div>
+                                                                <p class="mb-1 small text-muted text-truncate">
+                                                                    <?php echo $preview_msg; ?>
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </a>
                                     <?php endforeach; ?>
                                 <?php endif; ?>
                             </div>

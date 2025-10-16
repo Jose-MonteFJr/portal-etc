@@ -1021,3 +1021,17 @@ a.list-group-item:hover {
 [data-bs-theme="dark"] .chat-bubble.received {
     background-color: #3a3f44;
 }
+
+/* Adicione ao seu style.css */
+.unread-dot {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    background-color: var(--bs-primary); /* Usa a cor primária do Bootstrap */
+    border-radius: 50%;
+    flex-shrink: 0; /* Impede que o ponto encolha */
+}
+.placeholder-dot {
+    width: 12px;
+    flex-shrink: 0;
+}

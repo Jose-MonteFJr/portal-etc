@@ -537,6 +537,33 @@
               });
           });
       });
+
+    // Mensagem
+    // Script para rolar para a última mensagem (que você já tem)
+    document.addEventListener('DOMContentLoaded', function() {
+        const chatBox = document.getElementById('chat-box');
+        if (chatBox) {
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        // --- NOVA LÓGICA: Enviar com "Enter" ---
+        const messageTextarea = document.querySelector('textarea[name="conteudo"]');
+        const messageForm = messageTextarea.closest('form');
+
+        if (messageTextarea && messageForm) {
+            messageTextarea.addEventListener('keydown', function(event) {
+                // Verifica se a tecla pressionada foi "Enter" E se a tecla "Shift" NÃO estava pressionada
+                if (event.key === 'Enter' && !event.shiftKey) {
+                    // Impede o comportamento padrão (que é criar uma nova linha)
+                    event.preventDefault();
+                    // Envia o formulário
+                    messageForm.submit();
+                }
+                // Se o usuário apertar Shift + Enter, ele ainda conseguirá quebrar a linha.
+            });
+        }
+    });
+
   </script>
   </body>
 

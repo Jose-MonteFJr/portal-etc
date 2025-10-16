@@ -39,6 +39,25 @@ try {
             $stmt_update = $pdo->prepare("UPDATE participante_conversa SET status_leitura = 'nao lida' WHERE id_conversa = ? AND id_usuario != ?");
             $stmt_update->execute([$id_conversa, $id_usuario_logado]);
 
+            // =============================================================
+            // == NOVO: CRIA A NOTIFICAÇÃO PARA O OUTRO PARTICIPANTE      ==
+            // =============================================================
+            
+            // Busca o ID do outro participante para saber para quem enviar a notificação
+            $stmt_dest = $pdo->prepare("SELECT id_usuario FROM participante_conversa WHERE id_conversa = ? AND id_usuario != ?");
+            $stmt_dest->execute([$id_conversa, $id_usuario_logado]);
+            $id_destinatario = $stmt_dest->fetchColumn();
+
+            if ($id_destinatario) {
+                $nome_remetente = $_SESSION['nome_completo'];
+                $mensagem_notificacao = $nome_remetente . " respondeu à sua mensagem.";
+                $link_notificacao = "/portal-etc/mensagem/ver_conversa.php?id_conversa=" . $id_conversa; // Ajuste o caminho
+
+                criar_notificacao($pdo, $id_destinatario, $mensagem_notificacao, $link_notificacao);
+            }
+            // =============================================================
+
+
             $pdo->commit();
 
             // Redireciona para a mesma página para mostrar a nova mensagem
@@ -53,9 +72,14 @@ try {
 
     // --- 4. BUSCA DADOS DA CONVERSA E HISTÓRICO DE MENSAGENS ---
     // Busca o nome do outro participante para o título da página
-    $stmt_other = $pdo->prepare("SELECT u.nome_completo FROM usuario u JOIN participante_conversa pc ON u.id_usuario = pc.id_usuario WHERE pc.id_conversa = ? AND pc.id_usuario != ?");
-    $stmt_other->execute([$id_conversa, $id_usuario_logado]);
-    $outro_participante = $stmt_other->fetch();
+    $stmt_other = $pdo->prepare("
+    SELECT u.nome_completo, pc.status_leitura 
+    FROM usuario u 
+    JOIN participante_conversa pc ON u.id_usuario = pc.id_usuario 
+    WHERE pc.id_conversa = ? AND pc.id_usuario != ?
+");
+$stmt_other->execute([$id_conversa, $id_usuario_logado]);
+$outro_participante = $stmt_other->fetch();
 
     // Busca todas as mensagens da conversa, com os dados do remetente
     $stmt_msgs = $pdo->prepare("
@@ -99,14 +123,17 @@ include '../partials/portal_header.php'; // Ajuste o caminho
                                 <?php if ($is_sender): // SE A MENSAGEM FOI ENVIADA POR VOCÊ 
                                 ?>
 
-                                    <div class="d-flex justify-content-end mb-3">
+                                <div class="d-flex justify-content-end mb-3">
                                         <div class="chat-bubble sent">
                                             <p class="mb-1"><?php echo nl2br(htmlspecialchars($mensagem['conteudo'])); ?></p>
                                             <small class="d-block text-end text-white-50">
                                                 <?php echo date('H:i', strtotime($mensagem['created_at'])); ?>
+                                                <?php if ($outro_participante['status_leitura'] === 'lida'): ?>
+                                                    <i class="bi bi-check2-all ms-1 text-info"></i> <?php else: ?>
+                                                    <i class="bi bi-check2 ms-1"></i> <?php endif; ?>
                                             </small>
                                         </div>
-                                    </div>
+                                </div>
 
                                 <?php else: // SE A MENSAGEM FOI RECEBIDA 
                                 ?>
@@ -143,15 +170,6 @@ include '../partials/portal_header.php'; // Ajuste o caminho
         </div>
     </div>
 </div>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const chatBox = document.getElementById('chat-box');
-        if (chatBox) {
-            chatBox.scrollTop = chatBox.scrollHeight;
-        }
-    });
-</script>
 
 <?php include '../partials/footer.php'; // Ajuste o caminho 
 ?>
