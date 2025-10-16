@@ -59,7 +59,7 @@ include '../partials/header.php'; // Ajuste o caminho
 
         <div class="d-flex align-items-center justify-content-between mb-3">
             <h2 class="h4 mb-0">Definições de Horários</h2>
-            <a href="turmas_view.php" class="btn btn-sm btn-outline-secondary">Voltar para Turmas</a>
+            <a href="/portal-etc/turma/turmas_view.php" class="btn btn-sm btn-outline-secondary">Voltar para Turmas</a>
         </div>
 
         <?php if (!empty($errors)): ?>
