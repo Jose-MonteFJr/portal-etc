@@ -291,6 +291,34 @@ CREATE TABLE mensagem (
     CONSTRAINT fk_mensagem_usuario FOREIGN KEY (id_usuario_remetente) REFERENCES usuario(id_usuario) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+CREATE TABLE definicao_horario (
+    id_definicao INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    turno ENUM('matutino','vespertino','noturno') NOT NULL,
+    horario_label ENUM('primeiro', 'segundo') NOT NULL COMMENT 'Ex: 1º ou 2º horário',
+    hora_inicio TIME NOT NULL,
+    hora_fim TIME NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    UNIQUE KEY uq_turno_horario (turno, horario_label)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE horario_aula (
+    id_horario INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    id_turma INT UNSIGNED NOT NULL,
+    id_disciplina INT UNSIGNED NOT NULL,
+    id_professor INT UNSIGNED NOT NULL,
+    dia_semana ENUM('segunda', 'terca', 'quarta', 'quinta', 'sexta') NOT NULL,
+    horario ENUM('primeiro', 'segundo') NOT NULL,
+    sala VARCHAR(50) NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_horario_turma FOREIGN KEY (id_turma) REFERENCES turma(id_turma) ON DELETE CASCADE,
+    CONSTRAINT fk_horario_disciplina FOREIGN KEY (id_disciplina) REFERENCES disciplina(id_disciplina) ON DELETE CASCADE,
+    CONSTRAINT fk_horario_professor FOREIGN KEY (id_professor) REFERENCES usuario(id_usuario) ON DELETE CASCADE,
+    UNIQUE KEY uq_horario_turma_dia (id_turma, dia_semana, horario)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 -- INSERTS PADRÃO
 
 INSERT INTO usuario (nome_completo, cpf, email, password_hash, telefone, data_nascimento, tipo) 

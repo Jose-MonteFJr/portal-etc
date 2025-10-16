@@ -1,5 +1,23 @@
   </div>
 
+  <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h1 class="modal-title fs-5" id="confirmDeleteModalLabel">Confirmar Exclusão</h1>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body" id="modalBodyMessage">
+                  Você tem certeza que deseja excluir este item?
+              </div>
+              <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                  <button type="button" class="btn btn-danger" id="confirmDeleteButton">Confirmar Exclusão</button>
+              </div>
+          </div>
+      </div>
+  </div>
+
   <div style="display: none;">
       <?php csrf_input(); ?>
   </div>
@@ -482,7 +500,7 @@
 
                           // Limpa o campo de texto
                           commentInput.value = '';
-                        //   showToast('Comentário publicado!', 'success');
+                          //   showToast('Comentário publicado!', 'success');
 
                           // Atualiza o contador de comentários
                           const commentCountSpan = postCard.querySelector('.total-comentarios-count');
@@ -538,32 +556,31 @@
           });
       });
 
-    // Mensagem
-    // Script para rolar para a última mensagem (que você já tem)
-    document.addEventListener('DOMContentLoaded', function() {
-        const chatBox = document.getElementById('chat-box');
-        if (chatBox) {
-            chatBox.scrollTop = chatBox.scrollHeight;
-        }
+      // Mensagem
+      // Script para rolar para a última mensagem (que você já tem)
+      document.addEventListener('DOMContentLoaded', function() {
+          const chatBox = document.getElementById('chat-box');
+          if (chatBox) {
+              chatBox.scrollTop = chatBox.scrollHeight;
+          }
 
-        // --- NOVA LÓGICA: Enviar com "Enter" ---
-        const messageTextarea = document.querySelector('textarea[name="conteudo"]');
-        const messageForm = messageTextarea.closest('form');
+          // --- NOVA LÓGICA: Enviar com "Enter" ---
+          const messageTextarea = document.querySelector('textarea[name="conteudo"]');
+          const messageForm = messageTextarea.closest('form');
 
-        if (messageTextarea && messageForm) {
-            messageTextarea.addEventListener('keydown', function(event) {
-                // Verifica se a tecla pressionada foi "Enter" E se a tecla "Shift" NÃO estava pressionada
-                if (event.key === 'Enter' && !event.shiftKey) {
-                    // Impede o comportamento padrão (que é criar uma nova linha)
-                    event.preventDefault();
-                    // Envia o formulário
-                    messageForm.submit();
-                }
-                // Se o usuário apertar Shift + Enter, ele ainda conseguirá quebrar a linha.
-            });
-        }
-    });
-
+          if (messageTextarea && messageForm) {
+              messageTextarea.addEventListener('keydown', function(event) {
+                  // Verifica se a tecla pressionada foi "Enter" E se a tecla "Shift" NÃO estava pressionada
+                  if (event.key === 'Enter' && !event.shiftKey) {
+                      // Impede o comportamento padrão (que é criar uma nova linha)
+                      event.preventDefault();
+                      // Envia o formulário
+                      messageForm.submit();
+                  }
+                  // Se o usuário apertar Shift + Enter, ele ainda conseguirá quebrar a linha.
+              });
+          }
+      });
   </script>
   </body>
 

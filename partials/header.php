@@ -44,6 +44,7 @@ $foto_usuario_logado = !empty($_SESSION['foto_perfil'])
             <li><a class="dropdown-item" href="/portal-etc/turma/turmas_view.php">Ver turmas</a></li>
             <li><a class="dropdown-item" href="/portal-etc/modulo/modulos_view.php">Ver módulos</a></li>
             <li><a class="dropdown-item" href="/portal-etc/feed/avisos_view.php">Ver avisos</a></li>
+            <li><a class="dropdown-item" href="/portal-etc/grade_horaria/horarios_definicao.php">Ver grade horária</a></li>
         </ul>
     </div>
     <!-- Item da Direita: Botões de Tema e Perfil -->
