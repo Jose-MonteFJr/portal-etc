@@ -105,9 +105,9 @@ $foto_usuario_logado = !empty($_SESSION['foto_perfil'])
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="#" class="sidebar-link" title="Carga horária">
+                    <a href="/portal-etc/grade_horaria/grade_horaria.php" class="sidebar-link" title="Carga horária">
                         <i class="bi bi-alarm fs-4"></i>
-                        <span>Carga horária</span>
+                        <span>Grade horária</span>
                     </a>
                 </li>
                 <li class="sidebar-item">

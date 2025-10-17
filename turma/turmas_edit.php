@@ -5,15 +5,27 @@ require  '../helpers.php';
 ensure_admin();
 
 $id_turma = (int)($_GET['id_turma'] ?? 0);
-$stmt = $pdo->prepare('SELECT id_turma, id_curso, nome, ano, semestre, turno, status FROM turma WHERE id_turma=?');
-
-$stmt->execute([$id_turma]);
-$turma = $stmt->fetch();
-if (!$turma) {
-  flash_set('danger', 'Turma não encontrada.');
-  header('Location: turmas_view.php');
-  exit;
+if ($id_turma === 0) {
+    flash_set('danger', 'ID da turma inválido.');
+    header('Location: turmas_view.php');
+    exit;
 }
+
+// CORRIGIDO: A consulta agora busca TODAS as colunas necessárias, incluindo id_modulo_atual
+$stmt = $pdo->prepare('SELECT id_turma, id_curso, nome, ano, semestre, turno, status, id_modulo_atual FROM turma WHERE id_turma = ?');
+$stmt->execute([$id_turma]);
+$turma = $stmt->fetch(PDO::FETCH_ASSOC); // Usando FETCH_ASSOC para garantir a consistência
+
+if (!$turma) {
+    flash_set('danger', 'Turma não encontrada.');
+    header('Location: turmas_view.php');
+    exit;
+}
+
+// Busca a lista de módulos disponíveis para o curso desta turma
+$stmt_modulos = $pdo->prepare("SELECT id_modulo, nome FROM modulo WHERE id_curso = ? ORDER BY ordem ASC");
+$stmt_modulos->execute([$turma['id_curso']]);
+$modulos_disponiveis = $stmt_modulos->fetchAll(PDO::FETCH_ASSOC);
 
 $errors = [];
 $id_curso = $turma['id_curso'];
@@ -22,19 +34,21 @@ $ano = $turma['ano'];
 $semestre = $turma['semestre'];
 $turno = $turma['turno'];
 $status = $turma['status'];
+$id_modulo_atual = $turma['id_modulo_atual'];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    csrf_check(); 
-    
-        // Captura dados do formulário
+    csrf_check();
+
+    // Captura dados do formulário
     $id_curso   = (int)($_POST['id_curso'] ?? 0);
     $ano   = (int)($_POST['ano'] ?? 0);
     $semestre   = trim($_POST['semestre'] ?? '');
     $nome   = trim($_POST['nome'] ?? '');
     $turno   = trim($_POST['turno'] ?? '');
     $status   = trim($_POST['status'] ?? '');
+    $id_modulo_atual = (int)($_POST['id_modulo_atual'] ?? 0);
 
-        // --- Validações ---
+    // --- Validações ---
     if ($id_curso === 0) $errors[] = 'Curso é obrigatório.';
     if ($ano === 0) $errors[] = 'Ano é obrigatório.';
     if ($semestre === '') $errors[] = 'Semestre é obrigatório.';
@@ -42,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($turno === '') $errors[] = 'Turno é obrigatório.';
     if ($status === '') $errors[] = 'Status é obrigatório.';
 
-        // Checagem de unicidade no banco
+    // Checagem de unicidade no banco
     if (empty($errors)) {
         $stmt = $pdo->prepare("SELECT COUNT(*) FROM turma WHERE id_curso = ? AND ano = ? AND semestre = ? AND turno = ? AND id_turma != ?");
         $stmt->execute([$id_curso, $ano, $semestre, $turno, $id_turma]);
@@ -50,37 +64,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $errors[] = 'Já existe uma turma cadastrada para este curso, ano, semestre e turno.';
         }
     }
-    
+
     if (!$errors) {
         try {
-            $stmt = $pdo->prepare('UPDATE turma SET id_curso=?,nome=?, ano=?, semestre=?, turno=?, status=? WHERE id_turma=?');
-            $stmt->execute([$id_curso, $nome, $ano, $semestre, $turno, $status,$id_turma]);
+            $stmt = $pdo->prepare('UPDATE turma SET id_curso=?,nome=?, ano=?, semestre=?, turno=?, status=?, id_modulo_atual=? WHERE id_turma=?');
+            $id_modulo_para_salvar = $id_modulo_atual > 0 ? $id_modulo_atual : null;
+            $stmt->execute([$id_curso, $nome, $ano, $semestre, $turno, $status, $id_modulo_para_salvar, $id_turma]);
 
             flash_set('success', 'Turma atualizada com sucesso.');
             header('Location: turmas_view.php');
-            exit;            
+            exit;
         } catch (PDOException $e) {
-                  $errors[] = 'Erro ao salvar: ' . $e->getMessage();
+            $errors[] = 'Erro ao salvar: ' . $e->getMessage();
         }
     }
-}  
+}
 
-$cursos = $pdo->query("SELECT id_curso, nome FROM curso ORDER BY nome ASC")->fetchAll();
-    
+$cursos = $pdo->query("SELECT id_curso, nome FROM curso ORDER BY nome ASC")->fetchAll(PDO::FETCH_ASSOC);
+
 include '../partials/header.php';
 ?>
 
 <div class="d-flex align-items-center justify-content-between mb-3">
-  <h2 class="h4 mb-0">Editar Turma #<?php echo (int)$turma['id_turma']; ?></h2>
-  <a class="btn btn-outline-secondary btn-sm" href="turmas_view.php">Voltar</a>
+    <h2 class="h4 mb-0">Editar Turma #<?php echo (int)$turma['id_turma']; ?></h2>
+    <a class="btn btn-outline-secondary btn-sm" href="turmas_view.php">Voltar</a>
 </div>
 
 <?php if ($errors): ?>
-  <div class="alert alert-danger">
-    <ul class="mb-0">
-      <?php foreach ($errors as $e) echo '<li>'.htmlspecialchars($e).'</li>'; ?>
-    </ul>
-  </div>
+    <div class="alert alert-danger">
+        <ul class="mb-0">
+            <?php foreach ($errors as $e) echo '<li>' . htmlspecialchars($e) . '</li>'; ?>
+        </ul>
+    </div>
 <?php endif; ?>
 
 <!-- FORMULÁRIO  -->
@@ -149,6 +164,20 @@ include '../partials/header.php';
                 <option value="aberta" <?php echo ($status === 'aberta' ? 'selected' : ''); ?>>Aberta (Inscrições)</option>
                 <option value="fechada" <?php echo ($status === 'fechada' ? 'selected' : ''); ?>>Fechada</option>
             </select>
+        </div>
+
+        <div class="col-md-6">
+            <label for="id_modulo_atual" class="form-label">Módulo Atual (Opcional)</label>
+            <select name="id_modulo_atual" id="id_modulo_atual" class="form-select">
+                <option value="0">-- Nenhum / Não Aplicável --</option>
+                <?php foreach ($modulos_disponiveis as $modulo): ?>
+                    <option value="<?php echo (int)$modulo['id_modulo']; ?>"
+                        <?php echo ((int)$modulo['id_modulo'] === (int)$id_modulo_atual ? 'selected' : ''); ?>>
+                        <?php echo htmlspecialchars($modulo['nome']); ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+            <div class="form-text">Define em qual módulo esta turma está atualmente.</div>
         </div>
 
     </div>

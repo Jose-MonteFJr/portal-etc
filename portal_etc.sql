@@ -94,6 +94,7 @@ CREATE TABLE disciplina (
 CREATE TABLE turma (
     id_turma INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     id_curso INT UNSIGNED NOT NULL,
+    id_modulo_atual INT UNSIGNED NULL DEFAULT NULL,
     nome VARCHAR(100) NOT NULL,
     ano YEAR NOT NULL,
     semestre ENUM('1', '2') NOT NULL, 
@@ -103,8 +104,8 @@ CREATE TABLE turma (
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
     CONSTRAINT fk_turma_curso FOREIGN KEY (id_curso) REFERENCES curso(id_curso) ON DELETE RESTRICT,
-    CONSTRAINT uq_turma UNIQUE (nome, ano, semestre, id_curso)
-
+    CONSTRAINT uq_turma UNIQUE (nome, ano, semestre, id_curso),
+    CONSTRAINT fk_turma_modulo_atual FOREIGN KEY (id_modulo_atual) REFERENCES modulo(id_modulo) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Tabela associativa
@@ -418,6 +419,20 @@ VALUES
 (6, 3, '2025-02-10', 'cursando'); -- Juliana Lima na Turma de Enfermagem Vespertino
 
 
+-- Horários para o turno da Noite
+INSERT INTO definicao_horario (turno, horario_label, hora_inicio, hora_fim) VALUES
+('noturno', 'primeiro', '19:00:00', '20:50:00'),
+('noturno', 'segundo', '21:00:00', '22:40:00');
+
+-- Horários para o turno da Tarde (Vespertino)
+INSERT INTO definicao_horario (turno, horario_label, hora_inicio, hora_fim) VALUES
+('vespertino', 'primeiro', '13:30:00', '15:20:00'),
+('vespertino', 'segundo', '15:40:00', '17:30:00');
+
+-- Horários para o turno da Manhã (Matutino)
+INSERT INTO definicao_horario (turno, horario_label, hora_inicio, hora_fim) VALUES
+('matutino', 'primeiro', '07:30:00', '09:20:00'),
+('matutino', 'segundo', '09:40:00', '11:30:00');
 
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
