@@ -92,7 +92,6 @@ include '../partials/portal_header.php'; // Ajuste o caminho
 <div class="main">
     <div class="content">
         <div class="container mt-4">
-
             <?php if (!$info_turma || !$info_turma['id_turma']): ?>
                 <div class="row justify-content-center">
                     <div class="col-lg-8">
@@ -103,22 +102,19 @@ include '../partials/portal_header.php'; // Ajuste o caminho
                         </div>
                     </div>
                 </div>
-
             <?php else: ?>
-                <div class="card shadow-sm">
-                    <div class="card-header text-center">
-                        <h4 class="mb-1"><?php echo htmlspecialchars($info_turma['nome_curso']); ?></h4>
+                <div class="text-center mb-4">
+                    <h2 class="h4 mb-1"><?php echo htmlspecialchars($info_turma['nome_curso']); ?></h2>
+                    <?php if (!empty($info_turma['nome_modulo'])): ?>
+                        <h6 class="mb-1 fw-normal text-muted">Módulo: <?php echo htmlspecialchars($info_turma['nome_modulo']); ?></h6>
+                    <?php endif; ?>
+                    <p class="mb-0 text-muted">Turma: <?php echo htmlspecialchars($info_turma['nome_turma']); ?></p>
+                </div>
 
-                        <?php if (!empty($info_turma['nome_modulo'])): ?>
-                            <h6 class="mb-1 fw-normal text-muted">Módulo: <?php echo htmlspecialchars($info_turma['nome_modulo']); ?></h6>
-                        <?php endif; ?>
-
-                        <p class="mb-0 text-muted">Turma: <?php echo htmlspecialchars($info_turma['nome_turma']); ?></p>
-                    </div>
-                    <div class="card-body p-0">
+                <div class="card shadow-sm d-none d-md-block"> <div class="card-body p-0">
                         <div class="table-responsive">
                             <table class="table table-bordered text-center mb-0 align-middle">
-                                <thead class="table-light">
+                                <thead class="table">
                                     <tr>
                                         <th style="width: 15%;">Horário</th>
                                         <th>2ª Feira</th>
@@ -129,19 +125,17 @@ include '../partials/portal_header.php'; // Ajuste o caminho
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php foreach ($definicoes_horario as $definicao):
-                                        $label = $definicao['horario_label']; // 'primeiro' ou 'segundo'
+                                    <?php foreach ($definicoes_horario as $definicao): 
+                                        $label = $definicao['horario_label'];
                                     ?>
                                         <tr>
                                             <td class="fw-bold">
                                                 <?php echo ucfirst($label); ?> Horário<br>
                                                 <small class="text-muted"><?php echo date('H:i', strtotime($definicao['hora_inicio'])) . ' - ' . date('H:i', strtotime($definicao['hora_fim'])); ?></small>
                                             </td>
-
-                                            <?php
+                                            <?php 
                                             $dias_semana = ['segunda', 'terca', 'quarta', 'quinta', 'sexta'];
                                             foreach ($dias_semana as $dia):
-                                                // Busca no nosso "mapa" a aula para este dia e horário
                                                 $aula = $horarios_organizados[$label][$dia] ?? null;
                                             ?>
                                                 <td>
@@ -161,8 +155,50 @@ include '../partials/portal_header.php'; // Ajuste o caminho
                         </div>
                     </div>
                 </div>
-            <?php endif; ?>
 
+                <div class="d-block d-md-none"> <ul class="nav nav-tabs nav-fill mb-3" id="gradeTabs" role="tablist">
+                        <?php 
+                        $dias_semana_pt = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta'];
+                        $dias_semana_key = ['segunda', 'terca', 'quarta', 'quinta', 'sexta'];
+                        foreach ($dias_semana_pt as $index => $dia_pt):
+                            $active_class = ($index === 0) ? 'active' : ''; // Ativa a primeira aba
+                        ?>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link <?php echo $active_class; ?>" id="<?php echo $dias_semana_key[$index]; ?>-tab" data-bs-toggle="tab" data-bs-target="#<?php echo $dias_semana_key[$index]; ?>-pane" type="button" role="tab"><?php echo $dia_pt; ?></button>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+
+                    <div class="tab-content" id="gradeTabsContent">
+                        <?php foreach ($dias_semana_key as $index => $dia_key): 
+                            $active_class = ($index === 0) ? 'show active' : '';
+                        ?>
+                            <div class="tab-pane fade <?php echo $active_class; ?>" id="<?php echo $dia_key; ?>-pane" role="tabpanel">
+                                <div class="list-group">
+                                    <?php foreach ($definicoes_horario as $definicao): 
+                                        $label = $definicao['horario_label'];
+                                        $aula = $horarios_organizados[$label][$dia_key] ?? null;
+                                    ?>
+                                        <div class="list-group-item">
+                                            <div class="d-flex w-100 justify-content-between">
+                                                <h6 class="mb-1"><?php echo ucfirst($label); ?> Horário</h6>
+                                                <small class="text-muted"><?php echo date('H:i', strtotime($definicao['hora_inicio'])) . ' - ' . date('H:i', strtotime($definicao['hora_fim'])); ?></small>
+                                            </div>
+                                            <?php if ($aula): ?>
+                                                <p class="mb-1"><strong><?php echo htmlspecialchars($aula['disciplina']); ?></strong></p>
+                                                <small class="d-block text-muted">Prof. <?php echo htmlspecialchars($aula['professor']); ?></small>
+                                                <span class="badge bg-secondary mt-1">Sala: <?php echo htmlspecialchars($aula['sala']); ?></span>
+                                            <?php else: ?>
+                                                <p class="mb-1 text-muted">—</p>
+                                            <?php endif; ?>
+                                        </div>
+                                    <?php endforeach; ?>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            <?php endif; ?>
         </div>
     </div>
 </div>
