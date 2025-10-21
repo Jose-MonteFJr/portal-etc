@@ -122,6 +122,59 @@ $mapa_dias = [
 $dia_hoje_key = $mapa_dias[$dia_hoje_num] ?? null; 
 // =============================================================
 
+// =================================================================
+// == NOVO: CÁLCULO DAS CARGAS HORÁRIAS (SEMESTRAL E SEMANAL)     ==
+// =================================================================
+$resumo_disciplinas = [];
+$duracao_aula_horas = 2; // Duração de um "bloco" de aula. Ajuste se necessário (ex: 1h50m = 1.83)
+
+if (isset($horarios_organizados)) {
+    // 1. Calcula a carga horária SEMANAL de cada disciplina
+    foreach ($horarios_organizados as $horario => $dias) {
+        foreach ($dias as $dia => $aula) {
+            if ($aula) {
+                $nome_disciplina = $aula['disciplina'];
+                if (!isset($resumo_disciplinas[$nome_disciplina])) {
+                    // Se é a primeira vez que vemos essa disciplina, inicializa
+                    $resumo_disciplinas[$nome_disciplina] = [
+                        'semanal' => 0,
+                        'semestral' => 0 // O ideal é buscar isso do banco
+                    ];
+                }
+                // Adiciona as horas deste bloco à contagem semanal
+                $resumo_disciplinas[$nome_disciplina]['semanal'] += $duracao_aula_horas;
+            }
+        }
+    }
+
+    // 2. Busca a carga horária SEMESTRAL (Total) do banco
+    if (!empty($resumo_disciplinas)) {
+        // Pega apenas os nomes das disciplinas da grade
+        $nomes_disciplinas = array_keys($resumo_disciplinas);
+        
+        // Cria os placeholders (?) para a consulta IN
+        $placeholders = rtrim(str_repeat('?,', count($nomes_disciplinas)), ',');
+        
+        // Busca no banco a carga horária total (semestral) de cada disciplina
+        $stmt_cargas = $pdo->prepare("
+            SELECT nome, carga_horaria 
+            FROM disciplina 
+            WHERE nome IN ($placeholders)
+        ");
+        $stmt_cargas->execute($nomes_disciplinas);
+        $cargas_semestrais = $stmt_cargas->fetchAll(PDO::FETCH_KEY_PAIR); // Retorna [ 'Nome Disciplina' => 'Carga' ]
+
+        // 3. Adiciona a carga semestral ao nosso array de resumo
+        foreach ($resumo_disciplinas as $nome => &$dados) {
+            if (isset($cargas_semestrais[$nome])) {
+                $dados['semestral'] = $cargas_semestrais[$nome];
+            }
+        }
+    }
+}
+// =================================================================
+
+
 // Inclui o cabeçalho do seu portal
 include '../partials/portal_header.php'; // Ajuste o caminho
 ?>
@@ -148,7 +201,8 @@ include '../partials/portal_header.php'; // Ajuste o caminho
                     <p class="mb-0 text-muted">Turma: <?php echo htmlspecialchars($info_turma['nome_turma']); ?></p>
                 </div>
 
-                <div class="card shadow-sm d-none d-md-block"> <div class="card-body p-0">
+                <div class="card shadow-sm d-none d-md-block"> 
+                    <div class="card-body p-0">
                         <div class="table-responsive">
                             <table class="table table-bordered text-center mb-0 align-middle">
                                 <thead class="table">
@@ -197,30 +251,30 @@ include '../partials/portal_header.php'; // Ajuste o caminho
                     </div>
                 </div>
 
-                <div class="d-block d-md-none"> 
-                <ul class="nav nav-tabs nav-fill mb-3" id="gradeTabs" role="tablist">
-                        <?php 
-                        $dias_semana_pt = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta'];
-                        $dias_semana_key = ['segunda', 'terca', 'quarta', 'quinta', 'sexta'];
-                        foreach ($dias_semana_pt as $index => $dia_pt):
-                            $dia_key = $dias_semana_key[$index];
-                            $active_class = ($index === 0) ? 'active' : ''; // Ativa a primeira aba
-                            // Verifica se esta aba é a de hoje
-                            $classe_hoje_tab = ($dia_key === $dia_hoje_key) ? 'hoje-tab' : '';
-                        ?>
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link <?php echo $active_class; ?> <?php echo $classe_hoje_tab; ?>" id="<?php echo $dia_key; ?>-tab" data-bs-toggle="tab" data-bs-target="#<?php echo $dia_key; ?>-pane" type="button" role="tab"><?php echo $dia_pt; ?></button>
-                            </li>
-                        <?php endforeach; ?>
-                    </ul>
+                        <div class="d-block d-md-none"> 
+                        <ul class="nav nav-tabs nav-fill mb-3" id="gradeTabs" role="tablist">
+                                <?php 
+                                $dias_semana_pt = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta'];
+                                $dias_semana_key = ['segunda', 'terca', 'quarta', 'quinta', 'sexta'];
+                                foreach ($dias_semana_pt as $index => $dia_pt):
+                                    $dia_key = $dias_semana_key[$index];
+                                    $active_class = ($index === 0) ? 'active' : ''; // Ativa a primeira aba
+                                    // Verifica se esta aba é a de hoje
+                                    $classe_hoje_tab = ($dia_key === $dia_hoje_key) ? 'hoje-tab' : '';
+                                ?>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link <?php echo $active_class; ?> <?php echo $classe_hoje_tab; ?>" id="<?php echo $dia_key; ?>-tab" data-bs-toggle="tab" data-bs-target="#<?php echo $dia_key; ?>-pane" type="button" role="tab"><?php echo $dia_pt; ?></button>
+                                    </li>
+                                <?php endforeach; ?>
+                            </ul>
 
-                    <div class="tab-content" id="gradeTabsContent">
-                    <?php foreach ($dias_semana_key as $index => $dia_key): 
-        $active_class = ($index === 0) ? 'show active' : '';
-        
-        // NOVO: Verifica se este dia deve ter o destaque
-        $classe_destaque_mobile = in_array($dia_key, $dias_aula_dupla) ? 'aula-dupla' : '';
-    ?>
+                            <div class="tab-content" id="gradeTabsContent">
+                            <?php foreach ($dias_semana_key as $index => $dia_key): 
+                $active_class = ($index === 0) ? 'show active' : '';
+                
+                // NOVO: Verifica se este dia deve ter o destaque
+                $classe_destaque_mobile = in_array($dia_key, $dias_aula_dupla) ? 'aula-dupla' : '';
+            ?>
                             <div class="tab-pane fade <?php echo $active_class; ?>" id="<?php echo $dia_key; ?>-pane" role="tabpanel">
                                 <div class="list-group">
                                     <?php foreach ($definicoes_horario as $definicao): 
@@ -247,9 +301,49 @@ include '../partials/portal_header.php'; // Ajuste o caminho
                     </div>
                 </div>
             <?php endif; ?>
-        </div>
-    </div>
-</div>
+            <?php if (!empty($resumo_disciplinas)): ?>
+                <div classs="card shadow-sm mt-4">
+                    <div class="card-header">
+                        <h5 class="mb-0 mt-5">Resumo da Carga Horária</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Disciplina</th>
+                                        <th class="text-center">Carga Horária Semanal</th>
+                                        <th class="text-center">Carga Horária Semestral</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php 
+                                    $total_semanal = 0;
+                                    $total_semestral = 0;
+                                    foreach ($resumo_disciplinas as $nome => $cargas): 
+                                        $total_semanal += $cargas['semanal'];
+                                        $total_semestral += $cargas['semestral'];
+                                    ?>
+                                        <tr>
+                                            <td class="fw-medium"><?php echo htmlspecialchars($nome); ?></td>
+                                            <td class="text-center"><?php echo $cargas['semanal']; ?> horas/aula</td>
+                                            <td class="text-center"><?php echo $cargas['semestral']; ?> horas</td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                                <tfoot class="fw-bold">
+                                    <tr class="table-light">
+                                        <td>Total</td>
+                                        <td class="text-center"><?php echo $total_semanal; ?> horas/aula</td>
+                                        <td class="text-center"><?php echo $total_semestral; ?> horas</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            <?php endif; ?>
+            </div> </div> </div>
 
 <?php include '../partials/footer.php'; // Ajuste o caminho 
 ?>
