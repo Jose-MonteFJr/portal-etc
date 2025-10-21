@@ -304,7 +304,7 @@ include '../partials/portal_header.php'; // Ajuste o caminho
             <?php if (!empty($resumo_disciplinas)): ?>
                 <div classs="card shadow-sm mt-4">
                     <div class="card-header">
-                        <h5 class="mb-0 mt-5">Resumo da Carga Horária</h5>
+                        <h5 class="mb-3 mt-5 text-center">Resumo da Carga Horária</h5>
                     </div>
                     <div class="card-body p-0">
                         <div class="table-responsive">
