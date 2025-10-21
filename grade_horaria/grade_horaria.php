@@ -1,8 +1,11 @@
 <?php
+date_default_timezone_set('America/Sao_Paulo');
 // 1. INCLUDES E SEGURANÇA PADRÃO
 require     '../protect.php'; // Ajuste o caminho conforme sua estrutura
 require     '../config/db.php';
 require     '../helpers.php';
+
+
 
 // Garante que apenas usuários do tipo 'aluno' possam acessar esta página
 if ($_SESSION['tipo'] !== 'aluno') {

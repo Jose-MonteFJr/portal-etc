@@ -126,12 +126,16 @@ function criar_notificacao_para_grupo(PDO $pdo, string $grupo, string $mensagem,
     }
 }
 
-function criar_notificacao_para_turma(PDO $pdo, int $id_turma, string $mensagem, ?string $link = null) {
+function criar_notificacao_para_turma(PDO $pdo, int $id_turma, string $mensagem, ?string $link = null) 
+{
+    // CORRIGIDO: Adicionado '?, ?' ao SELECT para corresponder a 'mensagem' e 'link'
     $sql = "INSERT INTO notificacao (id_usuario_destino, mensagem, link)
-            SELECT a.id_usuario 
+            SELECT a.id_usuario, ?, ? 
             FROM aluno a
             WHERE a.id_turma = ?";
     
     $stmt = $pdo->prepare($sql);
+    
+    // O execute agora corresponde aos 3 placeholders da consulta
     $stmt->execute([$mensagem, $link, $id_turma]);
 }
