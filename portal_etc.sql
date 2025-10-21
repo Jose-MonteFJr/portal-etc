@@ -108,24 +108,6 @@ CREATE TABLE turma (
     CONSTRAINT fk_turma_modulo_atual FOREIGN KEY (id_modulo_atual) REFERENCES modulo(id_modulo) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Tabela associativa
-
-CREATE TABLE alocacao_professor (
-    id_alocacao INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    id_usuario INT UNSIGNED NOT NULL, -- Ligação direta com o usuário (professor)
-    id_turma INT UNSIGNED NOT NULL,
-    id_disciplina INT UNSIGNED NOT NULL,
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-
-    CONSTRAINT fk_alocacao_usuario FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario) ON DELETE RESTRICT,
-    CONSTRAINT fk_alocacao_turma FOREIGN KEY (id_turma) REFERENCES turma(id_turma) ON DELETE RESTRICT,
-    CONSTRAINT fk_alocacao_disciplina FOREIGN KEY (id_disciplina) REFERENCES disciplina(id_disciplina) ON DELETE RESTRICT,
-
-    CONSTRAINT uq_alocacao UNIQUE (id_usuario, id_turma, id_disciplina)
-
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
 CREATE TABLE aluno (
   id_aluno INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   id_usuario INT UNSIGNED NOT NULL,
