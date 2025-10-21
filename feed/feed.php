@@ -61,7 +61,7 @@ include '../partials/portal_header.php'; // Ajuste o caminho
                 <div class="col-lg-8">
 
                     <div class="d-flex align-items-center justify-content-between mb-3">
-                        <h2 class="h4 mb-0">Feed de Avisos</h2>
+                        <h2 class="h4 mb-0">Avisos</h2>
                     </div>
 
                     <?php if (empty($avisos)): ?>

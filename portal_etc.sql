@@ -258,10 +258,12 @@ CREATE TABLE evento_calendario (
     hora_fim VARCHAR(10) NOT NULL,
     data_evento DATE NOT NULL,
     tipo ENUM('pessoal', 'global') NOT NULL DEFAULT 'pessoal',
+    id_turma_alvo INT UNSIGNED NULL DEFAULT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
-    CONSTRAINT fk_evento_usuario FOREIGN KEY (id_usuario_criador) REFERENCES usuario(id_usuario) ON DELETE CASCADE
+    CONSTRAINT fk_evento_usuario FOREIGN KEY (id_usuario_criador) REFERENCES usuario(id_usuario) ON DELETE CASCADE,
+    CONSTRAINT fk_evento_turma_alvo FOREIGN KEY (id_turma_alvo) REFERENCES turma(id_turma) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 CREATE TABLE conversa (

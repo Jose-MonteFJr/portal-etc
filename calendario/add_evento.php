@@ -1,5 +1,5 @@
 <?php
-// calendario/add_evento.php
+
 session_start();
 require '../config/db.php';
 require '../helpers.php'; // Garante que a função criar_notificacao_para_grupo() esteja disponível
@@ -15,34 +15,32 @@ $titulo = trim($_POST['titulo'] ?? '');
 $hora_inicio = trim($_POST['hora_inicio'] ?? '');
 $hora_fim = trim($_POST['hora_fim'] ?? '');
 $data_evento = trim($_POST['data_evento'] ?? '');
-$is_global = ($_POST['is_global'] ?? 'false') === 'true';
+$id_turma_alvo = (int)($_POST['id_turma_alvo'] ?? 0);
 
 // Define o tipo do evento baseado no perfil
 $tipo = 'pessoal';
-if ($_SESSION['tipo'] === 'professor' && $is_global) {
+$id_turma_alvo_final = null;
+if ($_SESSION['tipo'] === 'professor' && $id_turma_alvo > 0) {
     $tipo = 'global';
+    $id_turma_alvo_final = $id_turma_alvo;
 }
 
 if (!empty($titulo) && !empty($data_evento)) {
     try {
-        $stmt = $pdo->prepare("INSERT INTO evento_calendario (id_usuario_criador, titulo, hora_inicio, hora_fim, data_evento, tipo) VALUES (?, ?, ?, ?, ?, ?)");
-        $stmt->execute([$id_usuario, $titulo, $hora_inicio, $hora_fim, $data_evento, $tipo]);
+        $stmt = $pdo->prepare("INSERT INTO evento_calendario (id_usuario_criador, titulo, hora_inicio, hora_fim, data_evento, tipo, id_turma_alvo) 
+         VALUES (?, ?, ?, ?, ?, ?, ?)");
+        $stmt->execute([$id_usuario, $titulo, $hora_inicio, $hora_fim, $data_evento, $tipo, $id_turma_alvo_final]);
 
-        // =====================================================================
-        // == NOVO: LÓGICA PARA NOTIFICAR OS ALUNOS SOBRE O AVISO GLOBAL      ==
-        // =====================================================================
-        if ($tipo === 'global') {
+        if ($tipo === 'global' && $id_turma_alvo_final) {
             $data_formatada = date('d/m/Y', strtotime($data_evento));
-            $mensagem = "Novo lembrete do professor para o dia {$data_formatada}: \"{$titulo}\"";
-            $link = "/portal-etc/calendario/calendario.php"; // Link para a página do calendário
+            $mensagem = "Aviso do professor no calendário para {$data_formatada}: \"{$titulo}\"";
+            $link = "/portal-etc/calendario/calendario.php";
 
-            // Chama a função para enviar a notificação para todos do grupo 'aluno'
-            criar_notificacao_para_grupo($pdo, 'aluno', $mensagem, $link);
+            // NOVO HELPER (veja abaixo)
+            criar_notificacao_para_turma($pdo, $id_turma_alvo_final, $mensagem, $link);
         }
-        // =====================================================================
         
         echo json_encode(['success' => true]);
-        
     } catch (PDOException $e) {
         http_response_code(500);
         echo json_encode(['success' => false, 'error' => 'Erro ao salvar o evento.']);

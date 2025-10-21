@@ -1,6 +1,23 @@
 <?php
 require '../protect.php'; // Ajuste o caminho
-require  '../helpers.php';
+require '../helpers.php';
+require '../config/db.php';
+
+// NOVO: Busca as turmas que o professor leciona
+$turmas_do_professor = [];
+if ($_SESSION['tipo'] === 'professor') {
+    // CORRIGIDO: Busca na tabela 'horario_aula' e usa 'DISTINCT'
+    $stmt = $pdo->prepare("
+        SELECT DISTINCT t.id_turma, t.nome, c.nome AS nome_curso
+        FROM horario_aula h
+        JOIN turma t ON h.id_turma = t.id_turma
+        JOIN curso c ON t.id_curso = c.id_curso
+        WHERE h.id_professor = ?
+        ORDER BY c.nome ASC, t.nome ASC
+    ");
+    $stmt->execute([$_SESSION['id_usuario']]);
+    $turmas_do_professor = $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
 
 include '../partials/portal_header.php'; // Inclui seu layout principal
 ?>
@@ -69,11 +86,17 @@ include '../partials/portal_header.php'; // Inclui seu layout principal
                                 </div>
                             </div>
                             <?php if ($_SESSION['tipo'] === 'professor'): ?>
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input" type="checkbox" id="event-global-check">
-                                    <label class="form-check-label small" for="event-global-check">
-                                        Aviso para todos
-                                    </label>
+                                <div class="mb-2">
+                                    <label for="event-turma-alvo" class="form-label small">Enviar para Turma (Opcional):</label>
+                                    <select id="event-turma-alvo" class="form-select form-select-sm">
+                                        <option value="">-- Apenas para mim (Pessoal) --</option>
+                                        <?php foreach ($turmas_do_professor as $turma): ?>
+                                            <option value="<?php echo $turma['id_turma']; ?>">
+                                                <?php echo htmlspecialchars($turma['nome_curso'] . ' - ' . $turma['nome']); ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                    <div class="form-text small">Se nenhuma turma for selecionada, o lembrete será pessoal.</div>
                                 </div>
                             <?php endif; ?>
                             <button id="add-event-btn" class="btn btn-primary btn-sm w-100 prev">Adicionar Lembrete</button>

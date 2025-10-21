@@ -70,19 +70,29 @@ document.addEventListener('DOMContentLoaded', function () {
     // Busca eventos do servidor via AJAX
     const fetchEvents = async () => {
         try {
-            const response = await fetch('/portal-etc/calendario/get_eventos.php'); // Ajuste o caminho
+            const response = await fetch('/portal-etc/calendario/get_eventos.php');
             const data = await response.json();
-            eventsArr = data.map(event => ({
-                id: event.id_evento,
-                id_usuario_criador: event.id_usuario_criador,
-                titulo: event.titulo,
-                hora_inicio: event.hora_inicio,
-                hora_fim: event.hora_fim,
-                data_evento: event.data_evento,
-                tipo: event.tipo
-            }));
+
+            // Verifica se a resposta do servidor é um array, para evitar erros no .map()
+            if (Array.isArray(data)) {
+                eventsArr = data.map(event => ({
+                    id: event.id_evento, // Assegura que o ID do evento é mapeado para 'id'
+                    id_usuario_criador: event.id_usuario_criador,
+                    titulo: event.titulo,
+                    hora_inicio: event.hora_inicio,
+                    hora_fim: event.hora_fim,
+                    data_evento: event.data_evento,
+                    tipo: event.tipo,
+                    id_turma_alvo: event.id_turma_alvo
+                }));
+            } else {
+                console.error("A resposta da API de eventos não é um array:", data);
+                eventsArr = []; // Define como array vazio em caso de erro
+            }
+
+            // Apenas chama o renderCalendar(). Ele cuidará do resto.
             renderCalendar();
-            renderEventsForDate(selectedDate); // Garante que a lista de eventos seja renderizada após a busca
+
         } catch (error) {
             console.error("Erro ao buscar eventos:", error);
         }
@@ -254,38 +264,27 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // NOVA FUNÇÃO para preparar o formulário para edição
     const startEditEvent = (event) => {
-        // Pega a instância do componente Collapse do Bootstrap
-        const formCollapseInstance = bootstrap.Collapse.getOrCreateInstance(addEventForm);
-        const isFormOpen = addEventForm.classList.contains('show');
-        const isEditingSameEvent = eventIdInput.value == event.id;
-
-        // --- NOVA LÓGICA DE TOGGLE ---
-        // Se o formulário já estiver aberto E for para o mesmo evento, fecha e reseta.
-        if (isFormOpen && isEditingSameEvent) {
-            formCollapseInstance.hide();
-            prepareFormForAdd(); // Usa a função de reset que já temos
-            return; // Encerra a função aqui
-        }
-
-        // --- LÓGICA ANTIGA (se o formulário estiver fechado ou for para outro evento) ---
-        // Preenche o campo oculto com o ID do evento
+        // 1. Preenche o campo oculto com o ID do evento
         eventIdInput.value = event.id;
 
-        // Preenche os campos visíveis do formulário com os dados do evento
+        // 2. Preenche os campos de texto
         document.getElementById('event-title').value = event.titulo;
         document.getElementById('event-start-time').value = event.hora_inicio;
         document.getElementById('event-end-time').value = event.hora_fim;
 
-        const globalCheck = document.getElementById('event-global-check');
-        if (globalCheck) {
-            globalCheck.checked = event.tipo === 'global';
+        // 3. NOVO: Seleciona a turma correta no dropdown
+        const turmaAlvoSelect = document.getElementById('event-turma-alvo');
+        if (turmaAlvoSelect) {
+            // Se o evento tinha uma turma alvo, seleciona. Senão, seleciona a opção "Apenas para mim".
+            turmaAlvoSelect.value = event.id_turma_alvo || "";
         }
 
-        // Muda os textos para o modo de edição
+        // 4. Muda os textos para o modo de edição
         addEventBtn.textContent = 'Salvar Alterações';
+        addEventFormTitle.textContent = 'Editar Lembrete';
 
-        // Abre o formulário
-        formCollapseInstance.show();
+        // 5. Abre o formulário
+        bootstrap.Collapse.getOrCreateInstance(addEventForm).show();
     };
 
     // Deleta um evento
@@ -311,45 +310,61 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
+        // Captura dos dados (seu código existente)
         const title = document.getElementById('event-title').value;
         const startTime = document.getElementById('event-start-time').value;
         const endTime = document.getElementById('event-end-time').value;
-        const isGlobal = document.getElementById('event-global-check') ? document.getElementById('event-global-check').checked : false;
+        const turmaAlvoSelect = document.getElementById('event-turma-alvo');
+        const idTurmaAlvo = turmaAlvoSelect ? turmaAlvoSelect.value : '';
 
         if (!title || !startTime || !endTime) {
             alert("Preencha todos os campos do lembrete.");
             return;
         }
 
-        // --- LÓGICA DE DECISÃO ---
-        const eventId = eventIdInput.value; // Pega o ID do campo oculto
-        const isEditing = eventId && eventId > 0; // Se tiver um ID, estamos editando
+        // Lógica de Decisão (seu código existente)
+        const eventId = eventIdInput.value;
+        const isEditing = eventId && eventId > 0;
 
-        // Decide para qual script PHP enviar os dados
-        const url = isEditing ? '/portal-etc/calendario/edit_evento.php' : '/portal-etc/calendario/add_evento.php';
+        // CORREÇÃO ESTÁ AQUI: A variável 'url' deve ser o caminho completo
+        const url = isEditing
+            ? '/portal-etc/calendario/edit_evento.php'
+            : '/portal-etc/calendario/add_evento.php';
 
+        // Montagem do FormData (seu código existente)
         const formData = new FormData();
         formData.append('titulo', title);
         formData.append('hora_inicio', startTime);
         formData.append('hora_fim', endTime);
+        formData.append('id_turma_alvo', idTurmaAlvo);
 
         if (isEditing) {
             formData.append('id_evento', eventId);
-            formData.append('is_global', isGlobal);
         } else {
             const dateString = `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`;
             formData.append('data_evento', dateString);
-            formData.append('is_global', isGlobal);
         }
 
         try {
-            await fetch(url, { method: 'POST', body: formData });
+            // CORREÇÃO ESTÁ AQUI: O fetch agora usa a variável 'url'
+            const response = await fetch(url, { method: 'POST', body: formData });
+            const result = await response.json();
 
-            prepareFormForAdd(); // Reseta o formulário
+            if (!result.success) {
+                alert(result.error || 'Ocorreu um erro no servidor.');
+                return;
+            }
+
+            // Limpa e reseta o formulário
+            prepareFormForAdd();
             bootstrap.Collapse.getOrCreateInstance(addEventForm).hide();
 
+            // Atualiza a tela
             await fetchEvents();
 
+            if (selectedDate) {
+                renderEventsForDate(selectedDate);
+            }
         } catch (error) {
             console.error("Erro ao salvar evento:", error);
         }

@@ -125,3 +125,13 @@ function criar_notificacao_para_grupo(PDO $pdo, string $grupo, string $mensagem,
         error_log("Erro ao criar notificação em grupo: " . $e->getMessage());
     }
 }
+
+function criar_notificacao_para_turma(PDO $pdo, int $id_turma, string $mensagem, ?string $link = null) {
+    $sql = "INSERT INTO notificacao (id_usuario_destino, mensagem, link)
+            SELECT a.id_usuario 
+            FROM aluno a
+            WHERE a.id_turma = ?";
+    
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$mensagem, $link, $id_turma]);
+}
