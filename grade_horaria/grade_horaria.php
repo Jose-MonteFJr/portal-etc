@@ -85,6 +85,43 @@ try {
     die("Erro ao carregar a grade horária: " . $e->getMessage());
 }
 
+// =============================================================
+// == NOVO: LÓGICA PARA IDENTIFICAR AULAS DUPLAS                ==
+// =============================================================
+$dias_semana_key = ['segunda', 'terca', 'quarta', 'quinta', 'sexta'];
+$dias_aula_dupla = []; // Array para guardar os dias que têm aula dupla
+
+if (isset($horarios_organizados['primeiro']) && isset($horarios_organizados['segundo'])) {
+    foreach ($dias_semana_key as $dia) {
+        // Verifica se existe aula nos dois horários
+        $aula1 = $horarios_organizados['primeiro'][$dia] ?? null;
+        $aula2 = $horarios_organizados['segundo'][$dia] ?? null;
+
+        // Se ambas existem E a disciplina for a mesma...
+        if ($aula1 && $aula2 && $aula1['disciplina'] === $aula2['disciplina']) {
+            // Adiciona o dia à nossa lista de destaques
+            $dias_aula_dupla[] = $dia;
+        }
+    }
+}
+// =============================================================
+
+// =============================================================
+// == NOVO: IDENTIFICA O DIA DA SEMANA ATUAL                   ==
+// =============================================================
+$dia_hoje_num = date('N'); // Retorna 1 (para Segunda) até 7 (para Domingo)
+$mapa_dias = [
+    1 => 'segunda',
+    2 => 'terca',
+    3 => 'quarta',
+    4 => 'quinta',
+    5 => 'sexta',
+    // 6 e 7 (Sábado e Domingo) são ignorados
+];
+// Guarda a chave do dia atual (ex: 'segunda') ou null se for fim de semana
+$dia_hoje_key = $mapa_dias[$dia_hoje_num] ?? null; 
+// =============================================================
+
 // Inclui o cabeçalho do seu portal
 include '../partials/portal_header.php'; // Ajuste o caminho
 ?>
@@ -117,11 +154,15 @@ include '../partials/portal_header.php'; // Ajuste o caminho
                                 <thead class="table">
                                     <tr>
                                         <th style="width: 15%;">Horário</th>
-                                        <th>2ª Feira</th>
-                                        <th>3ª Feira</th>
-                                        <th>4ª Feira</th>
-                                        <th>5ª Feira</th>
-                                        <th>6ª Feira</th>
+                                        <?php 
+                                        $dias_semana_pt = ['2ª Feira', '3ª Feira', '4ª Feira', '5ª Feira', '6ª Feira'];
+                                        $dias_semana_key = ['segunda', 'terca', 'quarta', 'quinta', 'sexta'];
+                                        foreach ($dias_semana_key as $index => $dia_key):
+                                            // Verifica se esta coluna é a de hoje
+                                            $classe_hoje_th = ($dia_key === $dia_hoje_key) ? 'hoje-coluna' : '';
+                                        ?>
+                                            <th class="<?php echo $classe_hoje_th; ?>"><?php echo $dias_semana_pt[$index]; ?></th>
+                                        <?php endforeach; ?>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -133,12 +174,12 @@ include '../partials/portal_header.php'; // Ajuste o caminho
                                                 <?php echo ucfirst($label); ?> Horário<br>
                                                 <small class="text-muted"><?php echo date('H:i', strtotime($definicao['hora_inicio'])) . ' - ' . date('H:i', strtotime($definicao['hora_fim'])); ?></small>
                                             </td>
-                                            <?php 
-                                            $dias_semana = ['segunda', 'terca', 'quarta', 'quinta', 'sexta'];
-                                            foreach ($dias_semana as $dia):
-                                                $aula = $horarios_organizados[$label][$dia] ?? null;
+                                            <?php foreach ($dias_semana_key as $dia_key):
+                                                $aula = $horarios_organizados[$label][$dia_key] ?? null;
+                                                $classe_destaque_aula_dupla = in_array($dia_key, $dias_aula_dupla) ? 'aula-dupla' : '';
+                                                
                                             ?>
-                                                <td>
+                                                <td class="<?php echo $classe_destaque_aula_dupla; ?>">
                                                     <?php if ($aula): ?>
                                                         <strong class="d-block mb-1"><?php echo htmlspecialchars($aula['disciplina']); ?></strong>
                                                         <small class="text-muted d-block">Prof. <?php echo htmlspecialchars($aula['professor']); ?></small>
@@ -156,30 +197,37 @@ include '../partials/portal_header.php'; // Ajuste o caminho
                     </div>
                 </div>
 
-                <div class="d-block d-md-none"> <ul class="nav nav-tabs nav-fill mb-3" id="gradeTabs" role="tablist">
+                <div class="d-block d-md-none"> 
+                <ul class="nav nav-tabs nav-fill mb-3" id="gradeTabs" role="tablist">
                         <?php 
                         $dias_semana_pt = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta'];
                         $dias_semana_key = ['segunda', 'terca', 'quarta', 'quinta', 'sexta'];
                         foreach ($dias_semana_pt as $index => $dia_pt):
+                            $dia_key = $dias_semana_key[$index];
                             $active_class = ($index === 0) ? 'active' : ''; // Ativa a primeira aba
+                            // Verifica se esta aba é a de hoje
+                            $classe_hoje_tab = ($dia_key === $dia_hoje_key) ? 'hoje-tab' : '';
                         ?>
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link <?php echo $active_class; ?>" id="<?php echo $dias_semana_key[$index]; ?>-tab" data-bs-toggle="tab" data-bs-target="#<?php echo $dias_semana_key[$index]; ?>-pane" type="button" role="tab"><?php echo $dia_pt; ?></button>
+                                <button class="nav-link <?php echo $active_class; ?> <?php echo $classe_hoje_tab; ?>" id="<?php echo $dia_key; ?>-tab" data-bs-toggle="tab" data-bs-target="#<?php echo $dia_key; ?>-pane" type="button" role="tab"><?php echo $dia_pt; ?></button>
                             </li>
                         <?php endforeach; ?>
                     </ul>
 
                     <div class="tab-content" id="gradeTabsContent">
-                        <?php foreach ($dias_semana_key as $index => $dia_key): 
-                            $active_class = ($index === 0) ? 'show active' : '';
-                        ?>
+                    <?php foreach ($dias_semana_key as $index => $dia_key): 
+        $active_class = ($index === 0) ? 'show active' : '';
+        
+        // NOVO: Verifica se este dia deve ter o destaque
+        $classe_destaque_mobile = in_array($dia_key, $dias_aula_dupla) ? 'aula-dupla' : '';
+    ?>
                             <div class="tab-pane fade <?php echo $active_class; ?>" id="<?php echo $dia_key; ?>-pane" role="tabpanel">
                                 <div class="list-group">
                                     <?php foreach ($definicoes_horario as $definicao): 
                                         $label = $definicao['horario_label'];
                                         $aula = $horarios_organizados[$label][$dia_key] ?? null;
                                     ?>
-                                        <div class="list-group-item">
+                                        <div class="list-group-item <?php echo $classe_destaque_mobile; ?>">
                                             <div class="d-flex w-100 justify-content-between">
                                                 <h6 class="mb-1"><?php echo ucfirst($label); ?> Horário</h6>
                                                 <small class="text-muted"><?php echo date('H:i', strtotime($definicao['hora_inicio'])) . ' - ' . date('H:i', strtotime($definicao['hora_fim'])); ?></small>
