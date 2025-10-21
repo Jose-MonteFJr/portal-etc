@@ -309,7 +309,7 @@ include '../partials/portal_header.php'; // Ajuste o caminho
                     <div class="card-body p-0">
                         <div class="table-responsive">
                             <table class="table table-striped table-hover mb-0">
-                                <thead class="table-light">
+                                <thead class="table">
                                     <tr>
                                         <th>Disciplina</th>
                                         <th class="text-center">Carga Horária Semanal</th>
@@ -332,7 +332,7 @@ include '../partials/portal_header.php'; // Ajuste o caminho
                                     <?php endforeach; ?>
                                 </tbody>
                                 <tfoot class="fw-bold">
-                                    <tr class="table-light">
+                                    <tr class="table">
                                         <td>Total</td>
                                         <td class="text-center"><?php echo $total_semanal; ?> horas/aula</td>
                                         <td class="text-center"><?php echo $total_semestral; ?> horas</td>

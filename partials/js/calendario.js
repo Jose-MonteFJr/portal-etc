@@ -24,6 +24,49 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // --- FUNÇÕES ---
 
+    // =================================================================
+    // == NOVO: LÓGICA DINÂMICA PARA AUTO-PREENCHER HORA DE FIM      ==
+    // =================================================================
+    const startTimeInput = document.getElementById('event-start-time');
+    const endTimeInput = document.getElementById('event-end-time');
+
+    if (startTimeInput && endTimeInput) {
+        // MUDANÇA 1: Ouve o evento 'input' (a cada tecla digitada)
+        startTimeInput.addEventListener('input', function () {
+            const startTimeValue = this.value; // Pega o valor, ex: "13:30"
+
+            // Só executa a lógica se o usuário tiver digitado um horário completo (HH:MM)
+            if (startTimeValue.length === 5) {
+                try {
+                    const parts = startTimeValue.split(':');
+                    const hour = parseInt(parts[0], 10);
+                    const minute = parseInt(parts[1], 10);
+
+                    // Verifica se é um horário válido (ex: 00-23 e 00-59)
+                    if (!isNaN(hour) && !isNaN(minute) && hour >= 0 && hour <= 23 && minute >= 0 && minute <= 59) {
+
+                        const date = new Date();
+                        date.setHours(hour, minute, 0, 0);
+
+                        // Adiciona 1 hora
+                        date.setHours(date.getHours() + 1);
+
+                        const newHour = String(date.getHours()).padStart(2, '0');
+                        const newMinute = String(date.getMinutes()).padStart(2, '0');
+
+                        // MUDANÇA 2: Define o valor diretamente, sem verificar se está vazio
+                        endTimeInput.value = `${newHour}:${newMinute}`;
+                    }
+                } catch (e) {
+                    // Ignora erros se o formato estiver incompleto (ex: "13:")
+                }
+            }
+        });
+    }
+    // =================================================================
+    // == FIM DA NOVA LÓGICA                                          ==
+    // =================================================================
+
     // Busca eventos do servidor via AJAX
     const fetchEvents = async () => {
         try {
