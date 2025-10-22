@@ -9,19 +9,24 @@ $destinatarios = [];
 
 try {
     if ($tipo_usuario_logado === 'secretaria' || $tipo_usuario_logado === 'coordenador') {
-        // REGRA: Secretaria/Coordenador pode enviar para TODOS (exceto eles mesmos).
+        // REGRA: Secretaria/Coordenador (permanece igual)
         $stmt = $pdo->prepare("SELECT id_usuario, nome_completo, tipo FROM usuario WHERE id_usuario != ? ORDER BY nome_completo ASC");
         $stmt->execute([$id_usuario_logado]);
         $destinatarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     } elseif ($tipo_usuario_logado === 'professor') {
-        // REGRA: Professor pode enviar para alunos de suas turmas e para a administração.
+        // REGRA: Professor
+        // CORRIGIDO: Agora busca em 'horario_aula'
         $sql = "
-            -- Alunos das turmas do professor
+            -- Alunos das turmas do professor (buscando em horario_aula)
             SELECT u.id_usuario, u.nome_completo, u.tipo
             FROM usuario u
             JOIN aluno a ON u.id_usuario = a.id_usuario
-            WHERE a.id_turma IN (SELECT id_turma FROM alocacao_professor WHERE id_usuario = ?)
+            WHERE a.id_turma IN (
+                SELECT DISTINCT id_turma 
+                FROM horario_aula 
+                WHERE id_professor = ?
+            )
             
             UNION
             
@@ -37,13 +42,13 @@ try {
         $destinatarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     } elseif ($tipo_usuario_logado === 'aluno') {
-        // REGRA: Aluno pode enviar para colegas da mesma turma, seus professores e a administração.
-        // Primeiro, descobre a turma do aluno logado.
+        // REGRA: Aluno
         $stmt_turma = $pdo->prepare("SELECT id_turma FROM aluno WHERE id_usuario = ?");
         $stmt_turma->execute([$id_usuario_logado]);
         $id_turma_aluno = $stmt_turma->fetchColumn();
 
         if ($id_turma_aluno) {
+            // CORRIGIDO: Agora busca professores em 'horario_aula'
             $sql = "
                 -- Colegas da mesma turma (exceto ele mesmo)
                 SELECT u.id_usuario, u.nome_completo, u.tipo
@@ -53,11 +58,11 @@ try {
 
                 UNION
 
-                -- Professores da sua turma
-                SELECT u.id_usuario, u.nome_completo, u.tipo
+                -- Professores da sua turma (buscando em horario_aula)
+                SELECT DISTINCT u.id_usuario, u.nome_completo, u.tipo
                 FROM usuario u
-                JOIN alocacao_professor ap ON u.id_usuario = ap.id_usuario
-                WHERE ap.id_turma = ?
+                JOIN horario_aula h ON u.id_usuario = h.id_professor
+                WHERE h.id_turma = ?
 
                 UNION
 

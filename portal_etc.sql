@@ -406,7 +406,7 @@ VALUES
 -- Horários para o turno da Noite
 INSERT INTO definicao_horario (turno, horario_label, hora_inicio, hora_fim) VALUES
 ('noturno', 'primeiro', '19:00:00', '20:50:00'),
-('noturno', 'segundo', '21:00:00', '22:40:00');
+('noturno', 'segundo', '21:00:00', '22:50:00');
 
 -- Horários para o turno da Tarde (Vespertino)
 INSERT INTO definicao_horario (turno, horario_label, hora_inicio, hora_fim) VALUES
@@ -415,7 +415,7 @@ INSERT INTO definicao_horario (turno, horario_label, hora_inicio, hora_fim) VALU
 
 -- Horários para o turno da Manhã (Matutino)
 INSERT INTO definicao_horario (turno, horario_label, hora_inicio, hora_fim) VALUES
-('matutino', 'primeiro', '07:30:00', '09:20:00'),
+('matutino', 'primeiro', '08:00:00', '09:20:00'),
 ('matutino', 'segundo', '09:40:00', '11:30:00');
 
 
