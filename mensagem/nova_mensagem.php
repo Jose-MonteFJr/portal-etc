@@ -13,7 +13,6 @@ try {
         $stmt = $pdo->prepare("SELECT id_usuario, nome_completo, tipo FROM usuario WHERE id_usuario != ? ORDER BY nome_completo ASC");
         $stmt->execute([$id_usuario_logado]);
         $destinatarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
     } elseif ($tipo_usuario_logado === 'professor') {
         // REGRA: Professor
         // CORRIGIDO: Agora busca em 'horario_aula'
@@ -40,7 +39,6 @@ try {
         $stmt = $pdo->prepare($sql);
         $stmt->execute([$id_usuario_logado]);
         $destinatarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
     } elseif ($tipo_usuario_logado === 'aluno') {
         // REGRA: Aluno
         $stmt_turma = $pdo->prepare("SELECT id_turma FROM aluno WHERE id_usuario = ?");
@@ -97,13 +95,16 @@ include '../partials/portal_header.php'; // Ajuste o caminho
 
                         <div class="card shadow-sm">
                             <div class="card-header d-flex align-items-center gap-2">
-                                <strong class="me-2">Para:</strong>
+                                    <strong class="me-2">Para:</strong>
+                                    
                                 <div id="destinatario-selecionado" class="d-none">
                                     <span class="badge text-bg-primary d-flex align-items-center">
                                         <span id="destinatario-nome"></span>
                                         <button type="button" class="btn-close btn-close-white ms-2" id="trocar-destinatario-btn" aria-label="Close"></button>
                                     </span>
                                 </div>
+
+                                <a class="btn btn-outline-secondary btn-sm ms-auto" href="caixa_de_entrada.php">Voltar</a>
                             </div>
 
                             <div id="area-selecao-contato">
@@ -115,9 +116,9 @@ include '../partials/portal_header.php'; // Ajuste o caminho
                                         <div class="list-group-item">Nenhum destinatário disponível.</div>
                                     <?php else: ?>
                                         <?php foreach ($destinatarios as $destinatario): ?>
-                                            <a href="#" class="list-group-item list-group-item-action d-flex align-items-center gap-3 contato-item" 
-                                               data-id="<?php echo (int)$destinatario['id_usuario']; ?>" 
-                                               data-nome="<?php echo htmlspecialchars($destinatario['nome_completo']); ?>">
+                                            <a href="#" class="list-group-item list-group-item-action d-flex align-items-center gap-3 contato-item"
+                                                data-id="<?php echo (int)$destinatario['id_usuario']; ?>"
+                                                data-nome="<?php echo htmlspecialchars($destinatario['nome_completo']); ?>">
                                                 <img src="/portal-etc/partials/img/avatar_padrao.png" class="rounded-circle" style="width: 40px; height: 40px;">
                                                 <div>
                                                     <strong class="mb-0"><?php echo htmlspecialchars($destinatario['nome_completo']); ?></strong>
@@ -152,66 +153,69 @@ include '../partials/portal_header.php'; // Ajuste o caminho
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const buscaInput = document.getElementById('busca-contato-input');
-    const listaContatos = document.getElementById('lista-contatos');
-    const contatoItems = listaContatos.querySelectorAll('.contato-item');
-    
-    const areaSelecao = document.getElementById('area-selecao-contato');
-    const areaEscrita = document.getElementById('area-escrita-mensagem');
-    const destinatarioSelecionado = document.getElementById('destinatario-selecionado');
-    const destinatarioNome = document.getElementById('destinatario-nome');
-    const hiddenInput = document.getElementById('id_destinatario_hidden');
-    const trocarBtn = document.getElementById('trocar-destinatario-btn');
+    document.addEventListener('DOMContentLoaded', function() {
+        const buscaInput = document.getElementById('busca-contato-input');
+        const listaContatos = document.getElementById('lista-contatos');
+        const contatoItems = listaContatos.querySelectorAll('.contato-item');
 
-    // Lógica da Busca em Tempo Real
-    buscaInput.addEventListener('input', function() {
-        const termoBusca = this.value.toLowerCase();
-        contatoItems.forEach(item => {
-            const nome = item.querySelector('strong').textContent.toLowerCase();
-            if (nome.includes(termoBusca)) {
-                item.style.display = 'flex';
-            } else {
-                item.style.display = 'none';
+        const areaSelecao = document.getElementById('area-selecao-contato');
+        const areaEscrita = document.getElementById('area-escrita-mensagem');
+        const destinatarioSelecionado = document.getElementById('destinatario-selecionado');
+        const destinatarioNome = document.getElementById('destinatario-nome');
+        const hiddenInput = document.getElementById('id_destinatario_hidden');
+        const trocarBtn = document.getElementById('trocar-destinatario-btn');
+
+        // Lógica da Busca em Tempo Real
+        buscaInput.addEventListener('input', function() {
+            const termoBusca = this.value.toLowerCase();
+            contatoItems.forEach(item => {
+                const nome = item.querySelector('strong').textContent.toLowerCase();
+                if (nome.includes(termoBusca)) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+
+        // Lógica ao Selecionar um Contato
+        listaContatos.addEventListener('click', function(event) {
+            const itemClicado = event.target.closest('.contato-item');
+            if (itemClicado) {
+                event.preventDefault();
+
+                const id = itemClicado.dataset.id;
+                const nome = itemClicado.dataset.nome;
+
+                // Preenche os campos
+                hiddenInput.value = id;
+                destinatarioNome.textContent = nome;
+
+                // Altera a visibilidade das seções
+                areaSelecao.classList.add('d-none');
+                destinatarioSelecionado.classList.remove('d-none');
+                areaEscrita.classList.remove('d-none');
             }
         });
-    });
 
-    // Lógica ao Selecionar um Contato
-    listaContatos.addEventListener('click', function(event) {
-        const itemClicado = event.target.closest('.contato-item');
-        if (itemClicado) {
-            event.preventDefault();
-            
-            const id = itemClicado.dataset.id;
-            const nome = itemClicado.dataset.nome;
-            
-            // Preenche os campos
-            hiddenInput.value = id;
-            destinatarioNome.textContent = nome;
-            
-            // Altera a visibilidade das seções
-            areaSelecao.classList.add('d-none');
-            destinatarioSelecionado.classList.remove('d-none');
-            areaEscrita.classList.remove('d-none');
-        }
-    });
+        // Lógica do botão "Trocar Destinatário" (o 'x' no badge)
+        trocarBtn.addEventListener('click', function() {
+            // Limpa os campos
+            hiddenInput.value = '';
+            destinatarioNome.textContent = '';
 
-    // Lógica do botão "Trocar Destinatário" (o 'x' no badge)
-    trocarBtn.addEventListener('click', function() {
-        // Limpa os campos
-        hiddenInput.value = '';
-        destinatarioNome.textContent = '';
-        
-        // Altera a visibilidade de volta ao estado inicial
-        areaSelecao.classList.remove('d-none');
-        destinatarioSelecionado.classList.add('d-none');
-        areaEscrita.classList.add('d-none');
-        
-        // Limpa a busca
-        buscaInput.value = '';
-        contatoItems.forEach(item => { item.style.display = 'flex'; });
+            // Altera a visibilidade de volta ao estado inicial
+            areaSelecao.classList.remove('d-none');
+            destinatarioSelecionado.classList.add('d-none');
+            areaEscrita.classList.add('d-none');
+
+            // Limpa a busca
+            buscaInput.value = '';
+            contatoItems.forEach(item => {
+                item.style.display = 'flex';
+            });
+        });
     });
-});
 </script>
-<?php include '../partials/footer.php'; // Ajuste o caminho ?>
+<?php include '../partials/footer.php'; // Ajuste o caminho 
+?>
