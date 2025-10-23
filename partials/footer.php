@@ -67,7 +67,7 @@
                   localStorage.setItem('theme', newTheme);
 
                   // Exibe a notificação que você já tinha
-                  showToast('Tema alterado para: ' + (newTheme === 'dark' ? 'Escuro' : 'Claro'), 'success');
+                 // showToast('Tema alterado para: ' + (newTheme === 'dark' ? 'Escuro' : 'Claro'), 'success');
               });
           }
       })();
