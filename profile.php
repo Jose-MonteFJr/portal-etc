@@ -54,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   }
 }
 
-include __DIR__ . '/partials/header.php';
+include __DIR__ . '/partials/admin_header.php';
 flash_show();
 ?>
 <div class="d-flex align-items-center justify-content-between mb-3">

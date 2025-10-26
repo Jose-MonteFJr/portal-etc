@@ -56,7 +56,7 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $avisos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-include '../partials/header.php'; // Ajuste o caminho
+include '../partials/admin_header.php'; // Ajuste o caminho
 ?>
 
 <div class="d-flex align-items-center justify-content-between mb-4">

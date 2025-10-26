@@ -56,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $modulos = $pdo->query("SELECT id_modulo, nome FROM modulo ORDER BY nome ASC")->fetchAll();
 
-include '../partials/header.php';
+include '../partials/admin_header.php';
 ?>
 
 <div class="d-flex align-items-center justify-content-between mb-3">

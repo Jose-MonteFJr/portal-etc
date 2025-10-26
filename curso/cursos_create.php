@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Cabeçalho
 
-include '../partials/header.php';
+include '../partials/admin_header.php';
 ?>
 <div class="d-flex align-items-center justify-content-between mb-3">
   <h2 class="h4 mb-0">Nova Turma</h2>

@@ -91,7 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-include '../partials/header.php'; // Ajuste o caminho
+include '../partials/admin_header.php'; // Ajuste o caminho
 ?>
 
 <div class="mt-4">

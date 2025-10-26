@@ -65,7 +65,7 @@ try {
     die("Erro ao carregar dados para montar o horário: " . $e->getMessage());
 }
 
-include '../partials/header.php'; // Ajuste o caminho
+include '../partials/admin_header.php'; // Ajuste o caminho
 ?>
 
 <div class="container-fluid mt-4">

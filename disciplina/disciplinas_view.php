@@ -65,7 +65,7 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $disciplinas = $stmt->fetchAll();
 
-include '../partials/header.php';
+include '../partials/admin_header.php';
 ?>
 
 <div class="d-flex align-items-center justify-content-between mb-3">

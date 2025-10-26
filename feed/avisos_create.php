@@ -92,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-include '../partials/header.php';
+include '../partials/admin_header.php';
 ?>
 
 <div class="mt-4">

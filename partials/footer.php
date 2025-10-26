@@ -67,7 +67,7 @@
                   localStorage.setItem('theme', newTheme);
 
                   // Exibe a notificação que você já tinha
-                 // showToast('Tema alterado para: ' + (newTheme === 'dark' ? 'Escuro' : 'Claro'), 'success');
+                  // showToast('Tema alterado para: ' + (newTheme === 'dark' ? 'Escuro' : 'Claro'), 'success');
               });
           }
       })();
@@ -161,7 +161,7 @@
 
                   // Personaliza a mensagem do modal
                   const modalBody = confirmDeleteModal.querySelector('#modalBodyMessage');
-                  modalBody.textContent = `Você tem certeza que deseja excluir o item "${itemName}"? Esta ação não pode ser desfeita.`;
+                  modalBody.textContent = `Você tem certeza que deseja excluir o  "${itemName}"? Esta ação não pode ser desfeita.`;
 
                   // Configura o botão de confirmação final
                   const confirmBtn = confirmDeleteModal.querySelector('#confirmDeleteButton');

@@ -68,7 +68,7 @@ $turmas = $stmt->fetchAll();
 
 $cursos = $pdo->query("SELECT id_curso, nome FROM curso ORDER BY nome ASC")->fetchAll();
 
-include '../partials/header.php';
+include '../partials/admin_header.php';
 ?>
 
 <div class="d-flex align-items-center justify-content-between mb-3">

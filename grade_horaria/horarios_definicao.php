@@ -51,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 // --- LÓGICA PARA BUSCAR OS HORÁRIOS JÁ CADASTRADOS ---
 $definicoes = $pdo->query("SELECT * FROM definicao_horario ORDER BY turno, horario_label ASC")->fetchAll(PDO::FETCH_ASSOC);
 
-include '../partials/header.php'; // Ajuste o caminho
+include '../partials/admin_header.php'; // Ajuste o caminho
 ?>
 
 <div class="row justify-content-center">

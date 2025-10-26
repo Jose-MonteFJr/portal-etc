@@ -33,7 +33,7 @@ portal-etc/
 ├─ config/
 │  └─ db.php         # Conexão PDO
 └─ partials/
-   ├─ header.php     # Navbar Bootstrap
+   ├─ admin_header.php     # Navbar Bootstrap
    └─ footer.php
 ```
 
