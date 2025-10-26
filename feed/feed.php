@@ -3,9 +3,11 @@ require     '../protect.php'; // Ajuste o caminho conforme sua estrutura
 require     '../config/db.php';
 require     '../helpers.php';
 
-if ($_SESSION['tipo'] !== 'aluno') {
-    // Você pode ajustar essa regra se outros perfis também puderem ver o feed
+$allowed_types = ['aluno', 'secretaria'];
+if (!isset($_SESSION['tipo']) || !in_array($_SESSION['tipo'], $allowed_types)) {
+    // Se não for nenhum dos dois, nega o acesso
     flash_set('danger', 'Acesso negado.');
+    // Redireciona para um local seguro (admin.php lida com outros perfis)
     header('Location: ../admin.php');
     exit;
 }
@@ -51,7 +53,11 @@ try {
     die("Erro ao carregar o feed: " . $e->getMessage());
 }
 
-include '../partials/portal_header.php'; // Ajuste o caminho
+if ($_SESSION['tipo'] === 'aluno') {
+    include '../partials/portal_header.php'; // Header do Aluno
+} else {
+    include '../partials/admin_header.php'; // Header da Secretaria
+}
 ?>
 
 <div class="main">
@@ -62,7 +68,16 @@ include '../partials/portal_header.php'; // Ajuste o caminho
 
                     <div class="d-flex align-items-center justify-content-between mb-3">
                         <h2 class="h4 mb-0">Avisos</h2>
+
+                        <?php if ($_SESSION['tipo'] === 'secretaria'): ?>
+                            <a href="avisos_create.php" class="btn btn-primary">
+                                <i class="bi bi-plus-lg"></i> Novo Aviso
+                            </a>
+                        <?php endif; ?>
                     </div>
+
+                    <?php flash_show(); // Movido para após o cabeçalho 
+                    ?>
 
                     <?php if (empty($avisos)): ?>
                         <div class="card shadow-sm text-center">
@@ -73,17 +88,29 @@ include '../partials/portal_header.php'; // Ajuste o caminho
                     <?php else: ?>
                         <?php foreach ($avisos as $aviso): ?>
                             <div class="card shadow-sm mb-4" id="aviso-<?php echo (int)$aviso['id_aviso']; ?>">
-                                <div class="card-header d-flex align-items-center">
-                                    <?php
-                                    $foto_autor = !empty($aviso['foto_autor'])
-                                        ? '/portal-etc/uploads/perfil/' . $aviso['foto_autor']
-                                        : '/portal-etc/partials/img/avatar_padrao.png';
-                                    ?>
-                                    <img src="<?php echo htmlspecialchars($foto_autor); ?>" class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;">
-                                    <div>
-                                        <h6 class="mb-0"><?php echo htmlspecialchars($aviso['nome_autor']); ?></h6>
-                                        <small class="text-muted"><?php echo date('d/m/Y \à\s H:i', strtotime($aviso['created_at'])); ?></small>
+                                <div class="card-header d-flex align-items-center justify-content-between">
+
+                                    <div class="d-flex align-items-center">
+                                        <?php
+                                        $foto_autor = !empty($aviso['foto_autor'])
+                                            ? '/portal-etc/uploads/perfil/' . $aviso['foto_autor']
+                                            : '/portal-etc/partials/img/avatar_padrao.png';
+                                        ?>
+                                        <img src="<?php echo htmlspecialchars($foto_autor); ?>" class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;">
+                                        <div>
+                                            <h6 class="mb-0"><?php echo htmlspecialchars($aviso['nome_autor']); ?></h6>
+                                            <small class="text-muted"><?php echo date('d/m/Y \à\s H:i', strtotime($aviso['created_at'])); ?></small>
+                                        </div>
                                     </div>
+
+                                    <div>
+                                        <?php if ($_SESSION['tipo'] === 'secretaria'): ?>
+                                            <a href="avisos_edit.php?id_aviso=<?php echo (int)$aviso['id_aviso']; ?>" class="btn btn-sm btn-outline-secondary">
+                                                <i class="bi bi-pencil-fill"></i> Editar
+                                            </a>
+                                        <?php endif; ?>
+                                    </div>
+
                                 </div>
 
                                 <div class="card-body">

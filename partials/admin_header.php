@@ -129,7 +129,7 @@ $foto_usuario_logado = !empty($_SESSION['foto_perfil'])
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="/portal-etc/aviso/avisos_view.php" class="sidebar-link">
+                    <a href="/portal-etc/feed/feed.php" class="sidebar-link">
                         <i class="bi bi-megaphone-fill fs-4"></i>
                         <span>Avisos (Feed)</span>
                     </a>

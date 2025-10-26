@@ -7,7 +7,7 @@ ensure_admin();
 
 // Garante que a requisição seja do tipo POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    redirect('avisos_view.php');
+    redirect('feed.php');
 }
 
 csrf_check();
@@ -16,7 +16,7 @@ csrf_check();
 $id_aviso = (int)($_POST['id_aviso'] ?? 0);
 if ($id_aviso <= 0) {
     flash_set('danger', 'ID do aviso é inválido.');
-    header('Location: avisos_view.php');
+    header('Location: feed.php');
     exit;
 }
 
@@ -28,7 +28,7 @@ try {
 
     if (!$aviso) {
         flash_set('danger', 'Aviso não encontrado.');
-        header('Location: avisos_view.php');
+        header('Location: feed.php');
         exit;
     }
     $nome_arquivo = $aviso['caminho_imagem'];
@@ -47,11 +47,10 @@ try {
 
     // 6. FEEDBACK E REDIRECIONAMENTO
     flash_set('success', 'Aviso excluído com sucesso!');
-    header('Location: avisos_view.php');
+    header('Location: feed.php');
     exit;
-
 } catch (PDOException $e) {
     flash_set('danger', 'Ocorreu um erro ao excluir o aviso.');
-    header('Location: avisos_view.php');
+    header('Location: feed.php');
     exit;
 }

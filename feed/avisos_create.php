@@ -84,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // =============================================================
 
             flash_set('success', 'Aviso publicado e alunos notificados!');
-            header('Location: avisos_view.php'); // Redireciona para a lista de avisos
+            header('Location: feed.php'); // Redireciona para a lista de avisos
             exit;
         } catch (PDOException $e) {
             $errors[] = 'Erro ao salvar o aviso no banco de dados: ' . $e->getMessage();
@@ -95,52 +95,70 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 include '../partials/admin_header.php';
 ?>
 
-<div class="mt-4">
-    <div class="row justify-content-center">
-        <div class="col-lg-9">
+<div class="main">
+    <div class="content">
+        <div class="container-fluid mt-4">
+            <div class="row justify-content-center">
+                <div class="col-lg-9">
+                    <div class="d-flex align-items-center justify-content-between mb-4">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-megaphone-fill fs-4 text-primary"></i>
+                            <h2 class="h4 mb-0">Publicar Novo Aviso</h2>
+                        </div>
 
-            <div class="d-flex align-items-center justify-content-between mb-3">
-                <h2 class="h4 mb-0">Publicar Novo Aviso</h2>
-                <a class="btn btn-outline-secondary btn-sm" href="avisos_view.php">Ver Todos os Avisos</a>
-            </div>
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb mb-0">
+                                <li class="breadcrumb-item"><a href="../admin.php">Dashboard</a></li>
+                                <li class="breadcrumb-item"><a href="feed.php">Feed de Avisos</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Novo Aviso</li>
+                            </ol>
+                        </nav>
+                    </div>
 
-            <?php if (!empty($errors)): ?>
-                <div class="alert alert-danger">
-                    <ul class="mb-0"><?php foreach ($errors as $e) echo '<li>' . htmlspecialchars($e) . '</li>'; ?></ul>
-                </div>
-            <?php endif; ?>
+                    <?php if (!empty($errors)): ?>
+                        <div class="alert alert-danger">
+                            <ul class="mb-0"><?php foreach ($errors as $e) echo '<li>' . htmlspecialchars($e) . '</li>'; ?></ul>
+                        </div>
+                    <?php endif; ?>
 
-            <div class="card shadow-sm">
-                <div class="card-body">
                     <form method="post" action="avisos_create.php" enctype="multipart/form-data" onsubmit="return confirm('Tem certeza que deseja postar o aviso?');">
                         <?php csrf_input(); ?>
+                        <div class="card shadow-sm">
+                            <div class="card-header">
+                                <h5 class="mb-0">Conteúdo do Aviso</h5>
+                            </div>
+                            <div class="card-body p-4">
 
-                        <div class="mb-3">
-                            <label for="titulo" class="form-label">Título do Aviso</label>
-                            <input type="text" name="titulo" id="titulo" class="form-control"
-                                value="<?php echo htmlspecialchars($titulo); ?>" required>
-                        </div>
+                                <div class="mb-3">
+                                    <label for="titulo" class="form-label">Título do Aviso</label>
+                                    <input type="text" name="titulo" id="titulo" class="form-control"
+                                        value="<?php echo htmlspecialchars($titulo); ?>" required>
+                                </div>
 
-                        <div class="mb-3">
-                            <label for="descricao" class="form-label">Descrição</label>
-                            <textarea name="descricao" id="descricao" class="form-control" rows="8"
-                                required><?php echo htmlspecialchars($descricao); ?></textarea>
-                        </div>
+                                <div class="mb-3">
+                                    <label for="descricao" class="form-label">Descrição</label>
+                                    <textarea name="descricao" id="descricao" class="form-control" rows="8"
+                                        required><?php echo htmlspecialchars($descricao); ?></textarea>
+                                </div>
 
-                        <div class="mb-3">
-                            <label for="imagemInput" class="form-label">Imagem (Opcional)</label>
-                            <input class="form-control" type="file" id="imagemInput" name="imagem" accept="image/jpeg, image/jpeg, image/png, image/gif">
-                            <div class="form-text">Envie uma imagem (JPG, JPEG, PNG, GIF) de até 2MB.</div>
-                        </div>
+                                <div class="mb-3">
+                                    <label for="imagemInput" class="form-label">Imagem (Opcional)</label>
+                                    <input class="form-control" type="file" id="imagemInput" name="imagem" accept="image/jpeg, image/png, image/gif, image/jpg">
+                                    <div class="form-text">Envie uma imagem (JPG, JPEG, PNG, GIF) de até 2MB.</div>
+                                </div>
 
-                        <div class="mb-3">
-                            <img id="imagemPreview" src="#" alt="Preview da Imagem" class="img-fluid rounded" style="display: none; max-height: 200px;">
-                        </div>
-                        <div class="text-end">
-                            <a href="avisos_view.php" class="btn btn-secondary">Cancelar</a>
-                            <button type="submit" class="btn btn-primary">Publicar Aviso</button>
+                                <div class="mb-3">
+                                    <img id="imagemPreview" src="#" alt="Preview da Imagem" class="img-fluid rounded" style="display: none; max-height: 200px;">
+                                </div>
+
+                            </div>
+                            <div class="card-footer text-end">
+                                <a href="feed.php" class="btn btn-secondary">Cancelar</a>
+                                <button type="submit" class="btn btn-primary">Publicar Aviso</button>
+                            </div>
                         </div>
                     </form>
+
                 </div>
             </div>
         </div>
