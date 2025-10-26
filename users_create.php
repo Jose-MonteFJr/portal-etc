@@ -172,7 +172,7 @@ include __DIR__ . '/partials/admin_header.php';
 ?>
 
 <div class="main">
-  <div class="content">
+  <div class="content mt-5">
     <div class="container-fluid mt-4">
       <div class="row justify-content-center">
         <div class="col-lg-9">

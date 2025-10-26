@@ -20,7 +20,6 @@ if ($q !== '') {
   $like = "%$q%";
   $params[] = $like;
 }
-
 $whereSql = $clauses ? ('WHERE ' . implode(' AND ', $clauses)) : '';
 
 // Total para paginação
@@ -36,8 +35,8 @@ $sql = "SELECT
             c.id_curso,
             c.nome,
             c.descricao,
-            DATE_FORMAT(c.created_at, '%d/%m/%Y %H:%i') as created_at,
-            DATE_FORMAT(c.updated_at, '%d/%m/%Y %H:%i') as updated_at,
+            c.created_at,
+            c.updated_at,
             COALESCE(ch.carga_horaria_total, 0) AS carga_horaria_total,
             COALESCE(ta.total_alunos, 0) AS total_alunos
         FROM
@@ -53,110 +52,130 @@ $sql = "SELECT
             GROUP BY t.id_curso
         ) AS ta ON c.id_curso = ta.id_curso
         $whereSql
-        ORDER BY c.id_curso DESC
+        ORDER BY c.nome ASC
         LIMIT $perPage OFFSET $offset";
+
 $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
-$users = $stmt->fetchAll();
+$cursos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 include '../partials/admin_header.php';
 ?>
 
-<div class="d-flex align-items-center justify-content-between mb-3">
-  <h2 class="h4 mb-0">Dashboard de administração: cursos</h2>
-  <span class="badge text-bg-primary">Perfil: Secretaria</span>
-  <a class="btn btn-outline-secondary" href="../admin.php">Voltar</a>
-</div>
+<div class="main">
+  <div class="content mt-5">
+    <div class="container-fluid">
 
-<?php flash_show(); ?>
+      <div class="d-flex align-items-center justify-content-between mb-4">
+        <h2 class="h4 mb-0">Gerenciamento de Cursos</h2>
+        <a class="btn btn-outline-secondary btn-sm" href="../admin.php">Voltar ao Dashboard</a>
+      </div>
 
-<form method="get" class="card card-body shadow-sm mb-3">
-  <div class="row g-2 align-items-end">
-    <div class="col-md-6">
-      <label class="form-label" for="q">Buscar</label>
-      <input type="text" id="q" name="q" class="form-control" value="<?php echo htmlspecialchars($q); ?>" placeholder="Nome do curso">
-    </div>
-    <div class="col-md-6 text-end">
-      <a class="btn btn-outline-secondary" href="cursos_view.php">Limpar</a>
-      <button class="btn btn-primary">Filtrar</button>
-      <a class="btn btn-outline-success" href="cursos_create.php">+ Novo Curso</a>
+      <?php flash_show(); ?>
+
+      <div class="card shadow-sm mb-4">
+        <div class="card-body">
+          <form method="get" class="row g-3 align-items-center">
+            <div class="col-md-9">
+              <label for="q" class="form-label visually-hidden">Buscar</label>
+              <input type="text" id="q" name="q" class="form-control" value="<?php echo htmlspecialchars($q); ?>" placeholder="Buscar por nome do curso...">
+            </div>
+            <div class="col-md-3 d-flex justify-content-end gap-2">
+              <a class="btn btn-outline-secondary" href="cursos_view.php">Limpar</a>
+              <button class="btn btn-primary">Filtrar</button>
+            </div>
+          </form>
+          <hr>
+          <div class="d-flex justify-content-end align-items-center">
+            <a class="btn btn-success" href="cursos_create.php"><i class="bi bi-plus-lg"></i> Novo Curso</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="card shadow-sm">
+        <div class="card-header">Cursos cadastrados (<?php echo $total; ?>)</div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-striped table-hover mb-0 align-middle">
+              <thead>
+                <tr>
+                  <th>Curso</th>
+                  <th>Descrição</th>
+                  <th class="text-center">Dados</th>
+                  <th>Cadastro</th>
+                  <th class="text-end">Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                <?php foreach ($cursos as $c): ?>
+                  <tr>
+                    <td>
+                      <strong><?php echo htmlspecialchars($c['nome']); ?></strong>
+                      <div class="small text-muted">ID: <?php echo (int)$c['id_curso']; ?></div>
+                    </td>
+
+                    <td class="text-muted small" style="max-width: 300px;">
+                      <span class="d-inline-block text-truncate" style="max-width: 300px;" title="<?php echo htmlspecialchars($c['descricao']); ?>">
+                        <?php echo htmlspecialchars($c['descricao']); ?>
+                      </span>
+                    </td>
+
+                    <td class="text-center">
+                      <div class="small">
+                        <strong>Carga:</strong> <?php echo (int)$c['carga_horaria_total']; ?>h<br>
+                        <strong>Alunos:</strong> <?php echo (int)$c['total_alunos']; ?>
+                      </div>
+                    </td>
+
+                    <td class="small">
+                      <?php echo date('d/m/Y', strtotime($c['created_at'])); ?>
+                    </td>
+
+                    <td class="text-end text-nowrap">
+                      <div class="btn-group" role="group">
+                        <a href="../modulo/modulos_view.php?q=&id_curso=<?php echo (int)$c['id_curso']; ?>" class="btn btn-sm btn-outline-info">
+                          Módulos
+                        </a>
+                        <a href="../turma/turmas_view.php?q=&id_curso=<?php echo (int)$c['id_curso']; ?>" class="btn btn-sm btn-outline-info">
+                          Turmas
+                        </a>
+                        <a class="btn btn-sm btn-outline-secondary" href="cursos_edit.php?id_curso=<?php echo (int)$c['id_curso']; ?>">
+                          Editar
+                        </a>
+                      </div>
+                    </td>
+                  </tr>
+                <?php endforeach; ?>
+                <?php if (empty($cursos)): ?>
+                  <tr>
+                    <td colspan="5" class="text-center text-muted py-4">Nenhum curso encontrado.</td>
+                  </tr>
+                <?php endif; ?>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <?php if ($pages > 1): ?>
+        <nav class="mt-3">
+          <ul class="pagination justify-content-center">
+            <?php
+            $baseQuery = $_GET;
+            for ($i = 1; $i <= $pages; $i++):
+              $baseQuery['page'] = $i;
+              // CORRIGIDO: O link da paginação deve apontar para a página atual
+              $href = 'cursos_view.php?' . http_build_query($baseQuery);
+            ?>
+              <li class="page-item <?php echo $i === $page ? 'active' : ''; ?>">
+                <a class="page-link" href="<?php echo htmlspecialchars($href); ?>"><?php echo $i; ?></a>
+              </li>
+            <?php endfor; ?>
+          </ul>
+        </nav>
+      <?php endif; ?>
+
     </div>
   </div>
-</form>
-
-<!-- TABELA VIEW -->
-<div class="card shadow-sm">
-  <div class="card-header">Cursos cadastrados (<?php echo $total; ?>)</div>
-  <div class="card-body p-0">
-    <div class="table-responsive">
-      <table class="table table-striped table-hover mb-0 align-middle">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Nome</th>
-            <th class="text-center">Carga horária</th>
-            <th class="text-center">Qtd alunos</th>
-            <th class="text-center">Descrição</th>
-            <th>Criado em</th>
-            <th>Atualizado em</th>
-            <th class="text-end">Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          <?php foreach ($users as $u): ?>
-            <tr>
-              <td><?php echo (int)$u['id_curso']; ?></td>
-              <td><?php echo htmlspecialchars($u['nome']); ?></td>
-              <td class="text-center"><?php echo ((int)$u['carga_horaria_total']); ?>h</td>
-              <td class="text-center"><?php echo ((int)$u['total_alunos']); ?></td>
-              <td class="text-truncate" style="max-width: 250px;" title="<?php echo htmlspecialchars($u['descricao']); ?>"> <?php echo htmlspecialchars($u['descricao']); ?></td>
-              <td><?php echo htmlspecialchars($u['created_at']); ?></td>
-              <td><?php echo htmlspecialchars($u['updated_at']); ?></td>
-              <td class="text-end">
-                <div class="btn-group" role="group" aria-label="Ações do curso">
-                  <a href="../turma/turmas_view.php?q=&id_curso=<?php echo (int)$u['id_curso']; ?>"
-                      class="btn btn-sm btn-outline-info">Turmas</a>
-                  <a href="../modulo/modulos_view.php?q=&id_curso=<?php echo (int)$u['id_curso']; ?>"
-                      class="btn btn-sm btn-outline-info">
-                      Módulos
-                  </a>
-                  <a class="btn btn-sm btn-outline-secondary" href="cursos_edit.php?id_curso=<?php echo (int)$u['id_curso']; ?>">Editar</a>
-                  <form action="cursos_delete.php" method="post" class="d-inline" onsubmit="return confirm('Tem certeza que deseja excluir?');">
-                    <?php require_once '../helpers.php';
-                    csrf_input(); ?>
-                    <input type="hidden" name="id_curso" value="<?php echo (int)$u['id_curso']; ?>">
-                    <button type="submit" class="btn btn-sm btn-outline-danger">Excluir</button>
-                  </form>
-                </div>
-              </td>
-            </tr>
-          <?php endforeach; ?>
-          <?php if (!$users): ?>
-            <tr>
-              <td colspan="8" class="text-center text-muted py-4">Nenhum curso encontrado.</td>
-            </tr>
-          <?php endif; ?>
-        </tbody>
-      </table>
-    </div>
-  </div>
 </div>
-
-<?php if ($pages > 1): ?>
-  <nav class="mt-3">
-    <ul class="pagination justify-content-center">
-      <?php
-      $baseQuery = $_GET;
-      for ($i = 1; $i <= $pages; $i++):
-        $baseQuery['page'] = $i;
-        $href = '../admin.php?' . http_build_query($baseQuery);
-      ?>
-        <li class="page-item <?php echo $i === $page ? 'active' : ''; ?>">
-          <a class="page-link" href="<?php echo htmlspecialchars($href); ?>"><?php echo $i; ?></a>
-        </li>
-      <?php endfor; ?>
-    </ul>
-  </nav>
-<?php endif; ?>
-
 <?php include '../partials/footer.php'; ?>

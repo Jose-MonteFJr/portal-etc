@@ -63,139 +63,158 @@ $modulos = $stmt->fetchAll();
 
 $cursos = $pdo->query("SELECT id_curso, nome FROM curso ORDER BY nome ASC")->fetchAll();
 
+// Pega o nome do curso selecionado (se houver) para o título
+$nomeCursoSelecionado = '';
+if ($id_curso > 0) {
+    // Tenta obter o nome do primeiro resultado
+    if (!empty($modulos)) {
+        $nomeCursoSelecionado = $modulos[0]['nome_curso'];
+    } else {
+        // Se não houver módulos, busca o nome do curso pelo ID
+        $stmtCurso = $pdo->prepare("SELECT nome FROM curso WHERE id_curso = ?");
+        $stmtCurso->execute([$id_curso]);
+        $nomeCursoSelecionado = $stmtCurso->fetchColumn();
+    }
+}
+
 include '../partials/admin_header.php';
 ?>
 
-<div class="d-flex align-items-center justify-content-between mb-3">
-    <div>
-        <h2 class="h4 mb-0">
-            <?php
-            if (!empty($modulos) && $id_curso > 0) {
-                // Se sim, pega o nome do curso do PRIMEIRO resultado do array
-                echo 'Módulos do Curso: ' . htmlspecialchars($modulos[0]['nome_curso']);
-            } else {
-                // Senão, exibe um título genérico
-                echo 'Gerenciamento de Módulos';
-            }
-            ?>
-        </h2>
-    </div>
-    <span class="badge text-bg-primary">Perfil: Secretaria</span>
-    <a class="btn btn-outline-secondary" href="../curso/cursos_view.php">Voltar</a>
-</div>
+<div class="main">
+    <div class="content mt-5">
+        <div class="container-fluid">
 
-<?php flash_show(); ?>
-
-<form method="get" class="card card-body shadow-sm mb-3">
-    <div class="row g-2 align-items-end">
-        <div class="col-md-6">
-            <label class="form-label" for="q">Buscar</label>
-            <input type="text" id="q" name="q" class="form-control" value="<?php echo htmlspecialchars($q); ?>" placeholder="Nome do módulo">
-        </div>
-
-        <div class="col-md-3">
-            <label class="form-label" for="id_curso">Filtrar por curso</label>
-            <select name="id_curso" id="id_curso" class="form-select">
-                <option value="">Todos os cursos</option>
-                <?php foreach ($cursos as $curso): ?>
-                    <option value="<?php echo (int)$curso['id_curso']; ?>"
-                        <?php echo ((int)$curso['id_curso'] === $id_curso ? 'selected' : ''); ?>>
-                        <?php echo htmlspecialchars($curso['nome']); ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
-        </div>
-
-        <div class="col-md-3">
-            <div class="d-flex justify-content-end gap-2">
-                <a class="btn btn-outline-secondary" href="modulos_view.php">Limpar</a>
-                <button class="btn btn-primary">Filtrar</button>
-                <a class="btn btn-outline-success" href="modulos_create.php">+ Novo Módulo</a>
+            <div class="d-flex align-items-center justify-content-between mb-4">
+                <h2 class="h4 mb-0">
+                    <?php
+                    if ($id_curso > 0 && $nomeCursoSelecionado) {
+                        echo 'Módulos do Curso: ' . htmlspecialchars($nomeCursoSelecionado);
+                    } else {
+                        echo 'Gerenciamento de Módulos';
+                    }
+                    ?>
+                </h2>
+                <a class="btn btn-outline-secondary btn-sm" href="../curso/cursos_view.php">Voltar para Cursos</a>
             </div>
-        </div>
-    </div>
-</form>
 
-<!-- TABELA VIEW -->
-<div class="card shadow-sm">
-    <div class="card-header">Módulos cadastrados (<?php echo $total; ?>)</div>
-    <div class="card-body p-0">
-        <div class="table-responsive">
-            <table class="table table-striped table-hover mb-0 align-middle">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Nome</th>
-                        <th>Curso</th>
-                        <th class="text-center">Ordem módulos</th>
-                        <th class="text-center">Qtd disciplinas</th>
-                        <th>Carga horária</th>
-                        <th>Criado em</th>
-                        <th>Atualizado em</th>
-                        <th class="text-end">Ações</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($modulos as $m): ?>
-                        <tr>
-                            <td><?php echo (int)$m['id_modulo']; ?></td>
-                            <td><?php echo htmlspecialchars($m['nome_modulo']); ?></td>
-                            <td><?php echo htmlspecialchars($m['nome_curso']); ?></td>
-                            <td class="text-center"><?php echo ((int)$m['ordem']); ?>°</td>
-                            <td class="text-center"><?php echo ((int)$m['total_disciplinas']); ?></td>
-                            <td><?php echo ((int)$m['carga_horaria_modulo']); ?>h</td>
-                            <td><?php echo htmlspecialchars($m['created_at']); ?></td>
-                            <td><?php echo htmlspecialchars($m['updated_at']); ?></td>
-                            <td class="text-end">
-                                <div class="btn-group" role="group" aria-label="Ações do Módulo">
-                                    <a href="../disciplina/disciplinas_view.php?id_modulo=<?php echo (int)$m['id_modulo']; ?>"
-                                        class="btn btn-sm btn-outline-info">
-                                        Disciplinas
-                                    </a>
+            <?php flash_show(); ?>
 
-                                    <a href="modulos_edit.php?id_modulo=<?php echo (int)$m['id_modulo']; ?>"
-                                        class="btn btn-sm btn-outline-secondary">
-                                        Editar
-                                    </a>
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <form method="get" class="row g-3 align-items-end">
+                        <div class="col-md-6">
+                            <label class="form-label" for="q">Buscar</label>
+                            <input type="text" id="q" name="q" class="form-control" value="<?php echo htmlspecialchars($q); ?>" placeholder="Nome do módulo">
+                        </div>
 
-                                    <form action="modulos_delete.php" method="post" class="d-inline" onsubmit="return confirm('Tem certeza que deseja excluir?');">
-                                        <?php require_once '../helpers.php';
-                                        csrf_input(); ?>
-                                        <input type="hidden" name="id_modulo" value="<?php echo (int)$m['id_modulo']; ?>">
-                                        <button type="submit" class="btn btn-sm btn-outline-danger">
-                                            Excluir
-                                        </button>
-                                    </form>
-                                
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                    <?php if (!$modulos): ?>
-                        <tr>
-                            <td colspan="9" class="text-center text-muted py-4">Nenhum módulo encontrado.</td>
-                        </tr>
-                    <?php endif; ?>
-                </tbody>
-            </table>
+                        <div class="col-md-3">
+                            <label class="form-label" for="id_curso">Filtrar por curso</label>
+                            <select name="id_curso" id="id_curso" class="form-select">
+                                <option value="">Todos os cursos</option>
+                                <?php foreach ($cursos as $curso): ?>
+                                    <option value="<?php echo (int)$curso['id_curso']; ?>"
+                                        <?php echo ((int)$curso['id_curso'] === $id_curso ? 'selected' : ''); ?>>
+                                        <?php echo htmlspecialchars($curso['nome']); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+
+                        <div class="col-md-3 d-flex justify-content-end gap-2">
+                            <a class="btn btn-outline-secondary" href="modulos_view.php">Limpar</a>
+                            <button class="btn btn-primary">Filtrar</button>
+                        </div>
+                    </form>
+                    <hr>
+                    <div class="d-flex justify-content-end align-items-center">
+                        <?php
+                        $create_url = 'modulos_create.php';
+                        if ($id_curso > 0) {
+                            $create_url .= '?id_curso=' . $id_curso;
+                        }
+                        ?>
+                        <a class="btn btn-success" href="<?php echo htmlspecialchars($create_url); ?>"><i class="bi bi-plus-lg"></i> Novo Módulo</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-header">Módulos cadastrados (<?php echo $total; ?>)</div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover mb-0 align-middle">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Nome</th>
+                                    <th>Curso</th>
+                                    <th class="text-center">Módulo</th>
+                                    <th class="text-center">Disciplinas</th>
+                                    <th class="text-center">Carga Horária</th>
+                                    <th>Criado em</th>
+                                    <th>Atualizado em</th>
+                                    <th class="text-end">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($modulos as $m): ?>
+                                    <tr>
+                                        <td><?php echo (int)$m['id_modulo']; ?></td>
+                                        <td><strong><?php echo htmlspecialchars($m['nome_modulo']); ?></strong></td>
+
+                                        <td class="small">
+                                            <a href="/portal-etc/curso/cursos_view.php" class="text-decoration-none">
+                                                <?php echo htmlspecialchars($m['nome_curso']); ?>
+                                            </a>
+                                        </td>
+
+                                        <td class="text-center"><?php echo ((int)$m['ordem']); ?>°</td>
+                                        <td class="text-center"><?php echo ((int)$m['total_disciplinas']); ?></td>
+                                        <td class="text-center"><?php echo ((int)$m['carga_horaria_modulo']); ?>h</td>
+                                        <td class="small"><?php echo htmlspecialchars($m['created_at']); ?></td>
+                                        <td class="small"><?php echo htmlspecialchars($m['updated_at']); ?></td>
+                                        <td class="text-end text-nowrap">
+                                            <div class="btn-group" role="group">
+                                                <a href="../disciplina/disciplinas_view.php?id_modulo=<?php echo (int)$m['id_modulo']; ?>" class="btn btn-sm btn-outline-info">
+                                                    Disciplinas
+                                                </a>
+                                                <a href="modulos_edit.php?id_modulo=<?php echo (int)$m['id_modulo']; ?>" class="btn btn-sm btn-outline-secondary">
+                                                    Editar
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                                <?php if (empty($modulos)): ?>
+                                    <tr>
+                                        <td colspan="9" class="text-center text-muted py-4">Nenhum módulo encontrado.</td>
+                                    </tr>
+                                <?php endif; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <?php if ($pages > 1): ?>
+                <nav class="mt-3">
+                    <ul class="pagination justify-content-center">
+                        <?php
+                        $baseQuery = $_GET;
+                        for ($i = 1; $i <= $pages; $i++):
+                            $baseQuery['page'] = $i;
+                            // CORRIGIDO: O link da paginação deve apontar para a página atual
+                            $href = 'modulos_view.php?' . http_build_query($baseQuery);
+                        ?>
+                            <li class="page-item <?php echo $i === $page ? 'active' : ''; ?>">
+                                <a class="page-link" href="<?php echo htmlspecialchars($href); ?>"><?php echo $i; ?></a>
+                            </li>
+                        <?php endfor; ?>
+                    </ul>
+                </nav>
+            <?php endif; ?>
+
         </div>
     </div>
 </div>
-
-<?php if ($pages > 1): ?>
-    <nav class="mt-3">
-        <ul class="pagination justify-content-center">
-            <?php
-            $baseQuery = $_GET;
-            for ($i = 1; $i <= $pages; $i++):
-                $baseQuery['page'] = $i;
-                $href = '../admin.php?' . http_build_query($baseQuery);
-            ?>
-                <li class="page-item <?php echo $i === $page ? 'active' : ''; ?>">
-                    <a class="page-link" href="<?php echo htmlspecialchars($href); ?>"><?php echo $i; ?></a>
-                </li>
-            <?php endfor; ?>
-        </ul>
-    </nav>
-<?php endif; ?>
-
 <?php include '../partials/footer.php'; ?>
