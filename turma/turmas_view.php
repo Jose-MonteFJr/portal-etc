@@ -68,146 +68,175 @@ $turmas = $stmt->fetchAll();
 
 $cursos = $pdo->query("SELECT id_curso, nome FROM curso ORDER BY nome ASC")->fetchAll();
 
+// Pega o nome do curso selecionado (se houver) para o título
+$nomeCursoSelecionado = '';
+if ($id_curso > 0) {
+    // Se a busca de turmas retornou algo, usa o nome do curso de lá
+    if (!empty($turmas)) {
+        $nomeCursoSelecionado = $turmas[0]['nome_curso'];
+    } else {
+        // Se não houver turmas, busca o nome do curso pelo ID
+        $stmtCurso = $pdo->prepare("SELECT nome FROM curso WHERE id_curso = ?");
+        $stmtCurso->execute([$id_curso]);
+        $nomeCursoSelecionado = $stmtCurso->fetchColumn();
+    }
+}
+
 include '../partials/admin_header.php';
 ?>
 
-<div class="d-flex align-items-center justify-content-between mb-3">
-    <div>
-        <h2 class="h4 mb-0">
-            <?php
-            if (!empty($turmas) && $id_curso > 0) {
-                // Se sim, pega o nome do curso do PRIMEIRO resultado do array
-                echo 'Turmas do Curso: ' . htmlspecialchars($turmas[0]['nome_curso']);
-            } else {
-                // Senão, exibe um título genérico
-                echo 'Gerenciamento de Turmas';
-            }
-            ?>
-        </h2>
-    </div>
-    <span class="badge text-bg-primary">Perfil: Secretaria</span>
-    <a class="btn btn-outline-secondary" href="../curso/cursos_view.php">Voltar</a>
-</div>
+<div class="main">
+    <div class="content mt-5">
+        <div class="container-fluid mt-4">
 
-<?php flash_show(); ?>
+            <div class="d-flex align-items-center justify-content-between mb-4">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-people-fill fs-4 text-warning"></i>
+                    <div>
+                        <h2 class="h4 mb-0">
+                            <?php
+                            if ($id_curso > 0 && $nomeCursoSelecionado) {
+                                echo 'Turmas: ' . htmlspecialchars($nomeCursoSelecionado);
+                            } else {
+                                echo 'Gerenciamento de Turmas';
+                            }
+                            ?>
+                        </h2>
+                    </div>
+                </div>
 
-<form method="get" class="card card-body shadow-sm mb-3">
-    <div class="row g-2 align-items-end">
-        <div class="col-md-6">
-            <label class="form-label" for="q">Buscar</label>
-            <input type="text" id="q" name="q" class="form-control" value="<?php echo htmlspecialchars($q); ?>" placeholder="Nome da disciplina ou curso">
-        </div>
-
-        <div class="col-md-3">
-            <label class="form-label" for="id_curso">Filtrar por curso</label>
-            <select name="id_curso" id="id_curso" class="form-select">
-                <option value="">Todos os cursos</option>
-                <?php foreach ($cursos as $curso): ?>
-                    <option value="<?php echo (int)$curso['id_curso']; ?>"
-                        <?php echo ((int)$curso['id_curso'] === $id_curso ? 'selected' : ''); ?>>
-                        <?php echo htmlspecialchars($curso['nome']); ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
-        </div>
-
-        <div class="col-md-3">
-            <div class="d-flex justify-content-end gap-2">
-                <a class="btn btn-outline-secondary" href="turmas_view.php">Limpar</a>
-                <button class="btn btn-primary">Filtrar</button>
-                <a class="btn btn-outline-success" href="turmas_create.php">+ Nova Turma</a>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a href="../admin.php">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="../curso/cursos_view.php">Cursos</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">
+                            <?php echo ($id_curso > 0) ? 'Turmas do Curso' : 'Todas as Turmas'; ?>
+                        </li>
+                    </ol>
+                </nav>
             </div>
-        </div>
-    </div>
-</form>
 
-<!-- TABELA VIEW -->
-<div class="card shadow-sm">
-    <div class="card-header">Turmas cadastradas (<?php echo $total; ?>)</div>
-    <div class="card-body p-0">
-        <div class="table-responsive">
-            <table class="table table-striped table-hover mb-0 align-middle">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Nome</th>
-                        <th>Curso</th>
-                        <th class="text-center">Qtd alunos</th>
-                        <th class="text-center">Ano</th>
-                        <th class="text-center">Semestre</th>
-                        <th>Turno</th>
-                        <th>Status</th>
-                        <th class="text-center">Criado em</th>
-                        <th class="text-center">Atualizado em</th>
-                        <th class="text-end">Ações</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($turmas as $t): ?>
-                        <tr>
-                            <td><?php echo (int)$t['id_turma']; ?></td>
-                            <td><?php echo htmlspecialchars($t['nome']); ?></td>
-                            <td><?php echo htmlspecialchars($t['nome_curso']); ?></td>
-                            <td class="text-center"><?php echo ((int)$t['total_alunos']); ?></td>
-                            <td class="text-center"><?php echo ((int)$t['ano']); ?></td>
-                            <td class="text-center"><?php echo ((int)$t['semestre']); ?></td>
-                            <td><?php echo htmlspecialchars($t['turno']); ?></td>
-                            <td>
-                                <span class="badge text-bg-<?php echo $t['status'] === 'aberta' ? 'success' : 'danger'; ?>">
-                                    <?php echo htmlspecialchars($t['status']); ?>
-                                </span>
-                            </td>
-                            <td class="text-center"><?php echo htmlspecialchars($t['created_at']); ?></td>
-                            <td class="text-center"><?php echo htmlspecialchars($t['updated_at']); ?></td>
-                            <td class="text-end">
-                                <div class="btn-group" role="group" aria-label="Ações da turma">
-                                    <a href="/portal-etc/grade_horaria/montar_horario.php?id_turma=<?php echo (int)$t['id_turma']; ?>" class="btn btn-sm btn-outline-info">
-                                        Grade
-                                    </a>
-                                    <a href="turmas_edit.php?id_turma=<?php echo (int)$t['id_turma']; ?>"
-                                        class="btn btn-sm btn-outline-secondary">
-                                        Editar
-                                    </a>
+            <?php flash_show(); ?>
 
-                                    <form action="turmas_delete.php" method="post" class="d-inline" onsubmit="return confirm('Tem certeza que deseja excluir?');">
-                                        <?php require_once '../helpers.php';
-                                        csrf_input(); ?>
-                                        <input type="hidden" name="id_turma" value="<?php echo (int)$t['id_turma']; ?>">
-                                        <button type="submit" class="btn btn-sm btn-outline-danger" style="border-top-left-radius: 0; border-bottom-left-radius: 0;">
-                                            Excluir
-                                        </button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <form method="get" class="row g-3 align-items-end">
+                        <div class="col-md-6">
+                            <label class="form-label" for="q">Buscar</label>
+                            <input type="text" id="q" name="q" class="form-control" value="<?php echo htmlspecialchars($q); ?>" placeholder="Nome da turma ou curso...">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label" for="id_curso">Filtrar por curso</label>
+                            <select name="id_curso" id="id_curso" class="form-select">
+                                <option value="">Todos os cursos</option>
+                                <?php foreach ($cursos as $curso): ?>
+                                    <option value="<?php echo (int)$curso['id_curso']; ?>" <?php echo ((int)$curso['id_curso'] === $id_curso ? 'selected' : ''); ?>>
+                                        <?php echo htmlspecialchars($curso['nome']); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="col-md-3 d-flex justify-content-end gap-2">
+                            <a class="btn btn-outline-secondary" href="turmas_view.php">Limpar</a>
+                            <button class="btn btn-primary">Filtrar</button>
+                        </div>
+                    </form>
+                    <hr>
+                    <div class="d-flex justify-content-end align-items-center">
+                        <?php
+                        // Adiciona o id_curso ao link de criação, se estiver filtrando
+                        $create_url = 'turmas_create.php';
+                        if ($id_curso > 0) {
+                            $create_url .= '?id_curso=' . $id_curso;
+                        }
+                        ?>
+                        <a class="btn btn-success" href="<?php echo htmlspecialchars($create_url); ?>"><i class="bi bi-plus-lg"></i> Nova Turma</a>
+                    </div>
+                </div>
+            </div>
 
-                    <?php if (!$turmas): ?>
-                        <tr>
-                            <td colspan="11" class="text-center text-muted py-4">Nenhuma turma encontrada.</td>
-                        </tr>
-                    <?php endif; ?>
-                </tbody>
-            </table>
+            <div class="card shadow-sm">
+                <div class="card-header">Turmas cadastradas (<?php echo $total; ?>)</div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover mb-0 align-middle">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Nome</th>
+                                    <th>Curso</th>
+                                    <th class="text-center">Alunos</th>
+                                    <th class="text-center">Ano/Sem.</th>
+                                    <th>Turno</th>
+                                    <th>Status</th>
+                                    <th>Criado em</th>
+                                    <th>Atualizado em</th>
+                                    <th class="text-end">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($turmas as $t): ?>
+                                    <tr>
+                                        <td><?php echo (int)$t['id_turma']; ?></td>
+                                        <td><strong><?php echo htmlspecialchars($t['nome']); ?></strong></td>
+                                        <td class="small">
+                                            <a href="turmas_view.php?id_curso=<?php echo (int)$t['id_curso']; ?>" class="text-decoration-none">
+                                                <?php echo htmlspecialchars($t['nome_curso']); ?>
+                                            </a>
+                                        </td>
+                                        <td class="text-center"><?php echo ((int)$t['total_alunos']); ?></td>
+                                        <td class="text-center"><?php echo ((int)$t['ano']); ?>/<?php echo ((int)$t['semestre']); ?></td>
+                                        <td><?php echo htmlspecialchars(ucfirst($t['turno'])); ?></td>
+                                        <td>
+                                            <span class="badge text-bg-<?php echo $t['status'] === 'aberta' ? 'success' : 'danger'; ?>">
+                                                <?php echo htmlspecialchars(ucfirst($t['status'])); ?>
+                                            </span>
+                                        </td>
+                                        <td class="small"><?php echo htmlspecialchars($t['created_at']); ?></td>
+                                        <td class="small"><?php echo htmlspecialchars($t['updated_at']); ?></td>
+                                        <td class="text-end text-nowrap">
+                                            <div class="btn-group" role="group" aria-label="Ações da turma">
+                                                <a href="/portal-etc/grade_horaria/montar_horario.php?id_turma=<?php echo (int)$t['id_turma']; ?>" class="btn btn-sm btn-outline-info">
+                                                    Grade
+                                                </a>
+                                                <a href="turmas_edit.php?id_turma=<?php echo (int)$t['id_turma']; ?>" class="btn btn-sm btn-outline-secondary">
+                                                    Editar
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+
+                                <?php if (!$turmas): ?>
+                                    <tr>
+                                        <td colspan="10" class="text-center text-muted py-4">Nenhuma turma encontrada.</td>
+                                    </tr>
+                                <?php endif; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <?php if ($pages > 1): ?>
+                <nav class="mt-3">
+                    <ul class="pagination justify-content-center">
+                        <?php
+                        $baseQuery = $_GET;
+                        for ($i = 1; $i <= $pages; $i++):
+                            $baseQuery['page'] = $i;
+                            // CORRIGIDO: O link da paginação deve apontar para a página atual
+                            $href = 'turmas_view.php?' . http_build_query($baseQuery);
+                        ?>
+                            <li class="page-item <?php echo $i === $page ? 'active' : ''; ?>">
+                                <a class="page-link" href="<?php echo htmlspecialchars($href); ?>"><?php echo $i; ?></a>
+                            </li>
+                        <?php endfor; ?>
+                    </ul>
+                </nav>
+            <?php endif; ?>
+
         </div>
     </div>
 </div>
-
-<?php if ($pages > 1): ?>
-    <nav class="mt-3">
-        <ul class="pagination justify-content-center">
-            <?php
-            $baseQuery = $_GET;
-            for ($i = 1; $i <= $pages; $i++):
-                $baseQuery['page'] = $i;
-                $href = '../admin.php?' . http_build_query($baseQuery);
-            ?>
-                <li class="page-item <?php echo $i === $page ? 'active' : ''; ?>">
-                    <a class="page-link" href="<?php echo htmlspecialchars($href); ?>"><?php echo $i; ?></a>
-                </li>
-            <?php endfor; ?>
-        </ul>
-    </nav>
-<?php endif; ?>
-
 <?php include '../partials/footer.php'; ?>
