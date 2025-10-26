@@ -82,19 +82,31 @@ include '../partials/admin_header.php';
 
 <div class="main">
     <div class="content mt-5">
-        <div class="container-fluid">
+        <div class="container-fluid mt-4">
 
             <div class="d-flex align-items-center justify-content-between mb-4">
-                <h2 class="h4 mb-0">
-                    <?php
-                    if ($id_curso > 0 && $nomeCursoSelecionado) {
-                        echo 'Módulos do Curso: ' . htmlspecialchars($nomeCursoSelecionado);
-                    } else {
-                        echo 'Gerenciamento de Módulos';
-                    }
-                    ?>
-                </h2>
-                <a class="btn btn-outline-secondary btn-sm" href="../curso/cursos_view.php">Voltar para Cursos</a>
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-stack fs-4 text-info"></i>
+                    <h2 class="h4 mb-0">
+                        <?php
+                        if ($id_curso > 0 && $nomeCursoSelecionado) {
+                            echo 'Módulos: ' . htmlspecialchars($nomeCursoSelecionado);
+                        } else {
+                            echo 'Gerenciamento de Módulos';
+                        }
+                        ?>
+                    </h2>
+                </div>
+
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a href="../admin.php">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="../curso/cursos_view.php">Cursos</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">
+                            <?php echo ($id_curso > 0) ? 'Módulos do Curso' : 'Todos os Módulos'; ?>
+                        </li>
+                    </ol>
+                </nav>
             </div>
 
             <?php flash_show(); ?>

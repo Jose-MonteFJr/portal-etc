@@ -58,7 +58,7 @@ include __DIR__ . '/partials/admin_header.php';
 ?>
 <div class="main">
   <div class="content mt-5">
-    <div class="container-fluid">
+    <div class="container-fluid mt-4">
 
       <div class="d-flex align-items-center justify-content-between mb-4">
         <h2 class="h4 mb-0">Dashboard de Administração</h2>

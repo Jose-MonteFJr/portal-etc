@@ -64,11 +64,20 @@ include '../partials/admin_header.php';
 
 <div class="main">
   <div class="content mt-5">
-    <div class="container-fluid">
+    <div class="container-fluid mt-4">
 
       <div class="d-flex align-items-center justify-content-between mb-4">
-        <h2 class="h4 mb-0">Gerenciamento de Cursos</h2>
-        <a class="btn btn-outline-secondary btn-sm" href="../admin.php">Voltar ao Dashboard</a>
+        <div class="d-flex align-items-center gap-2">
+          <i class="bi bi-collection-fill fs-4 text-primary"></i>
+          <h2 class="h4 mb-0">Gerenciamento de Cursos</h2>
+        </div>
+
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="../admin.php">Dashboard</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Cursos</li>
+          </ol>
+        </nav>
       </div>
 
       <?php flash_show(); ?>
