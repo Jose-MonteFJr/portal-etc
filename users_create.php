@@ -23,6 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $telefone = trim($_POST['telefone'] ?? '');
   $data_nascimento = trim($_POST['data_nascimento'] ?? '');
   $password = $_POST['password'] ?? '';
+  $password_confirm = $_POST['password_confirm'] ?? '';
   $tipo = trim($_POST['tipo'] ?? '');
   $status = trim($_POST['status'] ?? '');
 
@@ -42,10 +43,69 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   // --- Validações ---
   if (empty($nome_completo)) $errors[] = "Nome é obrigatório.";
+
+  if (empty($telefone)) $errors[] = "Telefone é obrigatório.";
+
+  $telefone_limpo = preg_replace('/[^0-9]/', '', $telefone);
+
+  // Um telefone brasileiro válido (com DDD) tem 10 (fixo) ou 11 (celular) dígitos
+  if (!empty($telefone_limpo) && strlen($telefone_limpo) < 10) {
+    $errors[] = "O número de telefone parece estar incompleto.";
+  }
+
+
   if (empty($cpf)) $errors[] = "CPF é obrigatório.";
+
+  if (!empty($cpf) && !validaCPF($cpf)) {
+    $errors[] = "O CPF informado não é válido.";
+  }
+
   if (empty($email)) $errors[] = "E-mail é obrigatório.";
   if (empty($password)) $errors[] = "Senha é obrigatória.";
   if (strlen($password) < 8) $errors[] = "A senha deve ter no mínimo 8 caracteres.";
+
+  if (!empty($password)) {
+    if (strlen($password) < 8) {
+      $errors[] = "A senha deve ter no mínimo 8 caracteres.";
+    }
+    if (!preg_match('/[A-Z]/', $password)) {
+      $errors[] = "A senha deve conter pelo menos uma letra maiúscula.";
+    }
+    if (!preg_match('/[a-z]/', $password)) {
+      $errors[] = "A senha deve conter pelo menos uma letra minúscula.";
+    }
+    if (!preg_match('/[0-9]/', $password)) {
+      $errors[] = "A senha deve conter pelo menos um número.";
+    }
+    if (!preg_match('/[\W]/', $password)) {
+      $errors[] = "A senha deve conter pelo menos um caractere especial.";
+    }
+    if ($password !== $password_confirm) {
+      $errors[] = "A senha e a confirmação de senha não coincidem.";
+    }
+  }
+  // --- Validação de idade ---
+
+  if (!empty($data_nascimento)) {
+    try {
+      // Cria objetos de data para a data de nascimento e para hoje
+      $data_nasc_obj = new DateTime($data_nascimento);
+      $data_hoje = new DateTime();
+
+      // Calcula qual seria a data do 14º aniversário
+      $data_14_anos = (clone $data_nasc_obj)->modify('+14 years');
+
+      // Compara as datas:
+      // Se a data do 14º aniversário for NO FUTURO (maior que hoje),
+      // significa que o usuário ainda não completou 14 anos.
+      if ($data_14_anos > $data_hoje) {
+        $errors[] = "O usuário deve ter no mínimo 14 anos de idade para se inscrever.";
+      }
+    } catch (Exception $e) {
+      // Captura erros se a data for inválida (ex: 31/02/2000)
+      $errors[] = "Formato de data de nascimento inválido.";
+    }
+  }
 
   // Validação de unicidade
   $stmt = $pdo->prepare("SELECT COUNT(*) FROM usuario WHERE email = ? OR cpf = ?");
@@ -186,9 +246,24 @@ include __DIR__ . '/partials/admin_header.php';
                           <option value="inativo" <?php echo $status === 'inativo' ? 'selected' : ''; ?>>Inativo</option>
                         </select>
                       </div>
-                      <div class="col-12">
+                      <div class="col-md-6">
                         <label class="form-label" for="password">Senha:</label>
-                        <input type="password" id="password" name="password" class="form-control" placeholder="Mínimo 8 caracteres" required>
+                        <input type="password" id="password" name="password" class="form-control" placeholder="Crie uma senha forte" required>
+
+                        <div class="mt-2">
+                          <div class="progress" style="height: 5px;">
+                            <div id="password-strength-bar" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                          </div>
+
+                          <span id="password-strength-text" class="form-text small">
+                            Mínimo 8 caracteres, 1 maiúscula (A-Z), 1 minúscula (a-z), 1 número (0-9) e 1 símbolo (@, #, $...).
+                          </span>
+                        </div>
+                      </div>
+
+                      <div class="col-md-6">
+                        <label class="form-label" for="password_confirm">Confirmar Senha:</label>
+                        <input type="password" id="password_confirm" name="password_confirm" class="form-control" placeholder="Repita a senha" required>
                       </div>
                     </div>
                   </div>
@@ -507,6 +582,89 @@ include __DIR__ . '/partials/admin_header.php';
         '"': '&quot;',
         "'": '&#039;'
       } [match]));
+    }
+
+    const passwordInput = document.getElementById('password');
+    const strengthBar = document.getElementById('password-strength-bar');
+    const strengthText = document.getElementById('password-strength-text');
+
+    if (passwordInput && strengthBar && strengthText) {
+
+      const initialHelpText = strengthText.innerHTML;
+      passwordInput.addEventListener('input', () => {
+        const password = passwordInput.value;
+        const score = checkPasswordStrength(password);
+
+        let width = '0%';
+        let colorClass = '';
+        let text = '';
+
+        if (password.length === 0) {
+          // Se a senha estiver vazia, reseta tudo e mostra as regras
+          text = initialHelpText; // Volta o texto para a lista de regras
+          width = '0%';
+          strengthBar.style.width = width;
+          strengthBar.className = 'progress-bar'; // Limpa as cores
+          strengthText.innerHTML = text; // Usa innerHTML para manter a formatação
+          strengthText.className = 'form-text small'; // Reseta a cor do texto
+          return; // Para a execução aqui
+        }
+
+        switch (score) {
+          case 0:
+          case 1:
+            width = '20%';
+            colorClass = 'bg-danger';
+            text = 'Fraca';
+            break;
+          case 2:
+            width = '40%';
+            colorClass = 'bg-warning';
+            text = 'Média';
+            break;
+          case 3:
+            width = '60%';
+            colorClass = 'bg-warning';
+            text = 'Razoável';
+            break;
+          case 4:
+            width = '80%';
+            colorClass = 'bg-success';
+            text = 'Forte';
+            break;
+          case 5:
+            width = '100%';
+            colorClass = 'bg-success';
+            text = 'Muito Forte';
+            break;
+        }
+
+        // Atualiza a barra de progresso
+        strengthBar.style.width = width;
+        strengthBar.className = 'progress-bar';
+        strengthBar.classList.add(colorClass);
+
+        // Atualiza o texto
+        strengthText.textContent = text;
+        strengthText.className = (score <= 2) ? 'form-text small text-danger' : 'form-text small text-muted';
+      });
+    }
+
+    // Função auxiliar que calcula a "pontuação" da senha
+    function checkPasswordStrength(password) {
+      let score = 0;
+      // Critério 1: Mínimo de 8 caracteres
+      if (password.length >= 8) score++;
+      // Critério 2: Contém pelo menos uma letra maiúscula
+      if (/[A-Z]/.test(password)) score++;
+      // Critério 3: Contém pelo menos uma letra minúscula
+      if (/[a-z]/.test(password)) score++;
+      // Critério 4: Contém pelo menos um número
+      if (/[0-9]/.test(password)) score++;
+      // (Opcional: se quiser 5 critérios, adicione a verificação de caractere especial)
+      if (/[\W_]/.test(password)) score++;
+
+      return score;
     }
 
   });

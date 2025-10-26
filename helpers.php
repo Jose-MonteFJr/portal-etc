@@ -126,16 +126,47 @@ function criar_notificacao_para_grupo(PDO $pdo, string $grupo, string $mensagem,
     }
 }
 
-function criar_notificacao_para_turma(PDO $pdo, int $id_turma, string $mensagem, ?string $link = null) 
+function criar_notificacao_para_turma(PDO $pdo, int $id_turma, string $mensagem, ?string $link = null)
 {
     // CORRIGIDO: Adicionado '?, ?' ao SELECT para corresponder a 'mensagem' e 'link'
     $sql = "INSERT INTO notificacao (id_usuario_destino, mensagem, link)
             SELECT a.id_usuario, ?, ? 
             FROM aluno a
             WHERE a.id_turma = ?";
-    
+
     $stmt = $pdo->prepare($sql);
-    
+
     // O execute agora corresponde aos 3 placeholders da consulta
     $stmt->execute([$mensagem, $link, $id_turma]);
+}
+
+// Validador de CPF
+if (!function_exists('validaCPF')) {
+    function validaCPF(string $cpf): bool
+    {
+        // Limpa a formatação (pontos e traço)
+        $cpf = preg_replace('/[^0-9]/is', '', $cpf);
+
+        // Verifica se tem 11 dígitos
+        if (strlen($cpf) != 11) {
+            return false;
+        }
+
+        // Verifica se todos os dígitos são iguais (ex: 111.111.111-11)
+        if (preg_match('/(\d)\1{10}/', $cpf)) {
+            return false;
+        }
+
+        // Faz o cálculo para validar os dígitos verificadores
+        for ($t = 9; $t < 11; $t++) {
+            for ($d = 0, $c = 0; $c < $t; $c++) {
+                $d += $cpf[$c] * (($t + 1) - $c);
+            }
+            $d = ((10 * $d) % 11) % 10;
+            if ($cpf[$c] != $d) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

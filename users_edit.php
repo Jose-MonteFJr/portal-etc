@@ -52,6 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $cpf             = trim($_POST['cpf'] ?? '');
   $email           = trim($_POST['email'] ?? '');
   $password        = $_POST['password'] ?? '';
+  $password_confirm = $_POST['password_confirm'] ?? '';
   $telefone        = trim($_POST['telefone'] ?? '');
   $data_nascimento = trim($_POST['data_nascimento'] ?? '');
   $status            = $_POST['status'] ?? 'ativo';
@@ -76,19 +77,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   // CPF: formato e dígito verificador
   if ($cpf === '') $errors[] = 'CPF é obrigatório.';
 
+  if (!empty($cpf) && !validaCPF($cpf)) {
+    $errors[] = "O CPF informado não é válido.";
+  }
+
   // E-mail
   if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
     $errors[] = 'E-mail inválido.';
   }
 
-  // Telefone
   if ($telefone === '') $errors[] = 'Telefone é obrigatório.';
+
+  $telefone_limpo = preg_replace('/[^0-9]/', '', $telefone);
+
+  if (!empty($telefone_limpo) && strlen($telefone_limpo) < 10) {
+    $errors[] = "O número de telefone parece estar incompleto.";
+  }
 
   // Data de nascimento
   if ($data_nascimento === '') {
     $errors[] = 'Data de nascimento é obrigatória.';
   } elseif (!DateTime::createFromFormat('Y-m-d', $data_nascimento)) {
     $errors[] = 'Data de nascimento inválida.';
+  }
+
+  if (!empty($data_nascimento)) {
+    try {
+      $data_nasc_obj = new DateTime($data_nascimento);
+      $data_hoje = new DateTime();
+      $data_14_anos = (clone $data_nasc_obj)->modify('+14 years');
+
+      if ($data_14_anos > $data_hoje) {
+        $errors[] = "O usuário deve ter no mínimo 14 anos de idade para se inscrever.";
+      }
+    } catch (Exception $e) {
+      $errors[] = "Formato de data de nascimento inválido.";
+    }
   }
 
   // Tipo de usuário
@@ -116,12 +140,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   if ($estado === '') $errors[] = 'Estado é obrigatório.';
 
-
   if (!$errors) {
     try {
       if ($password) {
         if (strlen($password) < 8) $errors[] = 'Senha deve ter pelo menos 8 caracteres.';
       }
+
+      if (!empty($password)) {
+        if (strlen($password) < 8) {
+          $errors[] = "A senha deve ter no mínimo 8 caracteres.";
+        }
+        if (!preg_match('/[A-Z]/', $password)) {
+          $errors[] = "A senha deve conter pelo menos uma letra maiúscula.";
+        }
+        if (!preg_match('/[a-z]/', $password)) {
+          $errors[] = "A senha deve conter pelo menos uma letra minúscula.";
+        }
+        if (!preg_match('/[0-9]/', $password)) {
+          $errors[] = "A senha deve conter pelo menos um número.";
+        }
+        // Opcional: Forçar um caractere especial (ex: @, #, $, %)
+        if (!preg_match('/[\W]/', $password)) {
+          $errors[] = "A senha deve conter pelo menos um caractere especial.";
+        }
+        if ($password !== $password_confirm) {
+          $errors[] = "A senha e a confirmação de senha não coincidem.";
+        }
+      }
+
       if (!$errors) {
         // verificar duplicidade de e-mail em outro ID
         $chk = $pdo->prepare('SELECT id_usuario FROM usuario WHERE (email=? OR cpf=?) AND id_usuario<>?');
@@ -176,7 +222,7 @@ include __DIR__ . '/partials/admin_header.php';
           <?php endif; ?>
 
           <!-- O formulário agora envolve todo o card e as abas -->
-          <form method="post">
+          <form method="post" autocomplete="off">
             <?php csrf_input(); ?>
             <div class="card shadow-sm">
               <!-- Abas de Navegação -->
@@ -206,19 +252,19 @@ include __DIR__ . '/partials/admin_header.php';
                     <div class="row g-3">
                       <div class="col-md-6">
                         <label class="form-label" for="nome_completo">Nome completo:</label>
-                        <input type="text" id="nome_completo" name="nome_completo" class="form-control" value="<?php echo htmlspecialchars($nome_completo); ?>" required>
+                        <input type="text" id="nome_completo" name="nome_completo" maxlength="150" placeholder="Nome completo" class="form-control" value="<?php echo htmlspecialchars($nome_completo); ?>" required>
                       </div>
                       <div class="col-md-6">
                         <label class="form-label" for="email">E-mail:</label>
-                        <input type="email" id="email" name="email" class="form-control" value="<?php echo htmlspecialchars($email); ?>" required>
+                        <input type="email" id="email" name="email" maxlength="150" placeholder="exemplo@exemplo.com" class="form-control" value="<?php echo htmlspecialchars($email); ?>" required>
                       </div>
                       <div class="col-md-6">
                         <label class="form-label" for="cpf">Cpf:</label>
-                        <input type="text" id="cpf" name="cpf" class="form-control" value="<?php echo htmlspecialchars($cpf); ?>" required>
+                        <input type="text" id="cpf" name="cpf" maxlength="14" placeholder="XXX.XXX.XXX-XX" class="form-control" value="<?php echo htmlspecialchars($cpf); ?>" required>
                       </div>
                       <div class="col-md-6">
                         <label class="form-label" for="telefone">Telefone:</label>
-                        <input type="tel" id="telefone" name="telefone" class="form-control" value="<?php echo htmlspecialchars($telefone); ?>" required>
+                        <input type="tel" id="telefone" name="telefone" maxlength="20" placeholder="(XX) XXXXX-XXXX" class="form-control" value="<?php echo htmlspecialchars($telefone); ?>" required>
                       </div>
                       <div class="col-md-4">
                         <label class="form-label" for="data_nascimento">Data de nascimento:</label>
@@ -241,9 +287,24 @@ include __DIR__ . '/partials/admin_header.php';
                         </select>
                         <div class="form-text">O perfil não pode ser alterado após a criação.</div>
                       </div>
-                      <div class="col-12">
-                        <label class="form-label" for="password">Nova senha:</label>
-                        <input type="password" id="password" name="password" class="form-control" placeholder="Deixe em branco para manter a senha atual">
+                      <div class="col-md-6">
+                        <label class="form-label" for="password">Senha:</label>
+                        <input type="password" id="password" name="password" class="form-control" placeholder="Deixe em branco para manter a senha">
+
+                        <div class="mt-2">
+                          <div class="progress" style="height: 5px;">
+                            <div id="password-strength-bar" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                          </div>
+
+                          <span id="password-strength-text" class="form-text small">
+                            Mínimo 8 caracteres, 1 maiúscula (A-Z), 1 minúscula (a-z), 1 número (0-9) e 1 símbolo (@, #, $...).
+                          </span>
+                        </div>
+                      </div>
+
+                      <div class="col-md-6">
+                        <label class="form-label" for="password_confirm">Confirmar Senha:</label>
+                        <input type="password" id="password_confirm" name="password_confirm" class="form-control" placeholder="Repita a senha">
                       </div>
                     </div>
                   </div>
@@ -256,7 +317,7 @@ include __DIR__ . '/partials/admin_header.php';
                       <div class="col-md-3">
                         <label class="form-label" for="cep">Cep:</label>
                         <div class="input-group">
-                          <input type="text" name="cep" id="cep" class="form-control" value="<?php echo htmlspecialchars($cep); ?>" required>
+                          <input type="text" name="cep" id="cep" placeholder="00000-000" maxlength="9" class="form-control" value="<?php echo htmlspecialchars($cep); ?>" required>
                           <span class="input-group-text" id="spinner" style="display: none;">...</span>
                         </div>
                         <div id="cep-error" class="text-danger small mt-1"></div>
@@ -365,7 +426,7 @@ include __DIR__ . '/partials/admin_header.php';
           </form>
 
           <div class="card border-danger shadow-sm mt-4">
-            <div class="card-header bg-danger text-white">
+            <div class="card-header bg-danger">
               <h5 class="mb-0">Zona de Perigo</h5>
             </div>
             <div class="card-body d-flex flex-column flex-sm-row justify-content-between align-items-sm-center">
@@ -479,5 +540,90 @@ include __DIR__ . '/partials/admin_header.php';
 
   };
   document.getElementById("cep").addEventListener("focusout", pesquisarCep);
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const passwordInput = document.getElementById('password');
+    const strengthBar = document.getElementById('password-strength-bar');
+    const strengthText = document.getElementById('password-strength-text');
+
+    if (passwordInput && strengthBar && strengthText) {
+
+      const initialHelpText = strengthText.innerHTML;
+      passwordInput.addEventListener('input', () => {
+        const password = passwordInput.value;
+        const score = checkPasswordStrength(password);
+
+        let width = '0%';
+        let colorClass = '';
+        let text = '';
+
+        if (password.length === 0) {
+          // Se a senha estiver vazia, reseta tudo e mostra as regras
+          text = initialHelpText; // Volta o texto para a lista de regras
+          width = '0%';
+          strengthBar.style.width = width;
+          strengthBar.className = 'progress-bar'; // Limpa as cores
+          strengthText.innerHTML = text; // Usa innerHTML para manter a formatação
+          strengthText.className = 'form-text small'; // Reseta a cor do texto
+          return; // Para a execução aqui
+        }
+
+        switch (score) {
+          case 0:
+          case 1:
+            width = '20%';
+            colorClass = 'bg-danger';
+            text = 'Fraca';
+            break;
+          case 2:
+            width = '40%';
+            colorClass = 'bg-warning';
+            text = 'Média';
+            break;
+          case 3:
+            width = '60%';
+            colorClass = 'bg-warning';
+            text = 'Razoável';
+            break;
+          case 4:
+            width = '80%';
+            colorClass = 'bg-success';
+            text = 'Forte';
+            break;
+          case 5:
+            width = '100%';
+            colorClass = 'bg-success';
+            text = 'Muito Forte';
+            break;
+        }
+
+        // Atualiza a barra de progresso
+        strengthBar.style.width = width;
+        strengthBar.className = 'progress-bar';
+        strengthBar.classList.add(colorClass);
+
+        // Atualiza o texto
+        strengthText.textContent = text;
+        strengthText.className = (score <= 2) ? 'form-text small text-danger' : 'form-text small text-muted';
+      });
+    }
+
+    // Função auxiliar que calcula a "pontuação" da senha
+    function checkPasswordStrength(password) {
+      let score = 0;
+      // Critério 1: Mínimo de 8 caracteres
+      if (password.length >= 8) score++;
+      // Critério 2: Contém pelo menos uma letra maiúscula
+      if (/[A-Z]/.test(password)) score++;
+      // Critério 3: Contém pelo menos uma letra minúscula
+      if (/[a-z]/.test(password)) score++;
+      // Critério 4: Contém pelo menos um número
+      if (/[0-9]/.test(password)) score++;
+      // (Opcional: se quiser 5 critérios, adicione a verificação de caractere especial)
+      if (/[\W_]/.test(password)) score++;
+
+      return score;
+    }
+  });
 </script>
 <?php include __DIR__ . '/partials/footer.php'; ?>
