@@ -34,7 +34,7 @@ try {
     // 2. Itera sobre os dados enviados pelo formulário
     foreach ($horarios as $label_horario => $dias) {
         foreach ($dias as $dia_semana => $dados_aula) {
-            
+
             // Só insere se uma disciplina E um professor foram selecionados
             if (!empty($dados_aula['id_disciplina']) && !empty($dados_aula['id_professor'])) {
                 $stmt_insert->execute([
@@ -52,7 +52,6 @@ try {
     // 3. Se tudo deu certo, confirma as alterações
     $pdo->commit();
     flash_set('success', 'Grade horária salva com sucesso!');
-
 } catch (Exception $e) {
     // Se algo deu errado, desfaz tudo
     $pdo->rollBack();
