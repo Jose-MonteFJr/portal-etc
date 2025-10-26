@@ -54,111 +54,114 @@ $definicoes = $pdo->query("SELECT * FROM definicao_horario ORDER BY turno, horar
 include '../partials/admin_header.php'; // Ajuste o caminho
 ?>
 
-<div class="row justify-content-center">
-    <div class="col-lg-10">
+<div class="main">
+    <div class="content mt-5">
+        <div class="container-fluid mt-4">
 
-        <div class="d-flex align-items-center justify-content-between mb-3">
-            <h2 class="h4 mb-0">Definições de Horários</h2>
-            <a href="/portal-etc/turma/turmas_view.php" class="btn btn-sm btn-outline-secondary">Voltar para Turmas</a>
-        </div>
+            <div class="d-flex align-items-center justify-content-between mb-4">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-clock-history fs-4 text-secondary"></i>
+                    <h2 class="h4 mb-0">Definições de Horários Padrão</h2>
+                </div>
 
-        <?php if (!empty($errors)): ?>
-            <div class="alert alert-danger">
-                <ul class="mb-0"><?php foreach ($errors as $e) echo '<li>' . htmlspecialchars($e) . '</li>'; ?></ul>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a href="../admin.php">Dashboard</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Horários Padrão</li>
+                    </ol>
+                </nav>
             </div>
-        <?php endif; ?>
-        <?php flash_show(); ?>
 
-        <div class="card shadow-sm mb-4">
-            <div class="card-header">
-                <h5 class="mb-0">Cadastrar Novo Bloco de Horário</h5>
-            </div>
-            <div class="card-body">
-                <form method="post">
-                    <?php csrf_input(); ?>
-                    <div class="row g-3 align-items-end">
-                        <div class="col-md-3">
-                            <label for="turno" class="form-label">Turno</label>
-                            <select name="turno" id="turno" class="form-select" required>
-                                <option value="" disabled <?php echo empty($turno) ? 'selected' : ''; ?>>Selecione...</option>
-                                <option value="matutino" <?php echo ($turno === 'matutino' ? 'selected' : ''); ?>>Matutino</option>
-                                <option value="vespertino" <?php echo ($turno === 'vespertino' ? 'selected' : ''); ?>>Vespertino</option>
-                                <option value="noturno" <?php echo ($turno === 'noturno' ? 'selected' : ''); ?>>Noturno</option>
-                            </select>
-                        </div>
-                        <div class="col-md-3">
-                            <label for="horario_label" class="form-label">Bloco</label>
-                            <select name="horario_label" id="horario_label" class="form-select" required>
-                                <option value="" disabled <?php echo empty($horario_label) ? 'selected' : ''; ?>>Selecione...</option>
-                                <option value="primeiro" <?php echo ($horario_label === 'primeiro' ? 'selected' : ''); ?>>1º Horário</option>
-                                <option value="segundo" <?php echo ($horario_label === 'segundo' ? 'selected' : ''); ?>>2º Horário</option>
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <label for="hora_inicio" class="form-label">Início</label>
-                            <input type="time" name="hora_inicio" id="hora_inicio" value="<?php echo htmlspecialchars($hora_inicio); ?>" class="form-control" required>
-                        </div>
-                        <div class="col-md-2">
-                            <label for="hora_fim" class="form-label">Fim</label>
-                            <input type="time" name="hora_fim" id="hora_fim" value="<?php echo htmlspecialchars($hora_fim); ?>" class="form-control" required>
-                        </div>
-                        <div class="col-md-2">
-                            <button type="submit" class="btn btn-primary w-100">Adicionar</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
+            <?php if (!empty($errors)): ?>
+                <div class="alert alert-danger">
+                    <ul class="mb-0"><?php foreach ($errors as $e) echo '<li>' . htmlspecialchars($e) . '</li>'; ?></ul>
+                </div>
+            <?php endif; ?>
+            <?php flash_show(); ?>
 
-        <div class="card shadow-sm">
-            <div class="card-header">Horários Cadastrados</div>
-            <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0 align-middle">
-                        <thead>
-                            <tr>
-                                <th>Turno</th>
-                                <th>Bloco</th>
-                                <th>Início</th>
-                                <th>Fim</th>
-                                <th class="text-end">Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php if (empty($definicoes)): ?>
+            <div class="card shadow-sm mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Cadastrar Novo Bloco de Horário</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        <?php csrf_input(); ?>
+                        <div class="row g-3 align-items-end">
+                            <div class="col-md-3">
+                                <label for="turno" class="form-label">Turno</label>
+                                <select name="turno" id="turno" class="form-select" required>
+                                    <option value="" disabled <?php echo empty($turno) ? 'selected' : ''; ?>>Selecione...</option>
+                                    <option value="matutino" <?php echo ($turno === 'matutino' ? 'selected' : ''); ?>>Matutino</option>
+                                    <option value="vespertino" <?php echo ($turno === 'vespertino' ? 'selected' : ''); ?>>Vespertino</option>
+                                    <option value="noturno" <?php echo ($turno === 'noturno' ? 'selected' : ''); ?>>Noturno</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="horario_label" class="form-label">Bloco</label>
+                                <select name="horario_label" id="horario_label" class="form-select" required>
+                                    <option value="" disabled <?php echo empty($horario_label) ? 'selected' : ''; ?>>Selecione...</option>
+                                    <option value="primeiro" <?php echo ($horario_label === 'primeiro' ? 'selected' : ''); ?>>1º Horário</option>
+                                    <option value="segundo" <?php echo ($horario_label === 'segundo' ? 'selected' : ''); ?>>2º Horário</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label for="hora_inicio" class="form-label">Início</label>
+                                <input type="time" name="hora_inicio" id="hora_inicio" value="<?php echo htmlspecialchars($hora_inicio); ?>" class="form-control" required>
+                            </div>
+                            <div class="col-md-2">
+                                <label for="hora_fim" class="form-label">Fim</label>
+                                <input type="time" name="hora_fim" id="hora_fim" value="<?php echo htmlspecialchars($hora_fim); ?>" class="form-control" required>
+                            </div>
+                            <div class="col-md-2">
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="bi bi-plus-lg"></i> Adicionar
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-header">Horários Cadastrados (<?php echo count($definicoes); ?>)</div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover mb-0 align-middle">
+                            <thead>
                                 <tr>
-                                    <td colspan="5" class="text-center text-muted py-3">Nenhum horário cadastrado.</td>
+                                    <th>Turno</th>
+                                    <th>Bloco</th>
+                                    <th>Início</th>
+                                    <th>Fim</th>
+                                    <th class="text-end">Ações</th>
                                 </tr>
-                            <?php else: ?>
-                                <?php foreach ($definicoes as $def): ?>
+                            </thead>
+                            <tbody>
+                                <?php if (empty($definicoes)): ?>
                                     <tr>
-                                        <td><?php echo htmlspecialchars(ucfirst($def['turno'])); ?></td>
-                                        <td><?php echo htmlspecialchars(ucfirst($def['horario_label'])); ?> Horário</td>
-                                        <td><?php echo date('H:i', strtotime($def['hora_inicio'])); ?></td>
-                                        <td><?php echo date('H:i', strtotime($def['hora_fim'])); ?></td>
-                                        <td class="text-end text-nowrap">
-                                            <div class="btn-group">
+                                        <td colspan="5" class="text-center text-muted py-3">Nenhum horário cadastrado.</td>
+                                    </tr>
+                                <?php else: ?>
+                                    <?php foreach ($definicoes as $def): ?>
+                                        <tr>
+                                            <td><?php echo htmlspecialchars(ucfirst($def['turno'])); ?></td>
+                                            <td><?php echo htmlspecialchars(ucfirst($def['horario_label'])); ?> Horário</td>
+                                            <td><?php echo date('H:i', strtotime($def['hora_inicio'])); ?></td>
+                                            <td><?php echo date('H:i', strtotime($def['hora_fim'])); ?></td>
+                                            <td class="text-end text-nowrap">
                                                 <a href="horarios_definicao_edit.php?id_definicao=<?php echo (int)$def['id_definicao']; ?>" class="btn btn-sm btn-outline-secondary">
                                                     Editar
                                                 </a>
-                                                <button type="button" class="btn btn-sm btn-outline-danger"
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#confirmDeleteModal"
-                                                    data-item-id="<?php echo (int)$def['id_definicao']; ?>"
-                                                    data-item-name="<?php echo htmlspecialchars(ucfirst($def['horario_label'])) . ' Horário (' . ucfirst($def['turno']) . ')'; ?>"
-                                                    data-form-action="horarios_definicao_delete.php"
-                                                    data-id-field="id_definicao">
-                                                    Excluir
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
-                        </tbody>
-                    </table>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
+
         </div>
     </div>
 </div>
