@@ -140,5 +140,11 @@ $foto_usuario_logado = !empty($_SESSION['foto_perfil'])
                         <span>Definir Horários</span>
                     </a>
                 </li>
+                <li class="sidebar-item">
+                    <a href="/portal-etc/mensagem/caixa_de_entrada.php" class="sidebar-link">
+                        <i class="bi bi-chat-text-fill fs-4"></i>
+                        <span>Chat</span>
+                    </a>
+                </li>
             </ul>
         </aside>

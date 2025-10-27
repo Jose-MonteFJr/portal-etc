@@ -42,7 +42,7 @@ try {
             // =============================================================
             // == NOVO: CRIA A NOTIFICAÇÃO PARA O OUTRO PARTICIPANTE      ==
             // =============================================================
-            
+
             // Busca o ID do outro participante para saber para quem enviar a notificação
             $stmt_dest = $pdo->prepare("SELECT id_usuario FROM participante_conversa WHERE id_conversa = ? AND id_usuario != ?");
             $stmt_dest->execute([$id_conversa, $id_usuario_logado]);
@@ -78,8 +78,8 @@ try {
     JOIN participante_conversa pc ON u.id_usuario = pc.id_usuario 
     WHERE pc.id_conversa = ? AND pc.id_usuario != ?
 ");
-$stmt_other->execute([$id_conversa, $id_usuario_logado]);
-$outro_participante = $stmt_other->fetch();
+    $stmt_other->execute([$id_conversa, $id_usuario_logado]);
+    $outro_participante = $stmt_other->fetch();
 
     // Busca todas as mensagens da conversa, com os dados do remetente
     $stmt_msgs = $pdo->prepare("
@@ -95,7 +95,11 @@ $outro_participante = $stmt_other->fetch();
     die("Erro ao carregar a conversa: " . $e->getMessage());
 }
 
-include '../partials/portal_header.php'; // Ajuste o caminho
+if ($_SESSION['tipo'] === 'aluno') {
+    include '../partials/portal_header.php'; // Header do Aluno
+} else {
+    include '../partials/admin_header.php'; // Header da Secretaria
+}
 ?>
 
 <div class="main">
@@ -123,7 +127,7 @@ include '../partials/portal_header.php'; // Ajuste o caminho
                                 <?php if ($is_sender): // SE A MENSAGEM FOI ENVIADA POR VOCÊ 
                                 ?>
 
-                                <div class="d-flex justify-content-end mb-3">
+                                    <div class="d-flex justify-content-end mb-3">
                                         <div class="chat-bubble sent">
                                             <p class="mb-1"><?php echo nl2br(htmlspecialchars($mensagem['conteudo'])); ?></p>
                                             <small class="d-block text-end text-white-50">
@@ -133,7 +137,7 @@ include '../partials/portal_header.php'; // Ajuste o caminho
                                                     <i class="bi bi-check2 ms-1"></i> <?php endif; ?>
                                             </small>
                                         </div>
-                                </div>
+                                    </div>
 
                                 <?php else: // SE A MENSAGEM FOI RECEBIDA 
                                 ?>

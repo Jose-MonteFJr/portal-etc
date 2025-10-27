@@ -80,7 +80,11 @@ try {
     die("Erro ao buscar destinatários: " . $e->getMessage());
 }
 
-include '../partials/portal_header.php'; // Ajuste o caminho
+if ($_SESSION['tipo'] === 'aluno') {
+    include '../partials/portal_header.php'; // Header do Aluno
+} else {
+    include '../partials/admin_header.php'; // Header da Secretaria
+}
 ?>
 
 <div class="main">
@@ -95,8 +99,8 @@ include '../partials/portal_header.php'; // Ajuste o caminho
 
                         <div class="card shadow-sm">
                             <div class="card-header d-flex align-items-center gap-2">
-                                    <strong class="me-2">Para:</strong>
-                                    
+                                <strong class="me-2">Para:</strong>
+
                                 <div id="destinatario-selecionado" class="d-none">
                                     <span class="badge text-bg-primary d-flex align-items-center">
                                         <span id="destinatario-nome"></span>
@@ -170,10 +174,13 @@ include '../partials/portal_header.php'; // Ajuste o caminho
             const termoBusca = this.value.toLowerCase();
             contatoItems.forEach(item => {
                 const nome = item.querySelector('strong').textContent.toLowerCase();
+
                 if (nome.includes(termoBusca)) {
-                    item.style.display = 'flex';
+                    // Garante que o item está visível (removendo d-none)
+                    item.classList.remove('d-none');
                 } else {
-                    item.style.display = 'none';
+                    // Esconde o item com a classe do Bootstrap
+                    item.classList.add('d-none');
                 }
             });
         });
@@ -212,7 +219,8 @@ include '../partials/portal_header.php'; // Ajuste o caminho
             // Limpa a busca
             buscaInput.value = '';
             contatoItems.forEach(item => {
-                item.style.display = 'flex';
+                // Mostra todos os itens removendo a classe 'd-none'
+                item.classList.remove('d-none');
             });
         });
     });

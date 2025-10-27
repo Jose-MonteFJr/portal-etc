@@ -46,12 +46,15 @@ try {
     // Note que o ID do usuário logado agora é usado duas vezes
     $stmt->execute([$id_usuario_logado, $id_usuario_logado]);
     $conversas = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
 } catch (PDOException $e) {
     die("Erro ao carregar a caixa de entrada: " . $e->getMessage());
 }
 
-include '../partials/portal_header.php'; // Ajuste o caminho
+if ($_SESSION['tipo'] === 'aluno') {
+    include '../partials/portal_header.php'; // Header do Aluno
+} else {
+    include '../partials/admin_header.php'; // Header da Secretaria
+}
 ?>
 
 <div class="main">
@@ -65,7 +68,7 @@ include '../partials/portal_header.php'; // Ajuste o caminho
                             <i class="bi bi-plus-lg"></i> Nova Mensagem
                         </a>
                     </div>
-                    
+
                     <div class="card shadow-sm">
                         <div class="card-body p-0">
                             <div class="list-group list-group-flush">
@@ -82,7 +85,7 @@ include '../partials/portal_header.php'; // Ajuste o caminho
                                         $foto_participante = !empty($conversa['foto_outro_participante'])
                                             ? '/portal-etc/uploads/perfil/' . $conversa['foto_outro_participante']
                                             : '/portal-etc/partials/img/avatar_padrao.png';
-                                        
+
                                         // Prepara o preview da última mensagem
                                         $preview_msg = 'Nenhuma mensagem ainda.';
                                         if ($conversa['ultimo_conteudo']) {
@@ -90,28 +93,28 @@ include '../partials/portal_header.php'; // Ajuste o caminho
                                             $preview_msg = $remetente . htmlspecialchars(substr($conversa['ultimo_conteudo'], 0, 70)) . '...';
                                         }
                                         ?>
-                                                    <a href="ver_conversa.php?id_conversa=<?php echo (int)$conversa['id_conversa']; ?>" 
-                                                    class="list-group-item list-group-item-action">
-                                                        <div class="d-flex align-items-center">
-                                                            <?php if ($conversa['status_leitura'] === 'nao lida'): ?>
-                                                                <span class="unread-dot me-3"></span>
-                                                            <?php else: ?>
-                                                                <span class="placeholder-dot me-3"></span> <?php endif; ?>
+                                        <a href="ver_conversa.php?id_conversa=<?php echo (int)$conversa['id_conversa']; ?>"
+                                            class="list-group-item list-group-item-action">
+                                            <div class="d-flex align-items-center">
+                                                <?php if ($conversa['status_leitura'] === 'nao lida'): ?>
+                                                    <span class="unread-dot me-3"></span>
+                                                <?php else: ?>
+                                                    <span class="placeholder-dot me-3"></span> <?php endif; ?>
 
-                                                            <img src="<?php echo htmlspecialchars($foto_participante); ?>" class="rounded-circle me-3" style="width: 50px; height: 50px; object-fit: cover;">
-                                                            <div class="flex-grow-1">
-                                                                <div class="d-flex w-100 justify-content-between">
-                                                                    <h6 class="mb-1 <?php echo $conversa['status_leitura'] === 'nao lida' ? 'fw-bold' : ''; ?>">
-                                                                        <?php echo htmlspecialchars($conversa['nome_outro_participante']); ?>
-                                                                    </h6>
-                                                                    <small class="text-muted"><?php echo date('d/m/y', strtotime($conversa['data_ultima_mensagem'])); ?></small>
-                                                                </div>
-                                                                <p class="mb-1 small text-muted text-truncate">
-                                                                    <?php echo $preview_msg; ?>
-                                                                </p>
-                                                            </div>
-                                                        </div>
-                                                    </a>
+                                                <img src="<?php echo htmlspecialchars($foto_participante); ?>" class="rounded-circle me-3" style="width: 50px; height: 50px; object-fit: cover;">
+                                                <div class="flex-grow-1">
+                                                    <div class="d-flex w-100 justify-content-between">
+                                                        <h6 class="mb-1 <?php echo $conversa['status_leitura'] === 'nao lida' ? 'fw-bold' : ''; ?>">
+                                                            <?php echo htmlspecialchars($conversa['nome_outro_participante']); ?>
+                                                        </h6>
+                                                        <small class="text-muted"><?php echo date('d/m/y', strtotime($conversa['data_ultima_mensagem'])); ?></small>
+                                                    </div>
+                                                    <p class="mb-1 small text-muted text-truncate">
+                                                        <?php echo $preview_msg; ?>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </a>
                                     <?php endforeach; ?>
                                 <?php endif; ?>
                             </div>
@@ -123,4 +126,5 @@ include '../partials/portal_header.php'; // Ajuste o caminho
     </div>
 </div>
 
-<?php include '../partials/footer.php'; // Ajuste o caminho ?>
+<?php include '../partials/footer.php'; // Ajuste o caminho 
+?>
