@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         flash_set('danger', 'Nenhum arquivo foi enviado ou ocorreu um erro no upload.');
     }
 
-    header('Location: foto_aluno.php');
+    header('Location: foto_edit.php');
     exit;
 }
 
@@ -68,7 +68,24 @@ $foto_path = !empty($usuario_atual['foto_perfil'])
     ? 'uploads/perfil/' . $usuario_atual['foto_perfil']
     : 'partials/img/avatar_padrao.png'; // Caminho para uma imagem padrão
 
-include __DIR__ . '/partials/portal_header.php';
+// 1. Define o link "Voltar" com base no tipo de usuário
+$tipo_usuario = $_SESSION['tipo'] ?? 'aluno'; // Pega o tipo da sessão
+$voltar_link = 'admin.php'; // Padrão de fallback
+
+if ($tipo_usuario === 'aluno') {
+    $voltar_link = 'perfil_aluno.php';
+} elseif ($tipo_usuario === 'secretaria') {
+    $voltar_link = 'perfil_secretaria.php';
+}
+// Você pode adicionar 'professor', 'coordenador' aqui no futuro, se criar perfis para eles.
+
+// 2. Inclui o Header correto com base no tipo de usuário
+if ($tipo_usuario === 'aluno') {
+    include __DIR__ . '/partials/portal_header.php';
+} else {
+    // Assume que todos os outros (secretaria, admin, etc.) usam o admin_header
+    include __DIR__ . '/partials/admin_header.php';
+}
 ?>
 <div class="main">
     <div class="content">
@@ -78,12 +95,12 @@ include __DIR__ . '/partials/portal_header.php';
                     <div class="card shadow-sm">
                         <div class="card-header d-flex flex-column flex-sm-row justify-content-sm-between align-items-sm-center">
                             <h4 class="mb-2 mb-sm-0">Minha Foto de Perfil</h4>
-                            <a class="btn btn-outline-secondary btn-sm" href="perfil_aluno.php">Voltar</a>
+                            <a class="btn btn-outline-secondary btn-sm" href="<?php echo htmlspecialchars($voltar_link); ?>">Voltar</a>
                         </div>
                         <div class="card-body">
                             <?php flash_show(); ?>
 
-                            <form method="post" action="foto_aluno.php" enctype="multipart/form-data">
+                            <form method="post" action="foto_edit.php" enctype="multipart/form-data">
                                 <?php csrf_input(); ?>
 
                                 <div class="text-center mb-3">

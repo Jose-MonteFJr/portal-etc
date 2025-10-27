@@ -66,7 +66,7 @@ $foto_usuario_logado = !empty($_SESSION['foto_perfil'])
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end">
                     <li>
-                        <a class="dropdown-item" href="/portal-etc/profile.php">
+                        <a class="dropdown-item" href="/portal-etc/perfil_secretaria.php">
                             <i class="bi bi-person-fill me-2"></i> Meu Perfil
                         </a>
                     </li>

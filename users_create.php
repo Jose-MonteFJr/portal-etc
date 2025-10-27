@@ -584,6 +584,8 @@ include __DIR__ . '/partials/admin_header.php';
       } [match]));
     }
 
+
+    // REGEX SENHA
     const passwordInput = document.getElementById('password');
     const strengthBar = document.getElementById('password-strength-bar');
     const strengthText = document.getElementById('password-strength-text');

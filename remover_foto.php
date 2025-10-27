@@ -5,7 +5,7 @@ require __DIR__ . '/helpers.php';
 
 // Apenas aceita requisições do tipo POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    redirect('foto_aluno.php');
+    redirect('foto_edit.php');
 }
 
 csrf_check();
@@ -37,5 +37,5 @@ try {
 }
 
 // 5. Redireciona o usuário de volta para a página de perfil
-header('Location: foto_aluno.php');
+header('Location: foto_edit.php');
 exit;

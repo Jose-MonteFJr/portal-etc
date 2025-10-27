@@ -25,7 +25,7 @@ $sql = "SELECT
         LEFT JOIN curso c ON t.id_curso = c.id_curso
         LEFT JOIN endereco e ON u.id_usuario = e.id_usuario
         WHERE u.id_usuario = ?";
-        
+
 $stmt = $pdo->prepare($sql);
 $stmt->execute([$id_usuario_logado]);
 $aluno = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -38,8 +38,8 @@ if (!$aluno) {
 
 // 2. Prepara as variáveis para exibição
 $foto_path = !empty($aluno['foto_perfil'])
-             ? '/portal-etc/uploads/perfil/' . $aluno['foto_perfil']
-             : '/portal-etc/partials/img/avatar_padrao.png';
+    ? '/portal-etc/uploads/perfil/' . $aluno['foto_perfil']
+    : '/portal-etc/partials/img/avatar_padrao.png';
 
 // Monta o endereço formatado
 $endereco_formatado = 'Endereço não cadastrado.';
@@ -69,11 +69,11 @@ include __DIR__ . '/partials/portal_header.php';
                     <div class="card shadow-sm">
                         <div class="card-body">
                             <div class="text-center mb-4">
-                                <img src="<?php echo htmlspecialchars($foto_path); ?>" alt="Foto de Perfil" 
-                                     class="img-thumbnail rounded-circle" style="width: 120px; height: 120px; object-fit: cover;">
+                                <img src="<?php echo htmlspecialchars($foto_path); ?>" alt="Foto de Perfil"
+                                    class="img-thumbnail rounded-circle" style="width: 120px; height: 120px; object-fit: cover;">
                                 <h5 class="mt-3 mb-0"><?php echo htmlspecialchars($aluno['nome_completo']); ?></h5>
                                 <p class="text-muted small"><?php echo htmlspecialchars($aluno['email']); ?></p>
-                                <a href="foto_aluno.php" class="btn btn-sm btn-outline-primary">Alterar Foto</a>
+                                <a href="foto_edit.php" class="btn btn-sm btn-outline-primary">Alterar Foto</a>
                             </div>
 
                             <ul class="nav nav-tabs nav-fill mb-3" id="myTab" role="tablist">
@@ -84,7 +84,7 @@ include __DIR__ . '/partials/portal_header.php';
                                     <button class="nav-link" id="academico-tab" data-bs-toggle="tab" data-bs-target="#academico-tab-pane" type="button" role="tab">Dados Acadêmicos</button>
                                 </li>
                             </ul>
-                            
+
                             <div class="tab-content" id="myTabContent">
                                 <div class="tab-pane fade show active" id="pessoal-tab-pane" role="tabpanel">
                                     <ul class="list-group list-group-flush">
@@ -98,7 +98,7 @@ include __DIR__ . '/partials/portal_header.php';
                                         </li>
                                     </ul>
                                 </div>
-                                
+
                                 <div class="tab-pane fade" id="academico-tab-pane" role="tabpanel">
                                     <ul class="list-group list-group-flush">
                                         <li class="list-group-item d-flex flex-column flex-md-row justify-content-md-between">
@@ -122,7 +122,7 @@ include __DIR__ . '/partials/portal_header.php';
                             </div>
                         </div>
                         <div class="card-footer text-end">
-                            <a href="editar_perfil_aluno.php" class="btn btn-sm btn-secondary">Editar Dados Pessoais</a>
+                            <a href="editar_perfil.php" class="btn btn-sm btn-secondary">Editar Dados Pessoais</a>
                             <a href="alterar_senha.php" class="btn btn-sm btn-outline-danger">Alterar Senha</a>
                         </div>
                     </div>
