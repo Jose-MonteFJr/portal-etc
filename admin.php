@@ -61,7 +61,7 @@ include __DIR__ . '/partials/admin_header.php';
     <div class="container-fluid mt-4">
 
       <div class="d-flex align-items-center justify-content-between mb-4">
-        <h2 class="h4 mb-0">Dashboard de Administração</h2>
+        <h2 class="h4 mb-0">Gerenciamento de usuários</h2>
         <span class="badge text-bg-primary">Perfil: Secretaria</span>
       </div>
 

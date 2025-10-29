@@ -52,6 +52,8 @@ try {
 
 if ($_SESSION['tipo'] === 'aluno') {
     include '../partials/portal_header.php'; // Header do Aluno
+} elseif ($_SESSION['tipo'] === 'professor') {
+    include '../partials/portal_header.php'; // Header do Aluno
 } else {
     include '../partials/admin_header.php'; // Header da Secretaria
 }

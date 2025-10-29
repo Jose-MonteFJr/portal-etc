@@ -684,10 +684,6 @@ a.sidebar-link:hover {
     flex-grow: 1;
 }
 
-.unread-notification {
-    background-color: #f0f8ff;
-}
-
 a.list-group-item:hover {
     background-color: #3b7ddd;
     border-left: 3px solid #1b2a44;

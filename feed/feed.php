@@ -3,7 +3,7 @@ require     '../protect.php'; // Ajuste o caminho conforme sua estrutura
 require     '../config/db.php';
 require     '../helpers.php';
 
-$allowed_types = ['aluno', 'secretaria'];
+$allowed_types = ['aluno', 'secretaria', 'professor'];
 if (!isset($_SESSION['tipo']) || !in_array($_SESSION['tipo'], $allowed_types)) {
     // Se não for nenhum dos dois, nega o acesso
     flash_set('danger', 'Acesso negado.');
@@ -54,6 +54,8 @@ try {
 }
 
 if ($_SESSION['tipo'] === 'aluno') {
+    include '../partials/portal_header.php'; // Header do Aluno
+} elseif ($_SESSION['tipo'] === 'professor') {
     include '../partials/portal_header.php'; // Header do Aluno
 } else {
     include '../partials/admin_header.php'; // Header da Secretaria

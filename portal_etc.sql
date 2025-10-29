@@ -308,7 +308,7 @@ CREATE TABLE horario_aula (
 INSERT INTO usuario (nome_completo, cpf, email, password_hash, telefone, data_nascimento, tipo) 
 VALUE
 -- SECRETARIA/ADMIN 
-('Jose Admin','123.123.123-23','jose@admin.com','$2y$10$4v3s86.rU8.Bq7UfqQ2mYuFmbv2voXZxdoeTDb4XdsX0w9AGUlrHG','(61) 91234-1234','2000-02-24','secretaria'); -- Senha: admin123
+('Jose Admin','123.123.123-23','jose@admin.com','$2y$10$xEPkcg78UqjpE6CLqnKSi.gnBCBRFCTtizRPYE7enb3uV7yqfr0TO','(61) 91234-1234','2000-02-24','secretaria'); -- Senha: admin123
 
 -- INSERTS TESTE
 
@@ -354,12 +354,12 @@ INSERT INTO disciplina (id_modulo, nome, carga_horaria) VALUES
 -- Por fim, criamos instâncias (turmas) dos cursos.
 -- Assumindo que 'Técnico em Informática' tem id_curso = 1
 INSERT INTO turma (id_curso, nome, ano, semestre, turno, status) VALUES
-(1, 'INF-2025.1-NOT', 2025, '1', 'noturno', 'aberta'),
-(1, 'INF-2024.2-MAT', 2024, '2', 'matutino', 'aberta');
+(1, 'Turma P - NOT', 2025, '1', 'noturno', 'aberta'),
+(1, 'Turma B - MAT', 2024, '2', 'matutino', 'aberta');
 
 -- Assumindo que 'Técnico em Enfermagem' tem id_curso = 2
 INSERT INTO turma (id_curso, nome, ano, semestre, turno, status) VALUES
-(2, 'ENF-2025.1-VES', 2025, '1', 'vespertino', 'aberta');
+(2, 'Turma D -VES', 2025, '1', 'vespertino', 'aberta');
 
 -- ===================================================================
 -- == INSERTS DE TESTE ADICIONAIS
@@ -371,12 +371,12 @@ INSERT INTO turma (id_curso, nome, ano, semestre, turno, status) VALUES
 INSERT INTO usuario (nome_completo, cpf, email, password_hash, telefone, data_nascimento, tipo) 
 VALUES
 -- Professores (IDs: 2, 3)
-('Carlos Nogueira','111.222.333-44','carlos.prof@email.com','$2y$10$GJ9AMaahNTSm.q1Dd.5fluMADwsH32C8J5BJ9i9DiWXIuuMtZTeAu','(61) 98877-6655','1985-05-20','professor'),
-('Ana Souza','444.555.666-77','ana.prof@email.com','$2y$10$GJ9AMaahNTSm.q1Dd.5fluMADwsH32C8J5BJ9i9DiWXIuuMtZTeAu','(61) 91122-3344','1990-11-10','professor'),
+('Carlos Nogueira','111.222.333-44','carlos.prof@email.com','$2y$10$xEPkcg78UqjpE6CLqnKSi.gnBCBRFCTtizRPYE7enb3uV7yqfr0TO','(61) 98877-6655','1985-05-20','professor'),
+('Ana Souza','444.555.666-77','ana.prof@email.com','$2y$10$xEPkcg78UqjpE6CLqnKSi.gnBCBRFCTtizRPYE7enb3uV7yqfr0TO','(61) 91122-3344','1990-11-10','professor'),
 -- Alunos (IDs: 4, 5, 6)
-('Mariana Costa','777.888.999-00','mariana.aluna@email.com','$2y$10$GJ9AMaahNTSm.q1Dd.5fluMADwsH32C8J5BJ9i9DiWXIuuMtZTeAu','(61) 91234-5678','2005-02-15','aluno'),
-('Pedro Almeida','123.456.789-10','pedro.aluno@email.com','$2y$10$GJ9AMaahNTSm.q1Dd.5fluMADwsH32C8J5BJ9i9DiWXIuuMtZTeAu','(61) 98765-4321','2006-08-30','aluno'),
-('Juliana Lima','987.654.321-00','juliana.aluna@email.com','$2y$10$GJ9AMaahNTSm.q1Dd.5fluMADwsH32C8J5BJ9i9DiWXIuuMtZTeAu','(61) 99999-8888','2004-12-01','aluno');
+('Mariana Costa','777.888.999-00','mariana.aluna@email.com','$2y$10$xEPkcg78UqjpE6CLqnKSi.gnBCBRFCTtizRPYE7enb3uV7yqfr0TO','(61) 91234-5678','2005-02-15','aluno'),
+('Pedro Almeida','123.456.789-10','pedro.aluno@email.com','$2y$10$xEPkcg78UqjpE6CLqnKSi.gnBCBRFCTtizRPYE7enb3uV7yqfr0TO','(61) 98765-4321','2006-08-30','aluno'),
+('Juliana Lima','987.654.321-00','juliana.aluna@email.com','$2y$10$xEPkcg78UqjpE6CLqnKSi.gnBCBRFCTtizRPYE7enb3uV7yqfr0TO','(61) 99999-8888','2004-12-01','aluno');
 
 -- 6. ENDEREÇOS
 -- Adicionando endereços para os usuários criados acima.

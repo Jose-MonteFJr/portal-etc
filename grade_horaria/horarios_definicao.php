@@ -67,7 +67,9 @@ include '../partials/admin_header.php'; // Ajuste o caminho
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb mb-0">
                         <li class="breadcrumb-item"><a href="../admin.php">Dashboard</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Horários Padrão</li>
+                        <li class="breadcrumb-item"><a href="../curso/cursos_view.php">Cursos</a></li>
+                        <li class="breadcrumb-item"><a href="../turma/turmas_view.php">Turmas</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Horários</li>
                     </ol>
                 </nav>
             </div>

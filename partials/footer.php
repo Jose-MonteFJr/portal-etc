@@ -250,7 +250,7 @@
 
                           // NOVO: Adiciona o botão "marcar como lida" APENAS se não estiver lida
                           if (notif.status === 'nao lida') {
-                              itemHTML += `<button class="btn btn-sm btn-light mark-as-read-btn" data-id="${notif.id_notificacao}" title="Marcar como lida">
+                              itemHTML += `<button class="btn btn-sm mark-as-read-btn" data-id="${notif.id_notificacao}" title="Marcar como lida">
                                         <i class="bi bi-check-circle"></i>
                                      </button>`;
                           }

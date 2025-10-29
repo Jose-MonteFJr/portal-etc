@@ -196,6 +196,9 @@ include '../partials/admin_header.php';
                                         <td class="small"><?php echo htmlspecialchars($t['updated_at']); ?></td>
                                         <td class="text-end text-nowrap">
                                             <div class="btn-group" role="group" aria-label="Ações da turma">
+                                                <a href="/portal-etc/grade_horaria/horarios_definicao.php" class="btn btn-sm btn-outline-info">
+                                                    Horários
+                                                </a>
                                                 <a href="/portal-etc/grade_horaria/montar_horario.php?id_turma=<?php echo (int)$t['id_turma']; ?>" class="btn btn-sm btn-outline-info">
                                                     Grade
                                                 </a>

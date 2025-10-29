@@ -123,9 +123,9 @@ $foto_usuario_logado = !empty($_SESSION['foto_perfil'])
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="/portal-etc/solicitacao/solicitacoes_view_admin.php" class="sidebar-link">
-                        <i class="bi bi-file-earmark-text-fill fs-4"></i>
-                        <span>Solicitações</span>
+                    <a href="/portal-etc/grade_horaria/horarios_definicao.php" class="sidebar-link">
+                        <i class="bi bi-clock-fill fs-4"></i>
+                        <span>Definir Horários</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
@@ -135,9 +135,9 @@ $foto_usuario_logado = !empty($_SESSION['foto_perfil'])
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a href="/portal-etc/grade_horaria/horarios_definicao.php" class="sidebar-link">
-                        <i class="bi bi-clock-fill fs-4"></i>
-                        <span>Definir Horários</span>
+                    <a href="/portal-etc/solicitacao/solicitacoes_view_admin.php" class="sidebar-link">
+                        <i class="bi bi-file-earmark-text-fill fs-4"></i>
+                        <span>Solicitações</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
