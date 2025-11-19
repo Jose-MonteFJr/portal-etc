@@ -15,13 +15,12 @@ include __DIR__ . '/partials/portal_header.php';
 <?php flash_show(); ?>
 <!-- Conteúdo principal -->
 <div class="main">
-  <div class="content">
-    <div class="container mt-4">
-      <div class="row justify-content-center">
-        <h1 class="text-3xl font-bold">Bem vindo(a) <?php echo htmlspecialchars($userName); ?>!</h1>
-        <p class="text-gray-700 mt-4">Começar a criar a pagina principal.</p>
-      </div>
+    <div class="content">
+        <div class="container mt-4">
+            <div class="row justify-content-center">
+                <h1 class="text-3xl font-bold">Bem vindo(a) <?php echo htmlspecialchars($userName); ?>!</h1>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
 <?php include __DIR__ . '/partials/footer.php'; ?>
